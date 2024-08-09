@@ -61,6 +61,8 @@ end
 
 arr = ['aaabcdefaaaghijklma', 'abcdef', 'aabbccddef', 'aaabcaade']
 
+# Iterate over elements of array and call the function
+#
 arr.each do |input_str|
 	puts "Input String :: #{input_str}"
 	find_longest_subst_no_repeated_chars(input_str)
