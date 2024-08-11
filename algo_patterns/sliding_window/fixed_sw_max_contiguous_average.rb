@@ -6,18 +6,23 @@
 # Naive Solution
 #
 # @param [Array] input_arr
-# @param [Integer] k
+# @param [Integer] max_contiguous
 # @return [Integer] max_avg
-# Time Complexity O(n*k) ~ O(n^2)
+# Time Complexity O(n*max_contiguous) ~ O(n^2)
 #
-def max_contiguous_avg(input_arr, _k)
+def max_contiguous_avg(input_arr, max_contiguous)
   max_avg = 0
-  return max_avg if input_arr.empty? || input_arr.length < 4
+  return max_avg if input_arr.empty? || input_arr.length < max_contiguous
 
-  input_arr.each_with_index do |element, index|
-    avg = (element + input_arr[index + 1] + input_arr[index + 2] + input_arr[index + 3]) / 4.to_f
+  input_arr.each_with_index do |_element, index|
+    counter = sum = 0
+    while counter < max_contiguous
+      sum += input_arr[counter]
+      counter += 1
+    end
+    avg = sum / max_contiguous.to_f
     max_avg = avg if max_avg < avg
-    break if (index + 4) == input_arr.length
+    break if (index + max_contiguous) == input_arr.length
   end
   max_avg
 end
@@ -30,22 +35,25 @@ end
 # Sliding Window Solution
 #
 # @param [Array] input_arr
-# @param [Integer] k
+# @param [Integer] max_contiguous
 # @return [Integer] max_avg
 # Time Complexity O(n)
 #
-def max_contiguous_avg_sw(input_arr, _k)
+def max_contiguous_avg_sw(input_arr, max_contiguous)
   max_avg = 0
-  return max_avg if input_arr.empty? || input_arr.length < 4
+  return max_avg if input_arr.empty? || input_arr.length < max_contiguous
 
-  start_index = 0
-  sum = (input_arr[start_index] + input_arr[start_index + 1] + input_arr[start_index + 2] + input_arr[start_index + 3])
+  counter = sum = 0
+  while counter < max_contiguous
+    sum += input_arr[counter]
+    counter += 1
+  end
   input_arr.each_with_index do |_element, index|
-    avg = sum / 4.to_f
+    avg = sum / max_contiguous.to_f
     max_avg = avg if max_avg > avg
-    break if (index + 4) == input_arr.length
+    break if (index + max_contiguous) == input_arr.length
 
-    sum = (sum - input_arr[index] + input_arr[index + 4])
+    sum = (sum - input_arr[index] + input_arr[index + max_contiguous])
   end
   max_avg
 end

@@ -13,7 +13,7 @@ class Queue
   # @param [Integer] data
   # @return [Integer]
   #
-  def enqueue(data)
+  def enqueue(data:)
     queue.push(data)
   end
 
@@ -62,9 +62,9 @@ class Queue
 end
 
 # queue = Queue.new
-# queue.enqueue(5)
-# queue.enqueue(6)
-# queue.enqueue(7)
+# queue.enqueue(data: 5)
+# queue.enqueue(data: 6)
+# queue.enqueue(data: 7)
 # queue.display
 # puts queue.peek
 # puts queue.dequeue

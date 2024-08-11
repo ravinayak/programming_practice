@@ -32,7 +32,7 @@ end
 # @param [Hash] min_subarr
 # @return NIL
 def assign_min_subarr(subarr_pointers, min_subarr)
-  return unless is_subarr_size_less?(subarr_pointers, min_subarr)
+  return unless subarr_size_less?(subarr_pointers, min_subarr)
 
   min_subarr[:size] = calc_subarr_size(subarr_pointers)
   min_subarr[:left] = subarr_pointers[:left]
@@ -44,7 +44,7 @@ end
 # @param [Hash] min_subarr
 # @return [Boolean]
 #
-def is_subarr_size_less?(subarr_pointers, min_subarr)
+def subarr_size_less?(subarr_pointers, min_subarr)
   return true if calc_subarr_size(subarr_pointers) < min_subarr[:size]
 
   false

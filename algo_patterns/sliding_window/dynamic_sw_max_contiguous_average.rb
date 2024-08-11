@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 # Find the maximum contiguous size for elements in an array where the maximum different elements
-# in the contiguous sequence can only be k
+# in the contiguous sequence can only be max_different
 # This is dynamic window sliding problem
 # @param [Array] input_arr
-# @param [Integer] k
+# @param [Integer]
 # @return [Hash] max_sw_size_arr
 #
 # arr = [1,2,1,2,1,2,3,4,5,6,6,8,6,8,8,6,6,7]
-def dynamic_sw_max_contiguous_sequence(input_arr, k)
-  return { max_size: 0, max_sw_arr: [] } if input_arr.empty? || k.zero?
+def dynamic_sw_max_contiguous_sequence(input_arr, max_different)
+  return { max_size: 0, max_sw_arr: [] } if input_arr.empty? || max_different.zero?
 
   sw_pointers = { left: 0, right: 0 }
   max_sw_size_arr = { max_size: 0, max_sw_arr: [] }
@@ -17,26 +17,27 @@ def dynamic_sw_max_contiguous_sequence(input_arr, k)
 
   while sw_pointers[:right] < input_arr.length
     k_elements_count_hsh[input_arr[sw_pointers[:right]]] += 1
-    adjust_elements_count_hsh(k_elements_count_hsh, k, input_arr, sw_pointers) while k_elements_count_hsh.size > k
+    adjust_elements_count_hsh(k_elements_count_hsh, input_arr,
+                              sw_pointers) while k_elements_count_hsh.size > max_different
     assign_max_sw_size_arr(input_arr, sw_pointers, max_sw_size_arr) if size_greater_max_size?(sw_pointers,
                                                                                               max_sw_size_arr)
     sw_pointers[:right] += 1
   end
 
-  puts "Maxium contiguous size for elements in array where maximum different elements is #{k} :: #{max_sw_size_arr[:max_size]}"
+  print 'Maxium contiguous size for elements in array where maximum different elements is '
+  puts "#{max_different} :: #{max_sw_size_arr[:max_size]}"
   puts "Elements in the contiguous sequence is :: ##{max_sw_size_arr[:max_sw_arr]}"
 
   [max_sw_size_arr]
 end
 
-# Adjusts elements in hash based on input parameter k
+# Adjusts elements in hash based on input parameter max_different
 # @param [Hash] k_elements_count_hsh
-# @param [Integer] k
 # @param [Array] input_arr
 # @param [Hash] sw_pointers
 # @return [NIL]
 #
-def adjust_elements_count_hsh(k_elements_count_hsh, _k, input_arr, sw_pointers)
+def adjust_elements_count_hsh(k_elements_count_hsh, input_arr, sw_pointers)
   key = input_arr[sw_pointers[:left]]
   k_elements_count_hsh[key] -= 1
   k_elements_count_hsh.delete(key) if (k_elements_count_hsh[key]).zero?

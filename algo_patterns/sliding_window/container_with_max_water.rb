@@ -11,7 +11,7 @@ def find_max_container(heights_arr)
 	max_area = 0
 	while pointer_with_indices[:left] != pointer_with_indices[:right]
 		right, left = pointer_with_indices[:right], pointer_with_indices[:left]
-		curr_area =[heights_arr[left], heights_arr[right]].min * (right - left + 1)
+		curr_area =[heights_arr[left], heights_arr[right]].min * (right - left)
 		max_area = find_max_area(curr_area: curr_area, max_area: max_area, max_area_container: max_area_container, pointer_with_indices: pointer_with_indices)
 		adjust_pointers(pointer_with_indices:, heights_arr:)
 	end

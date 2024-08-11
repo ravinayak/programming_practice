@@ -31,14 +31,14 @@ def merge_sorted_lists(list1:, list2:)
   list1
 end
 
-input_arr_1 = [1, 3, 5, 6, 17, 38]
-input_arr_2 = [2, 4, 7, 9, 11, 15, 16, 24, 26, 32, 45, 50, 55]
-puts "Given Input Array 1 :: #{input_arr_1}"
-puts "Given Input Array 2 :: #{input_arr_2}"
-list1 = List.new(input_arr: input_arr_1)
-list2 = List.new(input_arr: input_arr_2)
+input_arr_one = [1, 3, 5, 6, 17, 38]
+input_arr_two = [2, 4, 7, 9, 11, 15, 16, 24, 26, 32, 45, 50, 55]
+puts "Given Input Array 1 :: #{input_arr_one}"
+puts "Given Input Array 2 :: #{input_arr_two}"
+list1 = List.new(input_arr: input_arr_one)
+list2 = List.new(input_arr: input_arr_two)
 list1.traverse_list
 list2.traverse_list
-merge_sorted_lists(list1: list1, list2: list2)
+merge_sorted_lists(list1:, list2:)
 puts "\n\n Sorted List "
 list1.traverse_list

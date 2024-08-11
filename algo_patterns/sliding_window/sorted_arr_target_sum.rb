@@ -18,7 +18,7 @@ def find_target_sum(input_arr, target_sum)
       elements_arr << input_arr[pointer_two]
       break
     end
-    if is_curr_sum_greater?(target_sum: target_sum, curr_sum: curr_sum)
+    if curr_sum_greater?(target_sum:, curr_sum:)
       pointer_two -= 1
     else
       pointer_one += 1
@@ -33,7 +33,7 @@ end
 # @param [Integer] curr_sum
 # @return [Boolean]
 #
-def is_curr_sum_greater?(target_sum:, curr_sum:)
+def curr_sum_greater?(target_sum:, curr_sum:)
   return true if curr_sum > target_sum
 
   false

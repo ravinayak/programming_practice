@@ -25,7 +25,8 @@ def find_longest_subst_no_repeated_chars(input_str)
     substr_pointers[:right] = substr_pointers[:right] + 1
   end
 
-  puts "Maximum Substring with no repeated characters :: #{input_str[max_substr_index_len[:left]..max_substr_index_len[:right]]}"
+  print 'Maximum Substring with no repeated characters :: '
+  puts(input_str[max_substr_index_len[:left]..max_substr_index_len[:right]])
   puts "Maximum Substring length :: #{max_substr_index_len[:right] - max_substr_index_len[:left] + 1}"
 end
 
@@ -35,7 +36,7 @@ end
 # @return NIL
 #
 def assign_max_substr_index(substr_pointers, max_substr_index_len)
-  return unless is_substr_len_greater?(substr_pointers, max_substr_index_len)
+  return unless substr_len_greater?(substr_pointers, max_substr_index_len)
 
   max_substr_index_len[:max_length] = calc_substr_len(substr_pointers)
   max_substr_index_len[:left] = substr_pointers[:left]
@@ -47,7 +48,7 @@ end
 # @param [Hash] max_substr_index_len
 # @return NIL
 #
-def is_substr_len_greater?(substr_pointers, max_substr_index_len)
+def substr_len_greater?(substr_pointers, max_substr_index_len)
   return true if calc_substr_len(substr_pointers) > max_substr_index_len[:max_length]
 
   false
