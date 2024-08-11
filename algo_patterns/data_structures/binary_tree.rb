@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'binary_tree_node'
+require_relative 'stack'
+
 # Class implements BinaryTree
 # - Insert Node in BinaryTree
 # - Search for data in BinaryTree
@@ -42,7 +44,7 @@ class BinaryTree
 
     puts '********************* Pre Order Traversal of Binary Tree *********************'
     rec_pre_order_traversal(node: root)
-    puts '******************************************************************************'
+    puts "\n******************************************************************************"
   end
 
   # Post-order Traversal
@@ -52,7 +54,7 @@ class BinaryTree
 
     puts '********************* Post Order Traversal of Binary Tree ********************'
     rec_post_order_traversal(node: root)
-    puts '******************************************************************************'
+    puts "\n******************************************************************************"
   end
 
   # In-order Traversal
@@ -62,10 +64,77 @@ class BinaryTree
 
     puts '********************* In Order Traversal of Binary Tree **********************'
     rec_in_order_traversal(node: root)
-    puts '******************************************************************************'
+    puts "\n******************************************************************************"
+  end
+
+  # In Order Non Recursive Traversal
+  #
+  def non_rec_in_order_traversal
+    curr = root
+    st = Stack.new
+    puts '********** Non Recursive In Order Traversal ***********************************'
+    while curr || !st.empty?
+      while curr
+        st.push(data: curr)
+        curr = curr.left
+      end
+
+      curr = st.pop
+      print " #{curr.data} "
+      curr = curr.right
+    end
+    puts "\n******************************************************************************"
+  end
+
+  # Pre Order Non Recursive Traversal
+  #
+  def non_rec_pre_order_traversal
+    st = Stack.new
+    st.push(data: root)
+    puts '********** Non Recursive Pre Order Traversal *********************************'
+    until st.empty?
+      curr = st.pop
+      print " #{curr.data} "
+      st.push(data: curr.right) if curr.right
+      st.push(data: curr.left)	if curr.left
+    end
+    puts "\n******************************************************************************"
+  end
+
+  # Post Order Non Recursive Traversal
+  #
+  def non_rec_post_order_traversal
+    st1 = Stack.new
+    st2 = Stack.new
+    st1.push(data: root)
+    puts '********** Non Recursive Post Order Traversal ********************************'
+    prep_stack_for_traversal(st1, st2) until st1.empty?
+
+    print_elements_post_order(st2) until st2.empty?
+
+    puts "\n******************************************************************************"
   end
 
   private
+
+  # Push elements onto stack 2 and stack 1
+  # @param [Stack] st1
+  # @param [Stack] st2
+  #
+  def prep_stack_for_traversal(st1, st2)
+    curr = st1.pop
+    st2.push(data: curr)
+    st1.push(data: curr.left) if curr.left
+    st1.push(data: curr.right) if curr.right
+  end
+
+  # Pop and print elements from stack2
+  # @param [Stack] st2
+  #
+  def print_elements_post_order(st2)
+    curr = st2.pop
+    print " #{curr.data} "
+  end
 
   # Pre-Order Traversal - Recursive
   # @param [BinaryTreeNode] node
@@ -73,7 +142,7 @@ class BinaryTree
   def rec_pre_order_traversal(node:)
     return if node.nil?
 
-    print "#{node.data}, "
+    print " #{node.data} "
     rec_pre_order_traversal(node: node.left)
     rec_pre_order_traversal(node: node.right)
   end
@@ -86,7 +155,7 @@ class BinaryTree
 
     rec_post_order_traversal(node: node.left)
     rec_post_order_traversal(node: node.right)
-    print "#{node.data}, "
+    print " #{node.data} "
   end
 
   # In-Order Traversal - Recursive
@@ -96,7 +165,7 @@ class BinaryTree
     return if node.nil?
 
     rec_in_order_traversal(node: node.left)
-    print "#{node.data}, "
+    print " #{node.data} "
     rec_in_order_traversal(node: node.right)
   end
 
@@ -134,15 +203,22 @@ class BinaryTree
   end
 end
 
-bt = BinaryTree.new(data: 75)
-arr = [50, 40, 35, 45, 110, 60, 85, 125, 115, 55, 90, 135, 130, 80, 78]
-arr.each do |data|
-  bt.insert(data: data)
-end
-bt.in_order_traversal
-bt.pre_order_traversal
-bt.post_order_traversal
-puts bt.search(data: 35)
-puts bt.search(data: 78)
-puts bt.search(data: 85)
-puts bt.search(data: 129)
+# bt = BinaryTree.new(data: 75)
+# arr = [50, 40, 35, 45, 110, 60, 85, 125, 115, 55, 90, 135, 130, 80, 78]
+# arr.each do |data|
+#   bt.insert(data: data)
+# end
+
+# bt.in_order_traversal
+# bt.non_rec_in_order_traversal
+
+# bt.pre_order_traversal
+# bt.non_rec_pre_order_traversal
+
+# bt.post_order_traversal
+# bt.non_rec_post_order_traversal
+
+# puts bt.search(data: 35)
+# puts bt.search(data: 78)
+# puts bt.search(data: 85)
+# puts bt.search(data: 129)
