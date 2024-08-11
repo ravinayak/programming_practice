@@ -73,25 +73,32 @@ class List
 	# @return [NIL]
 	#
 	def shift_nodes_in_list(index:, node:)
-		(index...self.list.length).each do |arr_index|
-			self.list[arr_index + 1] = self.list[arr_index] 
+		iteration = list.length - 1
+		while iteration >= index
+			list[iteration + 1] = list[iteration]
+			iteration -= 1
 		end
-		self.list[index] = node
+		list[index] = node
 	end
 
 	# Traverse List
 	# @return [NIL]
 	#
 	def traverse_list
-		LinkedList.traverse_list(self.head)
+		# LinkedList.traverse_list(self.head)
+		puts "*********************************************************** List *****************************************************************"
+		list.each do |node|
+			print " #{node.data}  "
+		end
+		puts "\n**********************************************************************************************************************************"
 	end
 end
 
-input_arr = [1, 3, 5, 6, 7, 8]
-puts "Given Input Array :: #{input_arr}"
-list1 = List.new(input_arr: input_arr)
-list1.traverse_list
-list1.insert_element(element: 12, index: 0)
-list1.insert_element(element: 15, index: 5)
-puts "\n List with element 12 inserted at 0th index, and element 15 inserted at 5th index in the above list is as below :: "
-list1.traverse_list
+# input_arr = [1, 3, 5, 6, 7, 8]
+# puts "Given Input Array :: #{input_arr}"
+# list1 = List.new(input_arr: input_arr)
+# list1.traverse_list
+# list1.insert_element(element: 12, index: 0)
+# list1.insert_element(element: 15, index: 5)
+# puts "\n List with element 12 inserted at 0th index, and element 15 inserted at 5th index in the above list is as below :: "
+# list1.traverse_list
