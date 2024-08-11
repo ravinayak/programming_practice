@@ -26,13 +26,24 @@ class List
     list << node_previous
     initial_node = node_previous
     while curr_index < input_arr.length
-      node_next = Node.new(data: input_arr[curr_index])
-      list << node_next
-      node_previous.next = node_next
-      node_previous = node_next
-      curr_index += 1
+      node_previous, curr_index = *prepare_list_helper(input_arr: input_arr, curr_index: curr_index, list: list,
+                                                       node_previous: node_previous)
     end
     [initial_node, list]
+  end
+
+  # Helper method to prepare List
+  # @param [Array] input_arr
+  # @param [Integer] curr_index
+  # @param [Array] list
+  # @param [Node] node_previous
+  # @return [Array]
+  #
+  def prepare_list_helper(input_arr:, curr_index:, list:, node_previous:)
+    node_next = Node.new(data: input_arr[curr_index])
+    list << node_next
+    node_previous.next = node_next
+    [node_next, curr_index + 1]
   end
 
   # Insert an element at index in the list
@@ -88,11 +99,11 @@ class List
   #
   def traverse_list
     # LinkedList.traverse_list(self.head)
-    puts '*********************************************************** List *****************************************************************'
+    puts '**************************** List ****************************'
     list.each do |node|
       print " #{node.data}  "
     end
-    puts "\n**********************************************************************************************************************************"
+    puts "\n*************************************************************"
   end
 end
 
@@ -102,5 +113,6 @@ end
 # list1.traverse_list
 # list1.insert_element(element: 12, index: 0)
 # list1.insert_element(element: 15, index: 5)
-# puts "\n List with element 12 inserted at 0th index, and element 15 inserted at 5th index in the above list is as below :: "
+# print "\n List with element 12 inserted at 0th index, and element 15"
+# puts "inserted at 5th index in the above list is as below :: "
 # list1.traverse_list

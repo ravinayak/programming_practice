@@ -61,16 +61,16 @@ class Queue
   end
 end
 
-queue = Queue.new
-queue.enqueue(5)
-queue.enqueue(6)
-queue.enqueue(7)
-queue.display
-puts queue.peek
-puts queue.dequeue
-puts queue.size
-puts queue.empty?
-puts queue.dequeue
-queue.display
-puts queue.dequeue
-queue.display
+# queue = Queue.new
+# queue.enqueue(5)
+# queue.enqueue(6)
+# queue.enqueue(7)
+# queue.display
+# puts queue.peek
+# puts queue.dequeue
+# puts queue.size
+# puts queue.empty?
+# puts queue.dequeue
+# queue.display
+# puts queue.dequeue
+# queue.display
