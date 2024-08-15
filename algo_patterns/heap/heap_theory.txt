@@ -27,11 +27,18 @@ at the (bottom most - 1 level)
 Central operation to maintain heap property is
     MAX_HEAPIFY(A,i)
       1. A is the array that contains elements which correspond to nodes in the binary heap
-      2. It is assumed that the subtree rooted at node "i" is a max heap with the possibility
-         that element A[i] may be less than its left or right child. A[i] may violate the
+      2. It is assumed that the subtrees rooted at children of node "i" -
+            - left(i), right(i) are valid max heaps
+      3. However element A[i] may be less than its left or right child. A[i] may violate the
          max-heap property
-      3. MAX_HEAPIFY procedure fixes a possible violation of A[i] node and ensures that the
+      3. MAX_HEAPIFY procedure fixes this possible violation of A[i] node and ensures that the
          binary heap rooted at node "i" is a max heap
+      4. It allows element at node "i" to float down in the max heap so that the subtree rooted
+         at node "i" obeys the max heap property by exchanging A[i] with its largest child. With
+         this exchange, it is possible that the node "i" may be greater than its parent violating
+         the max heap property
+      5. This method continues until we reach the root node where all possible violations of max
+         heap property are fixed
 
 Operations on Max Heap
   1. Max Heapify: O(log n)
