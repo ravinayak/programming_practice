@@ -9,3 +9,5 @@ Metrics/ClassLength:
 Metrics/AbcSize:
   Max: 28
   Enabled: true
+Naming/MethodParameterName:
+  Enabled: false
