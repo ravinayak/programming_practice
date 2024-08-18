@@ -2,12 +2,9 @@
 
 # Ruby does not allow usage of instance variables (@A) or constants as default values for
 # method arguments directly
-# In this class, we use A as array because it implements the algorithm in Thomas Cormen
-# book which uses A for array
-# To keep it consistent with the algorithm implementation in the book, I have used A
-# although it violates ruby syntax
 #
 # Class implements Binary Heap
+#
 class MaxBinaryHeap
   class << self
     # Subtree rooted at children of node at index "i" -
@@ -114,13 +111,13 @@ class MaxBinaryHeap
     #
     def extract_max(arr:, heap_size:)
       arr_updated = prepare_arr_for_heap(arr:)
-      exchange_nodes(i: heap_size, largest: 1, arr: arr_updated)
+      exchange_nodes(i: heap_size, index_to_exchange: 1, arr: arr_updated)
 
       max_element = arr_updated[heap_size]
       new_heap_size = heap_size - 1
       arr_updated = max_heapify_helper(arr: arr_updated, i: 1, heap_size: new_heap_size)
 
-      [max_element, arr_updated[1..new_heap_size]]
+      [max_element, arr_updated[1..new_heap_size], new_heap_size]
     end
 
     private
@@ -133,7 +130,7 @@ class MaxBinaryHeap
     #
     def float_node_up_until_root(index:, arr:)
       while index > 1 && arr[parent(i: index)] < arr[index]
-        exchange_nodes(i: index, largest: parent(i: index), arr:)
+        exchange_nodes(i: index, index_to_exchange: parent(i: index), arr:)
         index = parent(i: index)
       end
 
@@ -162,7 +159,7 @@ class MaxBinaryHeap
       largest = right if right <= heap_size && arr[right] > arr[largest]
 
       if largest != i
-        exchange_nodes(i:, largest:, arr:)
+        exchange_nodes(i:, index_to_exchange: largest, arr:)
         max_heapify_helper(arr:, i: largest, heap_size:)
       end
 
@@ -190,7 +187,7 @@ class MaxBinaryHeap
     # @return [Array]
     #
     def heapsort_helper(arr:, n:)
-      exchange_nodes(i: 1, largest: n, arr:)
+      exchange_nodes(i: 1, index_to_exchange: n, arr:)
       new_heap_size = n - 1
       max_heapify_helper(arr:, i: 1, heap_size: new_heap_size)
     end
@@ -198,12 +195,12 @@ class MaxBinaryHeap
     # Exchanges nodes at index i with index_to_exchange
     # @param [Integer] i
     # @param [Array] arr
-    # @param [Integer] largest
+    # @param [Integer] index_to_exchange
     #
-    def exchange_nodes(i:, largest:, arr:)
+    def exchange_nodes(i:, index_to_exchange:, arr:)
       temp = arr[i]
-      arr[i] = arr[largest]
-      arr[largest] = temp
+      arr[i] = arr[index_to_exchange]
+      arr[index_to_exchange] = temp
     end
 
     # Left child of node at index "i" in binary heap
