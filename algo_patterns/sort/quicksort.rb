@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Youtube: https://www.youtube.com/watch?v=Vtckgz38QHs
 # Class implements QuickSort
 # @param [Array] arr
 # @return [Array]
