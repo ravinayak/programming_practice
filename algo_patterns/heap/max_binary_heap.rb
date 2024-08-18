@@ -107,6 +107,22 @@ class MaxBinaryHeap
       arr_updated[1..heap_size]
     end
 
+    # Extract max element from a max heap
+    # @param [Array] arr
+    # @param [Integer] heap_size
+    # @return [Integer]
+    #
+    def extract_max(arr:, heap_size:)
+      arr_updated = prepare_arr_for_heap(arr:)
+      exchange_nodes(i: heap_size, largest: 1, arr: arr_updated)
+
+      max_element = arr_updated[heap_size]
+      new_heap_size = heap_size - 1
+      arr_updated = max_heapify_helper(arr: arr_updated, i: 1, heap_size: new_heap_size)
+
+      [max_element, arr_updated[1..new_heap_size]]
+    end
+
     private
 
     # Compare node with its parent until we find a parent that has value greater than or equal to node
@@ -216,26 +232,29 @@ class MaxBinaryHeap
   end
 end
 
-arr = [1, 300, -50, 100, -200, -250, 19, 57, 65, 500, -350, -550, -600, 1900, 2100]
-puts "Sorted Array :: #{MaxBinaryHeap.heapsort(arr:, n: arr.length)}"
+# arr = [1, 300, -50, 100, -200, -250, 19, 57, 65, 500, -350, -550, -600, 1900, 2100]
+# puts "Sorted Array :: #{MaxBinaryHeap.heapsort(arr:, n: arr.length)}"
 
-arr1 = [2000, 1800, 100, 1700, 1600, 1500, 1850, 500, 600, 700, 650, 1000, 500, 1700, 1800, -50, 75, 400, 500, 10, -110]
-puts "Max Heapify :: #{MaxBinaryHeap.max_heapify(arr: arr1, i: 3, heap_size: arr1.length + 1)}"
+# arr1 = [2000, 1800, 100, 1700, 1600, 1500, 1850, 500, 600, 700, 650, 1000, 500, 1700, 1800, -50, 75, 400, 500, 10, -110]
+# puts "Max Heapify :: #{MaxBinaryHeap.max_heapify(arr: arr1, i: 3, heap_size: arr1.length)}"
 
-arr2 = [2000, 1800, 1850, 200, 1600, 1500, 1800, 500, 600, 700, 650, 1000, 500, 1700, 100, -50, 75, 400, 500, 10, -110]
-puts "Max Heapify :: #{MaxBinaryHeap.max_heapify(arr: arr2, i: 4, heap_size: arr2.length + 1)}"
+# arr2 = [2000, 1800, 1850, 200, 1600, 1500, 1800, 500, 600, 700, 650, 1000, 500, 1700, 100, -50, 75, 400, 500, 10, -110]
+# puts "Max Heapify :: #{MaxBinaryHeap.max_heapify(arr: arr2, i: 4, heap_size: arr2.length)}"
 
-arr3 = [2000, 1800, 1850, 1700, 1600, 1500, 1800, 500, 600, 700, 650]
-puts "Insert new element 4500 in #{arr3.inspect} - convert into max heap :: "
-print "\t \t \t #{MaxBinaryHeap.insert_key(k: 4500, arr: arr3, heap_size: arr3.length)}"
-puts
+# arr3 = [2000, 1800, 1850, 1700, 1600, 1500, 1800, 500, 600, 700, 650]
+# puts "Insert new element 4500 in #{arr3.inspect} - convert into max heap :: "
+# print "\t \t \t #{MaxBinaryHeap.insert_key(k: 4500, arr: arr3, heap_size: arr3.length)} \n"
 
-arr4 = [nil, 4500, 1800, 2000, 1700, 1600, 1850, 1800, 500, 600, 700, 650, 1500]
-puts "Increase key of 1700 to 5000 at index 4 in #{arr4[1..arr4.length].inspect}"
-print "\t \t \t #{MaxBinaryHeap.increase_key(i: 4, new_key: 5000, arr: arr4, heap_size: arr4.length)}"
-puts
+# arr4 = [nil, 4500, 1800, 2000, 1700, 1600, 1850, 1800, 500, 600, 700, 650, 1500]
+# puts "Increase key of 1700 to 5000 at index 4 in #{arr4[1..arr4.length].inspect}"
+# print "\t \t \t #{MaxBinaryHeap.increase_key(i: 4, new_key: 5000, arr: arr4, heap_size: arr4.length)} \n"
 
-arr5 = [nil, 4500, 1800, 2000, 1700, 1600, 1850, 1800, 500, 600, 700, 650, 1500]
-puts "Decrease key of 1800 to 400 at index 2 in #{arr5[1..arr5.length].inspect}"
-print "\t \t \t #{MaxBinaryHeap.decrease_key(i: 2, new_key: 400, arr: arr5, heap_size: arr5.length)}"
-puts
+# arr5 = [nil, 4500, 1800, 2000, 1700, 1600, 1850, 1800, 500, 600, 700, 650, 1500]
+# puts "Decrease key of 1800 to 400 at index 2 in #{arr5[1..arr5.length].inspect}"
+# print "\t \t \t #{MaxBinaryHeap.decrease_key(i: 2, new_key: 400, arr: arr5, heap_size: arr5.length)} \n"
+
+# arr6 = [4500, 1800, 2000, 1700, 1600, 1850, 1800, 500, 600, 700, 650, 1500]
+# puts "Extract max from binary heap :: #{arr6.inspect}"
+# max_element, binary_heap = *MaxBinaryHeap.extract_max(arr: arr6, heap_size: arr6.length)
+# print "\t \t \t #{max_element} \n"
+# puts "Binary Heap post extraction ::#{binary_heap.inspect}"
