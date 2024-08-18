@@ -1,17 +1,69 @@
 # frozen_string_literal: true
 
+require_relative '../data_structures/stack'
+# frozen_string_literal: true
+
 # Youtube: https://www.youtube.com/watch?v=Vtckgz38QHs
 # Class implements QuickSort
 # @param [Array] arr
+# @param [Integer] low
+# @param [Integer] high
 # @return [Array]
 #
-def quicksort(arr:, low:, high:)
+def quicksort_rec(arr:, low:, high:)
   return unless low < high
 
   pivot_index = partition(arr:, low:, high:)
 
-  quicksort(arr:, low:, high: pivot_index - 1)
-  quicksort(arr:, low: pivot_index + 1, high:)
+  quicksort_rec(arr:, low:, high: pivot_index - 1)
+  quicksort_rec(arr:, low: pivot_index + 1, high:)
+
+  arr
+end
+
+# The main intuition behind non-recursive algorithm of quicksort
+# is to simulate the recursion call stack. In order to simulate
+# recursion call stack, we would normally use a stack
+# Quicksort recursively calls itself on left and right partition
+# of array to partition the left and right sides of pivot to sort
+# array elements
+# If we push the low and high of left and right partition on stack
+# and run a while loop until stack is empty, partitioning the
+# array elements, we can achieve the same effect
+# @param [Array] arr
+# @param [Integer] low
+# @param [Integer] high
+# @return [Array]
+#
+def quicksort_non_rec(arr:, low:, high:)
+  return if low > high
+
+  stack = Stack.new
+
+  # Initialize stack with low and high before starting loop
+  #
+  stack.push(data: low)
+  stack.push(data: high)
+
+  until stack.empty?
+
+    high = stack.pop
+    low = stack.pop
+
+    pivot_index = partition(arr:, low:, high:)
+
+    # Simulates left partition recursive call
+    if pivot_index - 1 > low
+      stack.push(data: low)
+      stack.push(data: pivot_index - 1)
+    end
+
+    # Simulates right partition recursive call
+    if pivot_index + 1 < high
+      stack.push(data: pivot_index + 1)
+      stack.push(data: high)
+    end
+  end
 
   arr
 end
@@ -68,4 +120,6 @@ def swap_elements(index_one:, index_two:, arr:)
 end
 
 arr = [1, 3, -9, 10, 19, -25, -30, 85, 100, -210]
-puts quicksort(arr:, low: 0, high: arr.length - 1).inspect
+puts "Input Array :: #{arr.inspect}"
+puts quicksort_rec(arr:, low: 0, high: arr.length - 1).inspect
+puts quicksort_non_rec(arr:, low: 0, high: arr.length - 1).inspect
