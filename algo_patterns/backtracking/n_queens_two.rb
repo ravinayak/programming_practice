@@ -1,5 +1,15 @@
+# Find all distinct solutions for the N-Queens problem and also return the total number
+# of distinct solutions
+
 # frozen_string_literal: true
 
+# Time Complexity : O(n!)
+# he time complexity of this algorithm is O(n!). This is because, in the worst case,
+# the algorithm may need to explore all permutations of the queens on the board.
+# However, because the algorithm prunes invalid configurations early (backtracking), it
+# often performs better than O(n!) in practice. The exact time complexity is hard to determine
+# because it depends on the number of valid partial solutions that are explored before backtracking,
+# but O(n!) serves as the upper boun
 # N Queens problem solutionimplementation
 # Board is initialized as an array of arrays where each index of the outer array
 # represents rows, and each index of the inner arrays represents column
@@ -91,10 +101,15 @@ end
 # @param [Array<Array>] board
 # @param [Integer] col
 # @param [Integer] n
+# @param [Array] solutions
 # @return [boolean]
-def place_n_queen_util(board:, col:, n:)
+#
+def place_n_queen_util(board:, col:, n:, solutions:)
   # Base case: If all queens are placed, return true
-  return true if col >= n
+  if col >= n
+    solutions << board.map(&:dup) # board.dup will not work, iterate over all arrays and dup them
+    return
+  end
 
   # Try placing the queen in all rows one by one
   (0...n).each do |row|
@@ -102,9 +117,17 @@ def place_n_queen_util(board:, col:, n:)
 
       board[row][col] = 1
 
-      return true if place_n_queen_util(board:, col: col + 1, n:)
+      # We no longer return true because we want to find all possible solutions
+      # If a solution is found for a given board arrangement, it will backtrack
+      # and re-initialize the board arrangement for row,col to 0, so other rows
+      # in the same column can be tried to find other solutions
+      #
+      place_n_queen_util(board:, col: col + 1, n:, solutions:)
 
       # If placing queen at (row, col) doesn't lead to a solution, remove the queen (backtrack)
+      # Even if placing queen at (row, col) does lead to a solution, remove the queen to try
+      # other row and find valid arrangement
+      #
       board[row][col] = 0
     end
   end
@@ -151,12 +174,19 @@ end
 #
 def place_n_queen(n:)
   col = 0
+  solutions = []
   board = Array.new(n) { Array.new(n, 0) }
 
-  return success_arrangement(board:, n:) if place_n_queen_util(board:, col:, n:)
+  place_n_queen_util(board:, col:, n:, solutions:)
 
-  puts 'No arrangement exists where n queens can be placed as per given instructions'
+  return puts 'No arrangement exists where n queens can be placed as per given instructions' if
+    solutions.empty?
+
+  solutions.each do |solution_board|
+    success_arrangement(board: solution_board, n:)
+  end
+
+  puts "\n \t \t Total Number of distinct solutions :: #{solutions.size}"
 end
 
-place_n_queen(n: 4)
 place_n_queen(n: 8)
