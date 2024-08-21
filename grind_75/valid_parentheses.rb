@@ -11,6 +11,9 @@ require_relative '../algo_patterns/data_structures/stack'
 # Every close bracket has a corresponding open bracket of the same type.
 
 # Use a stack and hash data structure
+# Space Complexity => O(n)
+# Time Complexity => O(n)
+#
 
 CHAR_HASH = {
   ')' => '(',
