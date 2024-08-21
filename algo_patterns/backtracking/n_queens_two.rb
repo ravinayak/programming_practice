@@ -4,12 +4,13 @@
 # frozen_string_literal: true
 
 # Time Complexity : O(n!)
-# he time complexity of this algorithm is O(n!). This is because, in the worst case,
+# The time complexity of this algorithm is O(n!). This is because, in the worst case,
 # the algorithm may need to explore all permutations of the queens on the board.
 # However, because the algorithm prunes invalid configurations early (backtracking), it
 # often performs better than O(n!) in practice. The exact time complexity is hard to determine
 # because it depends on the number of valid partial solutions that are explored before backtracking,
-# but O(n!) serves as the upper boun
+# but O(n!) serves as the upper bound
+
 # N Queens problem solutionimplementation
 # Board is initialized as an array of arrays where each index of the outer array
 # represents rows, and each index of the inner arrays represents column
