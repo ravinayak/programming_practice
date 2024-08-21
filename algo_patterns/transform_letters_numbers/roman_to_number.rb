@@ -112,12 +112,15 @@ def simpler_roman_to_num(roman_str:)
 end
 roman_str = 'III'
 num = convert_roman_to_num(roman_str:)
-puts "Input Roman Str :: #{roman_str} \t \t Conversion to number :: #{num}  -- #{simpler_roman_to_num(roman_str:)}"
+num1 = simpler_roman_to_num(roman_str:)
+puts "Input Roman Str :: #{roman_str} \t \t Conversion to number :: #{num}  -- #{num1}}"
 
 roman_str = 'LVIII'
 num = convert_roman_to_num(roman_str:)
-puts "Input Roman Str :: #{roman_str} \t \t Conversion to number :: #{num}  -- #{simpler_roman_to_num(roman_str:)}"
+num1 = simpler_roman_to_num(roman_str:)
+puts "Input Roman Str :: #{roman_str} \t \t Conversion to number :: #{num}  -- #{num1}}"
 
 roman_str = 'MCMXCIV'
 num = convert_roman_to_num(roman_str:)
-puts "Input Roman Str :: #{roman_str} \t \t Conversion to number :: #{num}  -- #{simpler_roman_to_num(roman_str:)}"
+num1 = simpler_roman_to_num(roman_str:)
+puts "Input Roman Str :: #{roman_str} \t \t Conversion to number :: #{num}  -- #{num1}}"
