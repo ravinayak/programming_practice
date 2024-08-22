@@ -12,6 +12,30 @@ require_relative 'trie_node'
 #   If longest word has a length "L", maximum depth we may have to
 #    traverse in Trie to search word would be "L" nodes
 
+# TrieNode: Every TrieNode contains a hash "children" and an instance
+# variable "word". "word" is initialized to nil, children to an empty
+# hash
+# "children" hash contains keys. Each key represents a character. Path
+# from root to given node represents a combination of characters which
+# is the prefix for possible words stored in Trie. Value of this key in
+# children hash references another TrieNode which contains keys as
+# characters that form prefix for words with the prefix
+# Ex: See the image for explanation
+# Whenever we iterate to search for a character, we perform the following:
+#    1. Does current node store the word being searched? Yes - Stop and return
+#    2. children[char] is nil => No entry in trie data structure for the prefix
+#       formed by combination of characters until current node. Word with the
+#       prefix does not exist in Trie
+#    3. children[char] exists => Go to this node. Repeat steps 1,2
+#
+# NOTE: In this implementation, the node which contains last character of a word
+#        as a key does not contain the word entry, instead the node referenced by
+#        node.children[char] which is a node with empty "children" hash contains
+#        entry for word
+#        This is a VERY VERY CRUCIAL FACT because this implies we must move to the
+#        next node, i.e. node = node.children[char] before checking if node contains
+#        the word i.e. !node.word.nil?
+
 # Implements Trie Class and basic operations of search, insert
 class Trie
   attr_accessor :root
