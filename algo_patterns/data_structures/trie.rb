@@ -2,6 +2,16 @@
 
 require_relative 'trie_node'
 
+# Time Complexity To Build Trie: O(n * L)
+#    If longest word has a length "L", and number of words is "n"
+#    maximum time to insert a word would be the time to insert
+#    each character in trie. Total # of chars in any word < L
+#    "n" words => n * L (Maximum time)
+
+# Time Complexity to Search a word in Trie: O(L)
+#   If longest word has a length "L", maximum depth we may have to
+#    traverse in Trie to search word would be "L" nodes
+
 # Implements Trie Class and basic operations of search, insert
 class Trie
   attr_accessor :root
