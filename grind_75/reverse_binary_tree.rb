@@ -55,20 +55,20 @@ def reverse_binary_tree_util_non_rec(node:)
   node
 end
 
-def test_results
+# @param [Boolean] rec
+# @param [Boolean] non_rec
+#
+def test_results(rec: false, non_rec: false)
   bt = BinaryTree.new(data: 75)
   arr = [50, 40, 35, 45, 110, 60, 85, 125, 115, 55, 90, 135, 130, 80, 78]
   arr.each do |data|
     bt.insert(data:)
   end
   bt.in_order_traversal
-  bt
+  reverse_binary_tree(root: bt.root) if !rec.nil? && rec
+  reverse_binary_tree_util_non_rec(node: bt.root) if !non_rec.nil? && non_rec
+  bt.in_order_traversal
 end
 
-bt = test_results
-reverse_binary_tree(root: bt.root)
-bt.in_order_traversal
-
-bt_one = test_results
-reverse_binary_tree_util_non_rec(node: bt_one.root)
-bt_one.in_order_traversal
+test_results(rec: true)
+test_results(non_rec: true)
