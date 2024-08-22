@@ -6,5 +6,6 @@ class TrieNode
 
   def initialize
     @children = {}
+    @word = nil
   end
 end
