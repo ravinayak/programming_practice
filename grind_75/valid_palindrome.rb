@@ -67,7 +67,7 @@ def valid_palindrome(input_str:)
   result
 end
 
-input_str_arr = ['A man, a plan, a canal: Panama', 'race a car', ' ']
+input_str_arr = ['A man, a plan, a canal: Panama', 'race a car', ' ', 'abc 01233210 cba', 'abc 0123210 cba']
 input_str_arr.each do |input_str|
   valid_palindrome(input_str:)
 end
