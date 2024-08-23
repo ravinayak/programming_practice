@@ -122,8 +122,31 @@ def convert_to_english(num:)
 end
 
 def test
-  num = 12_252_785
-  puts "Num :: #{num}, Converted to English :: #{convert_to_english(num:)}"
+  english_translation = 'Twelve Million Two Hundred Fifty Two Thousand Seven Hundred Eighty Five'
+  nums_translations = [
+    { num: 12_252_785, english: english_translation },
+    { num: 123, english: 'One Hundred Twenty Three' },
+    { num: 12_345, english: 'Twelve Thousand Three Hundred Forty Five' },
+    { num: 1_234_567, english: 'One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven' }
+  ]
+  nums_translations.each do |num_english_hsh|
+    num = num_english_hsh[:num]
+    english = num_english_hsh[:english]
+    puts "Num :: #{num}, Converted to English :: #{convert_to_english(num:)}"
+    puts "Num :: #{num}, Expected English     :: #{english}"
+  end
 end
 
 test
+
+# Example 1:
+# Input: num = 123
+# Output: "One Hundred Twenty Three"
+
+# Example 2:
+# Input: num = 12345
+# Output: "Twelve Thousand Three Hundred Forty Five"
+
+# Example 3:
+# Input: num = 1234567
+# Output: "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
