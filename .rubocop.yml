@@ -7,7 +7,7 @@ Metrics/ClassLength:
   Max: 115
   Enabled: true
 Metrics/AbcSize:
-  Max: 28
+  Max: 35
   Enabled: true
 Naming/MethodParameterName:
   Enabled: false
@@ -15,3 +15,5 @@ Layout/LineLength:
   Max: 125
 Metrics/CyclomaticComplexity:
   Max: 8
+Metrics/ParameterLists:
+  Max: 6

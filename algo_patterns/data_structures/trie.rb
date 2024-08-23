@@ -28,13 +28,54 @@ require_relative 'trie_node'
 #       prefix does not exist in Trie
 #    3. children[char] exists => Go to this node. Repeat steps 1,2
 #
-# NOTE: In this implementation, the node which contains last character of a word
-#        as a key does not contain the word entry, instead the node referenced by
-#        node.children[char] which is a node with empty "children" hash contains
-#        entry for word
-#        This is a VERY VERY CRUCIAL FACT because this implies we must move to the
-#        next node, i.e. node = node.children[char] before checking if node contains
-#        the word i.e. !node.word.nil?
+# NOTE:
+
+# 1.Correct implementation: Node which contains last character of a word as a key 
+#	SHOULD not contain the word entry, instead the node referenced by node.children[char] 
+# which is a node with empty "children" hash should contain entry for word
+# This is a VERY VERY CRUCIAL FACT because this implies we must move to the next node, 
+# i.e. node = node.children[char] before checking if node contains the word 
+# i.e. !node.word.nil?
+
+# 2. This is the correct implementation. If we store word on the same node which contains
+# that character as a key in children hash, it will be incorrect. This is because the
+# node which contains character as key in children hash will also contain other
+# characters as keys, hence the prefix formed by traversing from root to the current
+# node will not be 1 prefix, but several prefixes - Storing the word at the current
+# node would be incorrect in a use case where many words are possible for different
+# prefix combinations achieved by traversing from root to current node. Hence we must
+# store word on the node referenced by node.children[char]. This node accurately
+# reflects the node which contains a single prefix obtained by traversing from root
+# the parent node of this node
+
+# 3. Every node in Trie data structure represents 1 and only 1 prefix. Although a node
+# may contain several characters as keys in its children hash, it represents only 1
+# Prefix.
+
+# Reference the image of Trie in TrieTheory.md for more explanation. 
+# 4. Prefix for any node in Trie data structure is obtained by traversing from root
+# to parent of node in question. Given node is not included in prefix calculation
+# This means => Root of Trie => NO PREFIX
+
+# Reference - trie/top_k_frequency_words.rb
+#	5. This will be especially problematic if we store word frequencies for prefix
+# on the same which contains the last character of prefix as a key. This will give
+# us INCORRECT RESULTS. This is because the node which contains last character as
+# key in children hash will have SEVERAL PREFIXES possible when traversing from 
+# root to the node in question since it has several characters as keys in its
+# children hash. During insert operation, when we insert a word, and frequency,
+# for each prefix possible at this node, we will end up updating word_frequencies
+# for each different prefix possible at the node.
+# Consider possible prefixes at a node: 1. bats	2. batt 3. batm. This is the 4th
+# node from root and contains keys - s, t, m as keys in its children hash
+# When we insert (words, frequency) -> ("batman", 2), ("batting", 3), ("bats", 5) 
+#	in trie - we will update the word frequencies array at the node to store all
+# these words, since we can store 3 most used words with their frequencies
+# Now, If we are given a prefix bats", and asked to return top 3 most frequently 
+# used words with this prefix we will end up returning - batman, batting, bats. 
+# This would be incorrect because batting, batman do not contain prefix "bats", we 
+# stored these words at the node for the other possible prefixes at the 
+# node - 1. batt 2. batm
 
 # Implements Trie Class and basic operations of search, insert
 class Trie
