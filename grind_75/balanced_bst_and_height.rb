@@ -17,17 +17,20 @@ require_relative '../algo_patterns/data_structures/binary_tree'
 # A height-balanced binary tree is a binary tree in which the depth of the
 # two subtrees of every node never differs by more than one. This implies
 # that two subtrees of any node in binary tree can differ by 1, not > 1
+# To customize this method to any other definition for height difference,
+# include parameter "k" for height difference calculation
 #
 # @param [Node] root
+# @param [Integer] k
 # @return [Hash] is_balanced, height
 #
-def balanced_and_height(node:)
+def balanced_and_height(node:, k: 1)
   # Initialized to true assuming the tree is balanced, if it is unbalanced
   # this flag will be set to false during recursion in utility function
   # We are using hash so that the value for key holds when it changes, if
   # we use a simple variable, changes will be lost when we return from
   # recursion
-  is_balanced_hsh = { is_balanced: true }
+  is_balanced_hsh = { is_balanced: true, k: }
 
   height = balanced_and_height_util(node:, is_balanced_hsh:)
 
@@ -48,8 +51,9 @@ def balanced_and_height_util(node:, is_balanced_hsh:)
   right_subtree_height = balanced_and_height_util(node: node.right, is_balanced_hsh:)
 
   # Binary Tree is balanced only if the depth of any two subtrees of any node in the binary
-  # tree differ by no more than 1
-  is_balanced_hsh[:is_balanced] = false if (left_subtree_height - right_subtree_height).abs > 1
+  # tree differ by no more than 1. This is the standard definition
+  # However, we can customize this to any difference "k", if provided in the method
+  is_balanced_hsh[:is_balanced] = false if (left_subtree_height - right_subtree_height).abs > is_balanced_hsh[:k]
 
   # Return the maximum of left and right subtree heights incremented by 1.
   # For a leaf node, height calculation evalautes to 1 which is correct
@@ -82,6 +86,9 @@ def test
     bh = balanced_and_height(node: bt.root)
     puts "Height :: #{bh[:height]}, Is Balanced :: #{bh[:is_balanced]}"
   end
+  puts 'For Binary Tree bt3, k=2 is provided, now it should show as balanced'
+  bh = balanced_and_height(node: bt3.root, k: 2)
+  puts "Height :: #{bh[:height]}, Is Balanced :: #{bh[:is_balanced]}"
 end
 
 test
