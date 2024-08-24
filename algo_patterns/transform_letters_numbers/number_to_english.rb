@@ -94,6 +94,9 @@ def convert_to_english_util(num:, below_twenty:, tens_between_20_and_100:)
     # Consider following use case
     # Ex: num = 115
     # num_remainder = 115 % 100 = 15 = One Hundred Ten Five
+    # We must call the recrusive helper method to convert tens part to english. Manual conversion by looking
+    # up in tens array will give incorrect results for number (tens part) < 20 since it ignores the
+    # < 20 comparison and tries to convert directly using tens constant
   end
 
   result
