@@ -175,7 +175,8 @@ def test
   test_arr = [
     { word1: 'kitten', word2: 'sitting', output: 3 },
     { word1: 'flaw', word2: 'lawn', output: 2 },
-    { word1: 'intention', word2: 'execution', output: 5 }
+    { word1: 'intention', word2: 'execution', output: 5 },
+    { word1: 'horse', word2: 'ros', output: 3 }
   ]
 
   test_arr.each do |word_output_hsh|
