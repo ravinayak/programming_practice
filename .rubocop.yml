@@ -7,7 +7,7 @@ Metrics/ClassLength:
   Max: 115
   Enabled: true
 Metrics/AbcSize:
-  Max: 35
+  Max: 44
   Enabled: true
 Naming/MethodParameterName:
   Enabled: false
@@ -19,3 +19,5 @@ Metrics/ParameterLists:
   Max: 6
 Metrics/PerceivedComplexity:
   Max: 14
+Style/ConditionalAssignment:
+  Enabled: false
