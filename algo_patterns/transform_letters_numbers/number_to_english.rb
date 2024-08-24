@@ -28,16 +28,14 @@
 BELOW_TWENTY = %w[Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven
                   Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen].freeze
 # In this case, Zero and Ten are kept simply for correct indexing, this constant
-# is used for conversion to english word for 20 <= number < 100
-# This constant (as we shall see in the example below) is also used for finding english
-# translation of number in tens place (i.e. for remainder of division by 100)
+# is ONLY used for conversion to english word for 20 <= number < 100
 # Say we have 21, divide by 10 + remainder of divide by 10 => We will index into
 # this constant and above constant to get the english words
 # At index 2 (in the constant arr below), we should have Twenty (num/10 = 2),
 # at index 1 (in below_twenty constant arr) we should have One (num % 10 = 1)
 # 21 => Twenty One
 
-TENS_AND_BETWEEN_20_AND_HUNDRED = %w[Zero Ten Twenty Thirty Forty Fifty Sixty
+TENS_BETWEEN_20_AND_HUNDRED = %w[Zero Ten Twenty Thirty Forty Fifty Sixty
                                  Seventy Eighty Ninty].freeze
 # Zero is kept for indexing purpose
 # 1121 => One Thousand => (1121/1000 = 1) => At index 1, we should have Thousand, so
@@ -47,40 +45,55 @@ THOUSANDS = %w[Zero Thousand Million Billion].freeze
 
 # @param [Integer] num
 # @param [Array<String>] below_twenty
-# @param [Array<String>] tens_and_between_20_and_100
+# @param [Array<String>] tens_between_20_and_100
 # @return [String]
 #
-def convert_to_english_util(num:, below_twenty:, tens_and_between_20_and_100:)
+def convert_to_english_util(num:, below_twenty:, tens_between_20_and_100:)
   result = ''
   # We compare with 20 but divide by 10 in the next condition to get the right index for
   # english word representation
   if num < 20
     result = below_twenty[num]
   elsif num < 100
-    # Ex: 45 => 45/10 = 4 => tens_and_between_20_and_100[4] = Forty + 45 % 10 = 5 => below_twenty[5] = " " + Five
+    # Ex: 45 => 45/10 = 4 => tens_between_20_and_100[4] = Forty + 45 % 10 = 5 => below_twenty[5] = " " + Five
     # Forty + " " + Five = Forty Five
-    result = tens_and_between_20_and_100[num / 10] + (num % 10 != 0 ? " #{below_twenty[num % 10]}" : '')
+    result = tens_between_20_and_100[num / 10] + (num % 10 != 0 ? " #{below_twenty[num % 10]}" : '')
   elsif num < 1000
+    # Ex: 115 =
+    #  1. 115/100 = 1 => below_twenty [1] = One + " " + Hundred = One Hundred
+    #  2. num_remainder = 115 % 100 => 15
+    #      => In Step 1, we have already got the Hundred Amount (One), we have to find the english translation
+    #       for remainder - i.e. tens part
+    #      => To get tens part => we divide by 100 and get the remainder of division, this gives us "tens part"
+    #      => To convert 'tens part' into english words, we recursively call the routine convert_to_english_util
+    #          with 15 as num
+    # 3. 15 < 20 => below_twenty [15] = Fifteen
+    # 5. One Hundred Fifteen
+
     # Ex: 985 =
     #  1. 985/100 = 9 => below_twenty [9] = Nine + " " + Hundred = Nine Hundred
     #  2. num_remainder = 985 % 100 => 85
     #      => In Step 1, we have already got the Hundred Amount (Nine), we have to find the english translation
     #       for remainder - i.e. tens part
     #      => To get tens part => we divide by 100 and get the remainder of division, this gives us "tens part"
-    #      => To convert 'tens part' into english words, we have to use 10 as division number
-    # 3. 85 / 10 => " " + tens_and_between_20_and_100[85/10=8] = " " + Eighty
-    # 4. 85 % 10 => " " + below_twenty[85%10 = 5] = " " + Five
-    # 5. Nine Hundred Eighty Five
-    result = "#{below_twenty[num / 100]} Hundred"
-    num_remainder = num % 100
-    # num_remainder here can be any number between 0 and 99, but it will be in tens place and no hundred's place
-    # We use the constant in this case to find the appropriate english word for the tens place if present
-    # Hence, the constant tens_and_between_20_and_100 is used for two use cases:
-    # 1. When number is between 20 and 100
-    # 2. When we want to find the english word for remainder of division by 100, i.e. number in tens place
-    # Hence named as tens and between_20_and_100
-    result += (num_remainder / 10 != 0 ? " #{tens_and_between_20_and_100[num_remainder / 10]}" : '') +
-              (num_remainder % 10 != 0 ? " #{below_twenty[num_remainder % 10]}" : '')
+    #      => To convert 'tens part' into english words, we recursively call the routine convert_to_english_util
+    #          with 85 as num
+    # 3. 85 > 20 but 85 < 100 => tens_between_20_and_100 [85/10=8] = Eighty
+    #      + (85 % 10 !=0 ? " " + below_twenty[85 % 10 = 5] = " " + Five) = Eighty Five
+    # 4. Nine Hundred Eighty Five
+
+    result = "#{below_twenty[num / 100]} Hundred " +
+             # It is important to call this utility in recursion, this will handle the use case when number in ten's
+             # place is between 0 and 20. The logic below without using recursion will give incorrect result
+             convert_to_english_util(num: num % 100, below_twenty:, tens_between_20_and_100:) # rubocop:disable Naming/VariableNumber
+
+    # The following logic is incorrect and will give incorrect result
+    # num_remainder = num % 100
+    # result += (num_remainder / 10 != 0 ? " #{tens_between_20_and_100[num_remainder / 10]}" : '') +
+    #           (num_remainder % 10 != 0 ? " #{below_twenty[num_remainder % 10]}" : '')
+    # Consider following use case
+    # Ex: num = 115
+    # num_remainder = 115 % 100 = 15 = One Hundred Ten Five
   end
 
   result
@@ -115,7 +128,7 @@ def convert_to_english(num:)
       # rubocop:disable Naming/VariableNumber
       result = convert_to_english_util(num: num % 1000,
                                        below_twenty: BELOW_TWENTY,
-                                       tens_and_between_20_and_100: TENS_AND_BETWEEN_20_AND_HUNDRED) +
+                                       tens_between_20_and_100: TENS_BETWEEN_20_AND_HUNDRED) +
                (index.positive? ? " #{THOUSANDS[index]}" : '') + (result.empty? ? '' : " #{result}")
       # rubocop:enable Naming/VariableNumber
     end
@@ -135,7 +148,8 @@ def test
     { num: 12_252_785, english: english_translation },
     { num: 123, english: 'One Hundred Twenty Three' },
     { num: 12_345, english: 'Twelve Thousand Three Hundred Forty Five' },
-    { num: 1_234_567, english: 'One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven' }
+    { num: 1_234_567, english: 'One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven' },
+    { num: 12_115, english: 'Twelve Thousand One Hundred Fifteen' }
   ]
   nums_translations.each do |num_english_hsh|
     num = num_english_hsh[:num]
