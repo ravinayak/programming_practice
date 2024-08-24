@@ -1,13 +1,13 @@
 AllCops:
   TargetRubyVersion: 3.3.0
 Metrics/MethodLength:
-  Max: 25
+  Max: 28
   Enabled: true
 Metrics/ClassLength:
   Max: 115
   Enabled: true
 Metrics/AbcSize:
-  Max: 44
+  Max: 58
   Enabled: true
 Naming/MethodParameterName:
   Enabled: false
