@@ -157,6 +157,18 @@ def lcs(word1:, word2:)
 
   i = m
   j = n
+
+  # Here we initialize i = m, j = n because we look into the word1
+  # and word2 at i-1, j-1. Since word1 has a length of m, it has
+  # m-1 chars, word2 has a length of n, it has n-1 chars. We use
+  # word1[i-1] and word2[j-1] for comparison of equality
+  # Condition: i > 0 && j > 0 ensures that i - 1 is never less than
+  # 0. i > 0 => i >= 1 => i - 1 >= 0, Same for j
+  # This is critical because word1 ranges from 0 .. m-1
+  # i,j cannot run in an iteration loop because their values are NOT
+  # statically changing, they change depending upon lcs calculation,
+  # i may remain "x", while j may continue to decrement which is not
+  # possible in a for loop iteration
   while i.positive? && j.positive?
     if word1[i - 1] == word2[j - 1]
       subsequence << word1[i - 1]
