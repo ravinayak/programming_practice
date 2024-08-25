@@ -12,19 +12,20 @@
 def find_all_palindromes(str:)
   result = {}
 
-  # Every single letter in string str is a valid palindrome
-  (0...str.length).each do |str_idx|
-    result[str[str_idx]] = str[str_idx]
+  (0...str.length).each do |start_idx|
+    # Every single letter in string str is a valid palindrome
+    # We assign string as value to this char as key in hash
+    result[str[start_idx]] = str[start_idx]
 
-    (str_idx...str.length).each do |end_idx|
-      # For this str_idx, we skip the character if it is same
-      # as the character at str_idx. This is because we have
+    (start_idx...str.length).each do |end_idx|
+      # For this start_idx, we skip the character if it is same
+      # as the character at start_idx. This is because we have
       # already put single letter characters into hash
-      next if str_idx == end_idx
+      next if start_idx == end_idx
 
-      # form a substring by including characters from str_idx
+      # form a substring by including characters from start_idx
       # to end_idx including end_idx
-      substr = str[str_idx..end_idx]
+      substr = str[start_idx..end_idx]
 
       # 1. Hash should not include substring as a key: This
       #    ensures we avoid duplicates
