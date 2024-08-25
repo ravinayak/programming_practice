@@ -33,7 +33,6 @@ def find_first_bad_version(num:, bad:)
   # api for detecting bad version
   high = num
   low = 1
-  mid = nil
 
   # Binary Search for bad version
   # In the binary search implementation remember to
