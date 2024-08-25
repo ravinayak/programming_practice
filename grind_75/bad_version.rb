@@ -26,6 +26,9 @@
 # @return [Integer | nil]
 #
 def find_first_bad_version(num:, bad:)
+  # This are edge cases for which no bad version exists
+  return puts "All versions are good" if num < 1 || num < bad || bad < 1
+
   # We implement binary search to minimize the number of calls to
   # api for detecting bad version
   high = num
@@ -36,19 +39,39 @@ def find_first_bad_version(num:, bad:)
   # In the binary search implementation remember to
   #    use <= and not <
   # There is a use case possible where low = high, and the element
-  # at this position happens to satifsy the condition. In this use
+  # at this position happens to satifsy the condition. In that use
   # case if low < high is used, we will not get the result.
+  # However, for this problem statement we can use low < high 
+  # if we update high in the condition
+  #    call_to_api(curr_version: mid, bad:)
+  #      high = mid
+  # Keeping low <= high to keep it uniform with binary search
   while low <= high
-    mid = (low + high) / 2
-    # If current version at mid is bad, this is the first starting
+    mid = low + (high - low) / 2
+    # If current version at mid is bad, either this is the 1st bad
+    # version or the 1st bad version is in the 1st half of the
+    # array. This is because all versions after the mid (bad version)
+    # are surely bad
+    # Hence we search in the 1st half of the array to find 1st
     # bad version
-    # If current version at mid is NOT bad, all elements before it
-    # are surely not bad, so the 1st bad must be in 2nd half of
-    # array => [mid, high]
-    return mid if call_to_api(curr_version: mid, bad:)
-
-    low = mid
+    # At some point in this search, both low and high will converge
+    # to a mid point which will be the 1st bad version
+    #
+    if call_to_api(curr_version: mid, bad:)
+      # [low, mid] => Search in the 1st half of array
+      high = mid - 1
+    else
+      # [mid, high] => Search in the 2nd half of array
+      low = mid + 1
+    end
   end
+
+  # Return the 1st bad version. Typically we return the element found
+  # at mid position, but here we want to return the 1st bad element
+  # In the code above, the loop may terminate with low > high, in this
+  # case, element at mid may not be the bad version but element at low
+  # will always be the 1st bad version
+  low
 end
 
 # Api to return whether vesion is bad or not
@@ -57,9 +80,9 @@ end
 # @return [Booolean]
 #
 def call_to_api(curr_version:, bad:)
-  return true if curr_version == bad
-
-  false
+  # This is because if current version is greater than bad version
+  # it is surely bad
+  curr_version >= bad
 end
 
 def test
