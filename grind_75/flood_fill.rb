@@ -77,7 +77,7 @@ def flood_fill(image:, sr:, sc:, color:)
   # with same color as the pixel identified by [sr, sc]. In this case, there
   # is no update required to be performed. Hence we can simply return the image
   # to avoid any further processing (which would simply waste CPU time without
-  #	doing anything)
+  #  doing anything)
   return image if original_color == color
 
   # Start at the pixel provided in input parameters
