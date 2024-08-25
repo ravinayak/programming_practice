@@ -9,9 +9,11 @@ def binary_search(input_arr:, target:)
   index_rec = binary_search_recursive(input_arr:, low: 0, high: input_arr.length - 1, target:)
   target_not_present = 'Target is not present in input array'
   target_present = "Found Target #{target} at Index"
-  puts "Binary Search Result :: #{index_rec.nil? ? target_not_present : "#{target_present} #{index_rec}"}"
+  str = 'Binary Search Result Recursive :: '
+  puts "#{str}#{index_rec.nil? ? target_not_present : "#{target_present} #{index_rec}"}"
   index_non_rec = binary_search_non_recursive(input_arr:, low: 0, high: input_arr.length - 1, target:)
-  puts "Binary Search Result :: #{index_non_rec.nil? ? target_not_present : "#{target_present} #{index_non_rec}"}"
+  str = 'Binary Search Result Non-Recursive :: '
+  puts "#{str}#{index_non_rec.nil? ? target_not_present : "#{target_present} #{index_non_rec}"}"
 end
 
 # Recursive Binary Search
@@ -32,7 +34,11 @@ def binary_search_recursive(input_arr:, low:, high:, target:)
   #
   return nil if low > high
 
-  mid = (low + high) / 2
+  # This can cause overflow issues for large integers
+  # mid = (low + high) / 2
+
+  # This is safer and yields the same result
+  mid = low + (high - low) / 2
 
   if input_arr[mid] == target
     mid
@@ -60,7 +66,7 @@ def binary_search_non_recursive(input_arr:, low:, high:, target:)
   # Recursive condition of returning nil when low > high, considers all use cases where 1. low < high 2. low = high
   #
   while low <= high
-    mid = (low + high) / 2
+    mid = low + (high - low) / 2
     if input_arr[mid] == target
       return mid
     elsif input_arr[mid] > target
@@ -79,5 +85,7 @@ arr = [
   { input_arr: [1, 3, 5, 7, 9], target: 14 }
 ]
 arr.each do |hsh|
+  puts "Input Arr :: #{hsh[:input_arr].inspect}, Target :: #{hsh[:target]}, "
   binary_search(input_arr: hsh[:input_arr], target: hsh[:target])
+  puts
 end
