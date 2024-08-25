@@ -66,8 +66,22 @@ def flood_fill(image:, sr:, sc:, color:)
   # 4-directionally connected components => Horizontal/Vertical adjacent cells
   directions_arr = [[-1, 0], [+1, 0], [0, -1], [0, +1]]
 
+  # Since we only find those pixels in 4-directionally connected nodes which
+  # have same color as the given pixel, hence the color of all these pixels
+  # will remain same. We can avoid storing color of each pixel when we
+  # add those pixels to queue by using this variable to hold their color
+  original_color = image[sr][sc]
+
+  # Base Condition Check: if the pixel at [sr, sc] has same color as the color
+  # provided for update, a 4-directionally check will only yield more pixels
+  # with same color as the pixel identified by [sr, sc]. In this case, there
+  # is no update required to be performed. Hence we can simply return the image
+  # to avoid any further processing (which would simply waste CPU time without
+  #	doing anything)
+  return image if original_color == color
+
   # Start at the pixel provided in input parameters
-  queue.enqueue(data: [sr, sc, image[sr][sc]])
+  queue.enqueue(data: [sr, sc])
 
   # In a 2D array representation in Ruby, we use an array of arrays where
   # each element in array is also an array that holds values for col entries
@@ -94,10 +108,12 @@ def flood_fill(image:, sr:, sc:, color:)
     element = queue.dequeue
 
     # De-construct row, col, original_color from array
-    row, col, original_color = element
+    row, col = element
 
-    # Update color of pixel if it has not been updated
-    image[row][col] = color if original_color != color
+    # Only those pixels are added to queue which need a color update
+    # Hence we do not have to perform any check, and can directly
+    # update the color of pixel
+    image[row][col] = color
 
     directions_arr.each do |dir|
       new_row = row + dir[0]
@@ -106,28 +122,17 @@ def flood_fill(image:, sr:, sc:, color:)
       # before accessing array element with that index
       next unless new_row >= 0 && new_row < row_length && new_col >= 0 && new_col < col_length
       # Queue only contains those pixels which should be processed for
-      # updating color
+      # updating. The pixel should satisfy the condition in problem statement
+      # color of new image pixel should be same as original_color (color of pixel [sr, sc])
+      next unless image[new_row][new_col] == original_color
 
-      # 1. Color of this pixel should not already be updated
-      # 2. Satisfies the condition given in problem statement for update
-      next unless udpate_pixel_color?(color:, original_color:, pixel_color: image[new_row][new_col])
-
-      queue.enqueue(data: [new_row, new_col, image[new_row][new_col]])
+      queue.enqueue(data: [new_row, new_col])
     end
 
   end
 
   # Return modified image
   image
-end
-
-# @param [String] color
-# @param [String] original_color
-# @param [String] pixel_color
-# @return [Boolean]
-#
-def udpate_pixel_color?(color:, original_color:, pixel_color:)
-  pixel_color != color && pixel_color == original_color
 end
 
 def test
@@ -138,14 +143,14 @@ def test
       sc: 1,
       color: 2,
       output: [[2, 2, 2], [2, 2, 0], [2, 0, 1]]
+    },
+    {
+      image: [[0, 0, 0], [0, 0, 0]],
+      sr: 0,
+      sc: 0,
+      color: 0,
+      output: [[0, 0, 0], [0, 0, 0]]
     }
-    # {
-    #   image: [[0, 0, 0], [0, 0, 0]],
-    #   sr: 0,
-    #   sc: 0,
-    #   color: 0,
-    #   output: [[0, 0, 0], [0, 0, 0]]
-    # }
   ]
 
   pixel_arr.each do |pixel_hsh|
