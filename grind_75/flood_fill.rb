@@ -77,7 +77,7 @@ def flood_fill(image:, sr:, sc:, color:)
   # array in increasing order of index
   #          Col 1   Col 2    Col 3    Array  Entry   Index in image
   # Row 1      1        1        1        [1, 1, 1]        0
-  # Row 2      1       0        1        [1, 0, 1]        1
+  # Row 2      1       0        1         [1, 0, 1]        1
   # Row 3      1        1        1        [1, 1, 1]        2
   # Row 4      1        0        0        [1, 0, 0]        3
   # Row 5      1        1        0        [1, 1, 0]        4
