@@ -184,7 +184,8 @@ def test
   end
 
   bt3 = BinaryTree.new(data: 100)
-  arr3 = [60, 47, 45, 50, 48, 65, 63, 62, 61, 70, 80, 75, 73, 110, 105, 125]
+  arr3 = [60, 47, 45, 50, 48, 65, 63, 62, 61, 70, 80, 75, 73, 110,
+          105, 125]
   arr3.each do |data|
     bt3.insert(data:)
   end
@@ -194,7 +195,8 @@ def test
     diameter = diameter_node_data[:diameter]
     node_data = diameter_node_data[:node_data]
     path = diameter_node_data[:path]
-    puts "Diameter :: #{diameter}, Node Data :: #{node_data}, path :: #{path.inspect}"
+    print "Diameter :: #{diameter}, Node Data :: #{node_data}, "
+    puts "path :: #{path.inspect}"
   end
 end
 
