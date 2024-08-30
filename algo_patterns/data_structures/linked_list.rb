@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require_relative 'node'
-# Prepares linked list based on input array where index of element in array determines the next pointer
-#
+# Prepares linked list based on input array where index of element
+# in array  determines the next pointer. The implementation creates
+# a dummy node which acts as a header, or the initial node to start
+# iteration. This node contains nil data and is a placeholder
 class LinkedList
   # Attribute Accessor
   #
@@ -19,16 +21,19 @@ class LinkedList
   # @return [Node] 1st Node of linked list
   #
   def prepare_list
-    curr_index = 1
-    node_previous = Node.new(data: input_arr[0])
-    initial_node = node_previous
+    curr_index = 0
+    # This is the header node which is a dummy node and is initialized
+    # with nil value. This serves as a start point for iteration over
+    # linked list
+    node_previous = Node.new(data: nil)
+    header = node_previous
     while curr_index < input_arr.length
       node_next = Node.new(data: input_arr[curr_index])
       node_previous.next = node_next
       node_previous = node_next
       curr_index += 1
     end
-    initial_node
+    header
   end
 
   # Class Method to Traverse linked list
@@ -45,9 +50,10 @@ class LinkedList
     self.class.traverse_list(head)
   end
 
-  def self.traverse_list_helper(node)
+  def self.traverse_list_helper(head)
     puts '*******************************************'
     print 'Linked List :: '
+    node = head.next
     until node.nil?
       print node.data
       print '  --> ' unless node.next.nil?

@@ -21,15 +21,23 @@ class List
   #
   def prepare_list
     list = []
-    curr_index = 1
-    node_previous = Node.new(data: input_arr[0])
-    list << node_previous
-    initial_node = node_previous
+    curr_index = 0
+    # Initialize a header node with nil data. This will act
+    # as the dummy node with which we can start iteration
+    # of linked list
+    node_previous = Node.new(data: nil)
+    # head node is not put into the array because it does not
+    # contain any element. A list maps elements in array to
+    # nodes in linked list. head does not contain any data
+    # and is only a placeholder to reference the 1st node in
+    # linked list. So, the next line is commented out
+    # list << node_previous
+    head = node_previous
     while curr_index < input_arr.length
       node_previous, curr_index = *prepare_list_helper(input_arr: input_arr, curr_index: curr_index, list: list,
                                                        node_previous: node_previous)
     end
-    [initial_node, list]
+    [head, list]
   end
 
   # Helper method to prepare List
@@ -43,6 +51,7 @@ class List
     node_next = Node.new(data: input_arr[curr_index])
     list << node_next
     node_previous.next = node_next
+    node_previous = node_next
     [node_next, curr_index + 1]
   end
 
@@ -61,10 +70,15 @@ class List
   #
   def insert_element_at_head(element:)
     node = Node.new(data: element)
-    temp = head
-    self.head = node
+    # Reference to current 1st node in list
+    temp = head.next
+    # Update the head to point to new node as the 1st node
+    self.head.next = node
+    # Prepend new node at the beginnning of the list
     list.unshift(node)
-    head.next = temp
+    # Current node should point to previous 1st node as
+    # next
+    node.next = temp
   end
 
   # Insert element when index is > 0
@@ -73,10 +87,16 @@ class List
   #
   def insert_element_at_non_head(element:, index:)
     node = Node.new(data: element)
+    # Node at index - 1 should point to new node which would be
+    # inserted at index position in the list. This new node
+    # should point to the node currently at index position in
+    # the list
     node_prev = list[index - 1]
     temp = node_prev.next
     node_prev.next = node
     node.next = temp
+    # All elements starting from and including index position
+    # should be shifted by 1 position in the list
     shift_nodes_in_list(index: index, node: node)
   end
 
@@ -86,6 +106,12 @@ class List
   # @return [NIL]
   #
   def shift_nodes_in_list(index:, node:)
+    # Idea here is to start from the end of list and copy the
+    # elements to one position greater than their current index
+    # This will shift all the elements from the end of list to 
+    # the index position where we want to insert new element to
+    # one position higher. Thus index position becomes free to
+    # include new node
     iteration = list.length - 1
     while iteration >= index
       list[iteration + 1] = list[iteration]
