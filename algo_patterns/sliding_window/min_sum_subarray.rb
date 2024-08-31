@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# Given an array of integers, find the minimum size subarray which has a sum greater than or equal to given target
+# Given an array of integers, find the minimum size subarray which has
+# a sum greater than or equal to given target
 #
 # @param [Array] input_arr
 # @param [Integer] sum
@@ -58,8 +59,11 @@ def calc_subarr_size(subarr_pointers)
   subarr_pointers[:right] - subarr_pointers[:left] + 1
 end
 
-arr = [{ arr: [1, 2, -3, 5, 6, 8, 3, 4, 5], sum: 3 }, { arr: [2, 3, 1, 2, 4, 3], sum: 7 },
-       { arr: [-1, 7, 1, 8, 0, 6, 2], sum: 8 }]
+arr = [
+  { arr: [1, 2, -3, 5, 6, 8, 3, 4, 5], sum: 3 },
+  { arr: [2, 3, 1, 2, 4, 3], sum: 7 },
+  { arr: [-1, 7, 1, 8, 0, 6, 2], sum: 8 }
+]
 
 arr.each do |hsh|
   min_subarray_sum(hsh[:arr], hsh[:sum])
