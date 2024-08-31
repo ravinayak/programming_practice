@@ -8,8 +8,8 @@
 # only elements. Order of elements returned in the flattened
 # array should be same as the elements in original array
 
-# Core idea here is to use recursion where we pass a results
-# array. Iterate over each element in the array, if the
+# Algorithm: Core idea here is to use recursion where we pass
+# results array. Iterate over each element in the array, if the
 # element is an array, we call the recursion with this element
 # and results array, else we push the element into array
 # Recursion will keep getting called unless we reach an element
