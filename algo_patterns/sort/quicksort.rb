@@ -3,6 +3,38 @@
 require_relative '../data_structures/stack'
 # frozen_string_literal: true
 
+# Algorithm: Quicksort uses the concept of Partitioning an array
+# into TWO SubArrays with left subarray containing elements <= Pivot
+# and right subarray containing elments > Pivot
+# It places Pivot at its correct index in the array
+# meaning the index at which the Pivot would have been placed if
+# the array were sorted in Ascending Order
+# 1. Quicksort recursively partitions left and right subarray,
+#    thereby placing all the elements in those subarrays at
+#    their correct index positions in the array
+# 2. When Quicksort is called recursively on left subarray, it
+#    sorts all the elements in left subarray correctly using
+#    pivot such that they are sorted correctly amongst themselves
+# 3. When Quicksort is called recursively on right subarray, it
+#    sorts all the elements in right subarray correctly using
+#    pivot such that they are sorted correctly amongst themselves
+# 4. Left Subarray contains elements <= Pivot
+#    Right Subarray contains elements > Pivot
+# 5. (Left Subarray Sorted correctly) + Pivot + (Right Subarray sorted correctly)
+#    => Left Subarray sorted (<= Pivot) + Pivot + (> Pivot) Right Subarray sorted
+#    => Above is the order of sorting of elements in the original Array
+#    => This is the correct ascending order for all elements in the Array
+#    => Sorted Array
+
+# Thus key idea of Quicksort is as follows:
+# 1. Place each element (one element at a time in recursion) at its correct index
+#    in the array (i.e. the index at which this element would have been placed
+#    if array were sorted in Ascending Order)
+# 2. Use Pivot to partition an array into 2 halves:
+#     a. 1st half with elements <= Pivot
+#     b. 2nd half with elements > Pivot
+
+
 # Youtube: https://www.youtube.com/watch?v=Vtckgz38QHs
 # Class implements QuickSort
 # @param [Array] arr
@@ -95,6 +127,40 @@ def partition(arr:, low:, high:)
   i = low - 1
   j = low
 
+  # Algorithm: 
+  # 1. Pointer "i" is the highest index at which an element <= pivot
+  #    is present in array(low..high)
+  #    => Keeps track of elements <= Pivot
+  # 2. Pointer "j" is the highest index at which an element > pivot
+  #    is present in array(low..high)
+  #    => Keeps track of elements > Pivot
+  # 3. Any time in iteration (j < high), if we find an element at
+  #    arr[j] < pivot,
+  #    => Violates the rule that element at "j" > Pivot
+  #    => Highest index at which element <= Pivot is present = i
+  #    => Index "i+1" is the lowest index at which element > Pivot
+  #       is present
+  #    => i = i + 1
+  #    => Swap arr[j] with arr[i]
+  #    => "i" now points to an element which is < Pivot and is the
+  #       highest index at which < Pivot elements are placed
+  # 4. At the end of iteration, we reach the following condition:
+  #     a. (low..i) => Elements <= pivot
+  #     b. (i+1..high-1) => Elements > pivot
+  # 5. Exchange "i+1" with "high", pivot is placed at "i+1" and
+  #    element at "i+1" (> pivot) is placed at "high"
+  # 6. Elements (low..i) <= pivot
+  # 7. Elements (i+2..high) > pivot
+  # 8. Element at "i+1" = pivot
+
+  # Thus, partition effectively partitions the array into 2 halves
+  #    => (low..i) < pivot AND (i+2..high) > pivot with pivot at (i+1)
+  # These are the two subarrays,
+  # a. left subarray contains elements < pivot
+  # b. right subarray contains elements > pivot
+  # c. "pivot" is placed at its correct index in the array, correct
+  #    index means the index at which pivot would have been placed
+  #    if the array were sorted in Ascending Order
   while j < high
     if arr[j] < pivot
       i += 1
