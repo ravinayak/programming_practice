@@ -47,6 +47,9 @@ class MaxBinaryHeap
     # @return [Array]
     #
     def build_max_heap(arr:, n:)
+      # index = n/2 = 0 in this case, so no processing takes place
+      return [nil, arr[0]] if n == 1
+
       index = n / 2
 
       while index >= 1

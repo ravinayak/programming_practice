@@ -8,6 +8,41 @@ require_relative '../heap/max_binary_heap'
 # Class implements Priority Queue which can hold objects and is based on max heap
 #
 class PriorityQueue
+  attr_accessor :arr, :heap_size
+
+  # Instance Methods
+  # These methods call class Methods to perform the required operations
+  def initialize
+    @arr = []
+    @heap_size = 0
+  end
+
+  def build_priority_queue(arr:, n:)
+    @arr = self.class.build_priority_queue(arr:, n:)
+    @heap_size = n
+  end
+
+  def insert_key(obj_hash:)
+    @arr = self.class.insert_key(obj_hash:, arr: @arr, heap_size: @heap_size, flag: true)
+    @heap_size = heap_size + 1
+  end
+
+  def max_element_in_priority_queue
+    @arr[1]
+  end
+
+  def extract_max
+    self.class.exchange_nodes(i: @heap_size, index_to_exchange: 1, arr: @arr)
+
+    max_element = @arr[@heap_size]
+    @heap_size -= 1
+    @arr =
+      self.class.build_priority_queue_helper(arr: @arr,
+                                             i: 1, heap_size: @heap_size)
+
+    [max_element, @arr[1..@heap_size], @heap_size]
+  end
+
   class << self
     # Build Priority Queue from an array of n object hashes, each of which must
     # contain a key - "key", the object hash can contain other keys as well
@@ -17,6 +52,9 @@ class PriorityQueue
     # @return [Array]
     #
     def build_priority_queue(arr:, n:)
+      # index = n/2 = 0 in this case, so no processing takes place
+      return [nil, arr[0]] if n == 1
+
       arr_updated = prepare_arr_for_heap(arr:)
       index = n / 2
 
@@ -34,8 +72,12 @@ class PriorityQueue
     # @param [Integer] heap_size
     # @return [Array]
     #
-    def insert_key(obj_hash:, arr:, heap_size:)
-      priority_queue_arr = prepare_arr_for_heap(arr:)
+    def insert_key(obj_hash:, arr:, heap_size:, flag: false)
+      if flag
+        priority_queue_arr = arr
+      else
+        priority_queue_arr = prepare_arr_for_heap(arr:)
+      end
 
       new_heap_size = heap_size + 1
       priority_queue_arr[new_heap_size] = obj_hash
@@ -58,11 +100,10 @@ class PriorityQueue
       max_element = arr_updated[heap_size]
       new_heap_size = heap_size - 1
       arr_updated = build_priority_queue_helper(arr: arr_updated, i: 1, heap_size: new_heap_size)
-
       [max_element, arr_updated[1..new_heap_size], new_heap_size]
     end
 
-    private
+    # private
 
     # Compare node with its parent until we find a parent that has value greater than or equal
     # to key of node or we reach root
@@ -165,11 +206,11 @@ end
 # arr_index = 0
 # objs = []
 # sorted_arr.each_with_index do |element, index|
-# 	objs << { arr_index:, element_index: index, key: element }
+#   objs << { arr_index:, element_index: index, key: element }
 # end
 
 # pq = PriorityQueue.build_priority_queue(arr: objs, n: objs.length)
-# obj_hash = { arr_index: 0, element_index: 15, key: 125}
+# obj_hash = { arr_index: 0, element_index: 15, key: 125 }
 
 # pq = PriorityQueue.insert_key(obj_hash:, arr: pq.compact, heap_size: pq.compact.size)
 # puts "Extract Max :: #{PriorityQueue.extract_max(arr: pq, heap_size: pq.size)}"
