@@ -34,8 +34,16 @@ require_relative '../data_structures/stack'
 #     a. 1st half with elements <= Pivot
 #     b. 2nd half with elements > Pivot
 
-
 # Youtube: https://www.youtube.com/watch?v=Vtckgz38QHs
+
+# Quicksort method to call from outside
+# @param [Array<Integer>] arr
+# @return [Array<Integer>]
+#
+def quicksort(arr:)
+  quicksort_rec(arr:, low: 0, high: arr.length - 1)
+end
+
 # Class implements QuickSort
 # @param [Array] arr
 # @param [Integer] low
@@ -127,7 +135,7 @@ def partition(arr:, low:, high:)
   i = low - 1
   j = low
 
-  # Algorithm: 
+  # Algorithm:
   # 1. Pointer "i" is the highest index at which an element <= pivot
   #    is present in array(low..high)
   #    => Keeps track of elements <= Pivot
@@ -194,5 +202,6 @@ end
 
 arr = [1, 3, -9, 10, 19, -25, -30, 85, 100, -210]
 puts "Input Array :: #{arr.inspect}"
+puts quicksort(arr:).inspect
 puts quicksort_rec(arr:, low: 0, high: arr.length - 1).inspect
 puts quicksort_non_rec(arr:, low: 0, high: arr.length - 1).inspect
