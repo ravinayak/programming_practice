@@ -10,21 +10,23 @@
 # of substring
 # We use a Hash to maintain last seen position of every character in string
 # If this character is found again while right is moving forward in the
-# iteration, we know that current substring cannot be extended to include
-# this character since it is repeating itself and was found earlier in the
-# substring. Here we have an important observation:
+# iteration. Here we have 2 possibilities:
 
-# NOTE: If the current window or substring starts at left, where left is
-#       at a position greater than the last seen position of that character,
-#           left > last seen position of the repeating character
-#       then the current window/substring does not include that character,
-#       meaning NO REPITION, hence no update/resetting of window/substring
-#       is REQUIRED. However, if the current window/substring does include
-#       that character, means left POINTER is at a position less than or 
-#       equal to the last seen position of that character
-#          left <= last seen position of the repeating character
-#       then the current window/substring will contain the repeating character
-#       unless we reset the current window/substring
+# 1. Current window/substring includes this repeating character: We know that 
+#   current substring cannot be extended to include this character since it is
+#   repeating itself and was found earlier in the substring.
+#     => Condition => left <= last seen position of the repeating character
+#   In this case we must reset the window/substring to exclude this character
+#   and start from an index greater than the last seen occurrence of this
+#   character.
+#       => left = last seen position of the repeating character + 1
+#   New window/substring is formed and it starts at a new left
+
+# 2. Current window/substring DOES NOT include this repeating character: In
+#    this use case, we can include this character since no repetition occurs
+#     => Condition => left > last seen position of the repeating character
+#       => No Update/Resetting of window/substring is required
+# 
 
 # Hence 1 of 2 actions must be taken:
 # 1. Character found earlier must be excluded from the current substring and
