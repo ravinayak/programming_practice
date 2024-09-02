@@ -79,11 +79,16 @@ def evaluate_rp_notation(input_arr:)
   result = nil
 
   input_arr.each do |element|
+    # an operator should not be pushed onto stack, it should pop
+    # elements from stack
     unless allowed_operators.include?(element)
+      # operands are integers as strings, convert them to integers
+      # before pushing onto stack
       st.push(data: element.to_i)
       next
     end
 
+    # l2R1 => 2nd Pop  = Left, R1 => 1st Pop = Right
     right_operand = st.pop
     left_operand = st.pop
 

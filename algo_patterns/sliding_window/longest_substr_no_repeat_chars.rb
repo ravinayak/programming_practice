@@ -18,7 +18,13 @@
 #     => Condition => left <= last seen position of the repeating character
 #   In this case we must reset the window/substring to exclude this character
 #   and start from an index greater than the last seen occurrence of this
-#   character.
+#   character. This is because a substring is formed by contiguous set of
+#   characters, and we have only 2 options:
+#     a. To exclude last seen occurrence of repeating character by increasing
+#        left to (last seen position of the repeating character + 1)
+#     b. Jump the current substring by excluding the repeating character BUT
+#        THIS will Lead to a NON-CONTIGUOUS set of characters and hence MUST
+#        NOT BE USED
 #       => left = last seen position of the repeating character + 1
 #   New window/substring is formed and it starts at a new left
 
