@@ -1,3 +1,4 @@
+**HEAP**
 A binary heap data structure is a nearly complete binary tree meaning that it is
 complete at all levels except possibly the last level which is filled from left to right
 
@@ -26,16 +27,23 @@ maximum height is O(logn). This is because every node has 2 children except node
 at the (bottom most - 1 level)
 
 Central operation to maintain heap property is
-MAX_HEAPIFY(A,i) 1. A is the array that contains elements which correspond to nodes in the binary heap 2. It is assumed that the subtrees rooted at children of node "i" - - left(i), right(i) are valid max heaps 3. However element A[i] may be less than its left or right child. A[i] may violate the
-max-heap property 3. MAX_HEAPIFY procedure fixes this possible violation of A[i] node and ensures that the
-binary heap rooted at node "i" is a max heap 4. It allows element at node "i" to float down in the max heap so that the subtree rooted
-at node "i" obeys the max heap property by exchanging A[i] with its largest child. With
-this exchange, it is possible that the node at index "largest" may be greater than its
-children, this again may violate the max heap property 5. This method continues iterating downwards in the max heap until we reach a node where
-the exchange results in the value at node being greater than its children (thus restoring
-max heap property) or we reach a leaf node
+MAX_HEAPIFY(A,i)
 
-Operations on Max Heap
+1. A is the array that contains elements which correspond to nodes in the binary heap
+2. It is assumed that the subtrees rooted at children of node "i" - left(i), right(i)
+   are valid max heaps 3. However element A[i] may be less than its left or right child.
+   A[i] may violate the max-heap property
+3. MAX_HEAPIFY procedure fixes this possible violation of A[i] node and ensures that the
+   binary heap rooted at node "i" is a max heap
+4. It allows element at node "i" to float down in the max heap so that the subtree rooted
+   at node "i" obeys the max heap property by exchanging A[i] with its largest child. With
+   this exchange, it is possible that the node at index "largest" may be greater than its
+   children, this again may violate the max heap property
+5. This method continues iterating downwards in the max heap until we reach a node where
+   the exchange results in the value at node being greater than its children (thus restoring
+   max heap property) or we reach a leaf node
+
+**Operations on Max Heap**
 
 1. Max Heapify: O(log n)
    Takes an array A and index "i" of node in binary heap and ensures that the binary heap
@@ -88,3 +96,33 @@ Operations on Max Heap
       array A[1..n-1] is placed at the root.
    6. Repeat steps 3,4,5 until we reach index 1.
    7. All elements in the array are now sorted in ascending order
+
+**Heap Relation to PriorityQueue**
+Heaps are generally used for Implementation of Priority Queues. Consider a max-heap implementation
+where root of max-heap contains the max element in the Heap. We can use Max Heap to implement a
+Priority Queue where we process tasks with highest priority at any given time
+
+1. Tasks will be represented as Objects
+2. Objects will have a key which will be = Priority for that Task
+3. Consider "n" such objects => We shall build a MaxHeap from these "n" tasks
+   => In Max Heap => BUILD-MAX-HEAP (from "n" such objects)
+4. Root of MaxHeap will contain the task with Highest Priority
+5. Say Tasks are tickets to be completed in any sprint
+6. When a new sprint starts, we can extract root from Max Heap, this will give the ticket with
+   highest Priority. It can be allocated to an engineer in the team
+   => In Max Heap => Extract-Max method
+7. Say the engineer is currently working on a ticket while a bug originally having a lower
+   priority is now blocking production, it becomes CRITICAL => Priority Increases to Maximum
+   => In Max Heap => INCREASE-KEY (for the object representing that bug/task)
+8. Current ticket's priority is lowered, so the engineer can work on this ticket
+   => In Max Heap => DECREASE-KEY (for the object representing that ticket)
+9. A new bug is created in the software system and needs to be allocated in sprints according
+   to priority
+   => In Max Heap => INSERT-KEY (for the object representing that bug)
+10. Consider an unstructured data which does not change, its values are fixed and remain
+    constant. Unlike tickets/bugs whose priority can increase/decrease, this data has
+    fixed Priority which does not change. In such a case, we can sort this data based on
+    their keys, and store this data in descending order in an array. We can process the data
+    in reverse order of array index, giving us the Highest Priority elements at any given time
+    stored in the array
+    => In Max Heap => HeapSort (of objects which contain keys => Unstructure data with FIXED KEYS)
