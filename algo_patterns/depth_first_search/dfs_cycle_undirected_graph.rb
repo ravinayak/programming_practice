@@ -69,6 +69,15 @@ def cycle_check?(vertex:, adj_matrix:, visited:, parent:)
   visited[vertex] = true
 
   adj_matrix[vertex]&.each do |neighbor|
+    # Problem with the following lines of code
+    #
+    # By using two separate return statements like this, you could mistakenly
+    # treat a freshly visited neighbor as a cycle. The logic does not
+    # adequately separate handling for visited vs. unvisited neighbors
+
+    # return true if cycle_check?(vertex: neighbor, adj_matrix:, visited:, parent: vertex) unless visited[neighbor]
+    # return true if neighbor != parent
+
     # If neighbor has not been visited, we should perform a DFS on this node
     # visited[neighbor] = true => node has already been processed in DFS
     if !visited[neighbor]
