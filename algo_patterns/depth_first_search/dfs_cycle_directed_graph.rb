@@ -70,14 +70,6 @@ def detect_cycle_directed_graph_dfs(vertices:, adj_matrix:)
 end
 
 def cycle_check?(vertex:, adj_matrix:, visited:, recursion_hsh:)
-  # If a node does not have any adjacency matrix, it means we have
-  # reached a node which does not have any outgoing edge, and hence
-  # there cannot be a cycle
-  if adj_matrix[vertex].nil?
-    recursion_hsh[vertex] = false
-    return false
-  end
-
   # Mark this node as visited => avoid DFS on node again, and validate
   #	if this node is present in the recursion hash. If node is found
   # again in recursion hash during DFS, this means there is a cycle
@@ -85,10 +77,12 @@ def cycle_check?(vertex:, adj_matrix:, visited:, recursion_hsh:)
   recursion_hsh[vertex] = true
 
   # Iterate over the adjacency matrix
-  adj_matrix[vertex].each do |neighbor|
-    return true if !(visited[neighbor]) && cycle_check?(vertex: neighbor, adj_matrix:, visited:, recursion_hsh:)
-
-    return true if recursion_hsh[neighbor]
+  adj_matrix[vertex]&.each do |neighbor|
+    if !(visited[neighbor])
+      return true if cycle_check?(vertex: neighbor, adj_matrix:, visited:, recursion_hsh:)
+    elsif recursion_hsh[neighbor]
+      return true
+    end
   end
 
   # Since we have finished recursion for the given vertex in current call,

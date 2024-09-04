@@ -63,14 +63,9 @@ def cycle_check_undirected_graph_dfs(vertices:, adj_matrix:)
 end
 
 def cycle_check?(vertex:, adj_matrix:, visited:, parent:)
-  # If node has no adjacent nodes, we have reached a node
-  # which marks an end, and there was no cycle found, so
-  # we return false
-  return false if adj_matrix[vertex].nil?
-
   visited[vertex] = true
 
-  adj_matrix[vertex].each do |neighbor|
+  adj_matrix[vertex]&.each do |neighbor|
     # If neighbor has not been visited, we should perform a DFS on this node
     # visited[neighbor] = true => node has already been processed in DFS
     if !visited[neighbor]
