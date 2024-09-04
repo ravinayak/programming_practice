@@ -135,6 +135,9 @@ def test
     st.push(data:)
   end
   st.display
+  puts "Stack Size :: #{st.size}"
+  puts "Stack Empty :: #{st.empty?}"
+  puts "Stack Peek :: #{st.peek}"
 
   2.times do
     st.pop
