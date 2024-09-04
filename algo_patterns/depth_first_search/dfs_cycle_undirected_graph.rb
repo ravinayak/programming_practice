@@ -63,6 +63,9 @@ def cycle_check_undirected_graph_dfs(vertices:, adj_matrix:)
 end
 
 def cycle_check?(vertex:, adj_matrix:, visited:, parent:)
+  # we should not return false from here if adj_matrix[vertex].nil?
+  # This is because visited[vertex] = true will not be set for that
+  # vertex
   visited[vertex] = true
 
   adj_matrix[vertex]&.each do |neighbor|
