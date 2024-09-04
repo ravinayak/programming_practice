@@ -61,10 +61,9 @@ def detect_cycle_directed_graph_dfs(vertices:, adj_matrix:)
     # before it is called in this iteration, we would have already
     # processed all the nodes in its adjacency matrix. Since this
     #	node has already been processed, we should not process it again
-    res = cycle_check?(vertex:, adj_matrix:, visited:, recursion_hsh:) unless
-      visited[vertex]
-    # dfs returns true if there is a cycle in directed graph
-    return res if res
+    next if visited[vertex]
+
+    return true if cycle_check?(vertex:, adj_matrix:, visited:, recursion_hsh:)
   end
 
   false
@@ -74,7 +73,10 @@ def cycle_check?(vertex:, adj_matrix:, visited:, recursion_hsh:)
   # If a node does not have any adjacency matrix, it means we have
   # reached a node which does not have any outgoing edge, and hence
   # there cannot be a cycle
-  return false if adj_matrix[vertex].nil?
+  if adj_matrix[vertex].nil?
+    recursion_hsh[vertex] = false
+    return false
+  end
 
   # Mark this node as visited => avoid DFS on node again, and validate
   #	if this node is present in the recursion hash. If node is found
@@ -84,9 +86,7 @@ def cycle_check?(vertex:, adj_matrix:, visited:, recursion_hsh:)
 
   # Iterate over the adjacency matrix
   adj_matrix[vertex].each do |neighbor|
-    return cycle_check?(vertex: neighbor, adj_matrix:, visited:, recursion_hsh:) unless visited[neighbor]
-    # return dfs call itself because DFS call should return false/true
-    # for every vertex when it reaches end
+    return true if !(visited[neighbor]) && cycle_check?(vertex: neighbor, adj_matrix:, visited:, recursion_hsh:)
 
     return true if recursion_hsh[neighbor]
   end
@@ -103,7 +103,7 @@ end
 def test
   graph_arr = [
     {
-      vertices: [1, 2, 3, 4, 5, 6],
+      vertices: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       adj_matrix: {
         1 => [2, 4],
         2 => [3],
@@ -115,10 +115,10 @@ def test
       output: 'false'
     },
     {
-      vertices: [1, 2, 3, 4, 5, 6],
+      vertices: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       adj_matrix: {
-        1 => [2, 4],
-        2 => [3],
+        1 => [4],
+        2 => [1, 3],
         3 => [7],
         4 => [5],
         5 => [2, 6],
