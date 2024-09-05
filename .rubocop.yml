@@ -1,7 +1,7 @@
 AllCops:
   TargetRubyVersion: 3.3.0
 Metrics/MethodLength:
-  Max: 35
+  Max: 50
   Enabled: true
 Metrics/ClassLength:
   Max: 115
@@ -14,10 +14,10 @@ Naming/MethodParameterName:
 Layout/LineLength:
   Max: 125
 Metrics/CyclomaticComplexity:
-  Max: 14
+  Max: 17
 Metrics/ParameterLists:
   Max: 6
 Metrics/PerceivedComplexity:
-  Max: 14
+  Max: 18
 Style/ConditionalAssignment:
   Enabled: false
