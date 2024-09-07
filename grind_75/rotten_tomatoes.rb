@@ -91,6 +91,7 @@ def rotten_oranges(grid:)
     # This is used to keep track of the minimum number of minutes to
     # convert all fresh oranges to rotten in grid
     # NOTE: It is critical to observe the following:
+
     # a.  In the initial scan, all oranges are already rotten, if we
     #     process these and at the end of processing all of them, we
     #     do not have any new oranges enqueued, it means that no time
@@ -100,6 +101,9 @@ def rotten_oranges(grid:)
     #  b. This applies to each level. Oranges dequeued and processed do
     #     not add to mins for fresh oranges to rot, the next set of
     #     oranges if present in queue indicate that some time will elapse
+    #  c. !queue.empty? check is critical, without it, we would add a min
+    #     more to the minimum time required, though there are no oranges
+    #     which will take that 1 min to rot
 
     # Each level takes 1 minute to rot, queue has certain organges to rot
     level += 1 unless queue.empty?
