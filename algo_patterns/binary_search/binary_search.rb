@@ -6,14 +6,26 @@
 # @return [Integer|nil]
 #
 def binary_search(input_arr:, target:)
-  index_rec = binary_search_recursive(input_arr:, low: 0, high: input_arr.length - 1, target:)
+  index_rec = binary_search_recursive(input_arr:, low: 0,
+                                      high: input_arr.length - 1, target:)
   target_not_present = 'Target is not present in input array'
   target_present = "Found Target #{target} at Index"
   str = 'Binary Search Result Recursive :: '
-  puts "#{str}#{index_rec.nil? ? target_not_present : "#{target_present} #{index_rec}"}"
-  index_non_rec = binary_search_non_recursive(input_arr:, low: 0, high: input_arr.length - 1, target:)
+  rec_res = if index_rec.nil?
+              target_not_present
+            else
+              "#{target_present} #{index_rec}"
+            end
+  puts "#{str}#{rec_res}"
+  index_non_rec = binary_search_non_recursive(input_arr:, low: 0,
+                                              high: input_arr.length - 1, target:)
   str = 'Binary Search Result Non-Recursive :: '
-  puts "#{str}#{index_non_rec.nil? ? target_not_present : "#{target_present} #{index_non_rec}"}"
+  non_rec_res = if index_non_rec.nil?
+                  target_not_present
+                else
+                  "#{target_present} #{index_non_rec}"
+                end
+  puts "#{str}#{non_rec_res}"
 end
 
 # Recursive Binary Search
@@ -26,10 +38,13 @@ end
 # @return [Integer|nil]
 #
 def binary_search_recursive(input_arr:, low:, high:, target:)
-  # We should not use >= because in such a case, we shall not be able to compare the element in input_arr when
-  # low=high to target, there is a potential solution which we may miss. This is equivalent to saying that we
+  # We should not use >= because in such a case, we shall not be able to
+  # compare the element in input_arr when
+  # low = high to target, there is a potential solution which we may miss.
+  # This is equivalent to saying that we
   #  1. low < high
   #  2. low = high
+  #  3. low > high
   # This is exactly the use cases covered in Iterative approach
   #
   return nil if low > high
@@ -60,11 +75,15 @@ end
 #
 def binary_search_non_recursive(input_arr:, low:, high:, target:)
   # We must use <= and not just <
-  # This is because if we use only <, a use case where low = high, the comparison of element
-  # in input_arr at that position of low (low = high) will not be made with the target. In this
-  # case, even if the input_arr contains target, we shall return nil because the while loop will terminate
-  # Recursive condition of returning nil when low > high, considers all use cases where 1. low < high 2. low = high
-  #
+  # This is because if we use only <, a use case where low = high,
+  # the comparison of element in input_arr at that position of low (low = high)
+  # will not be made with the target. In this case, even if the input_arr contains
+  # target, we shall return nil because the while loop will terminate
+  # Recursive condition of returning nil when low > high, considers all use cases
+  # where
+  # 1. low < high
+  # 2. low = high
+  # 3. low > high
   while low <= high
     mid = low + (high - low) / 2
     if input_arr[mid] == target
