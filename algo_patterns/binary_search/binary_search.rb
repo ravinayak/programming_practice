@@ -8,9 +8,9 @@
 def binary_search(input_arr:, target:)
   index_rec = binary_search_recursive(input_arr:, low: 0,
                                       high: input_arr.length - 1, target:)
-  target_not_present = 'Target is not present in input array'
+  target_not_present = ' Target is not present in input array'
   target_present = "Found Target #{target} at Index"
-  str = 'Binary Search Result Recursive :: '
+  str = ' Binary Search Result Recursive :: '
   rec_res = if index_rec.nil?
               target_not_present
             else
@@ -19,7 +19,7 @@ def binary_search(input_arr:, target:)
   puts "#{str}#{rec_res}"
   index_non_rec = binary_search_non_recursive(input_arr:, low: 0,
                                               high: input_arr.length - 1, target:)
-  str = 'Binary Search Result Non-Recursive :: '
+  str = ' Binary Search Result Non-Recursive :: '
   non_rec_res = if index_non_rec.nil?
                   target_not_present
                 else
@@ -64,6 +64,33 @@ def binary_search_recursive(input_arr:, low:, high:, target:)
   end
 end
 
+# @param [Array<Integer>] input_arr
+# @param [Integer] target
+def modified_binary_search(input_arr:, target:)
+  return input_arr[0] if input_arr.length == 1 && input_arr[0] <= target
+
+  return nil if input_arr.empty?
+
+  low = 0
+  high = input_arr.length - 1
+  best = nil
+
+  while low <= high
+    mid = low + (high - low) / 2
+
+    if input_arr[mid] == target
+      return target
+    elsif input_arr[mid] < target
+      best = input_arr[mid]
+      low = mid + 1
+    else
+      high = mid - 1
+    end
+  end
+
+  best
+end
+
 # Recursive Binary Search
 #  Time Complexity => O(log n)
 #  Space Complexity => O(1)
@@ -98,13 +125,41 @@ def binary_search_non_recursive(input_arr:, low:, high:, target:)
 end
 
 arr = [
-  { input_arr: [1, 5, 7, 9, 11, 15, 19, 25], target: 7 },
-  { input_arr: [-1, -3, -5, 7, 9], target: 9 },
-  { input_arr: [13, 15, 17, 19, 21], target: 13 },
-  { input_arr: [1, 3, 5, 7, 9], target: 14 }
+  {
+    input_arr: [1, 5, 7, 9, 11, 15, 19, 25],
+    target: 7,
+    modified_target: 18,
+    output: 15
+  },
+  {
+    input_arr: [-5, -3, -1, 7, 9],
+    target: 9,
+    modified_target: 9,
+    output: 9
+  },
+  {
+    input_arr: [13, 15, 17, 19, 21],
+    target: 13,
+    modified_target: 16,
+    output: 15
+  },
+  {
+    input_arr: [1, 3, 5, 7, 9],
+    target: 14,
+    modified_target: 6,
+    output: 5
+  }
 ]
+
 arr.each do |hsh|
-  puts "Input Arr :: #{hsh[:input_arr].inspect}, Target :: #{hsh[:target]}, "
+  puts " Input Arr :: #{hsh[:input_arr].inspect}, Target :: #{hsh[:target]}, "
   binary_search(input_arr: hsh[:input_arr], target: hsh[:target])
   puts
+
+  input_arr = hsh[:input_arr]
+  target = hsh[:modified_target]
+  output = hsh[:output]
+  res = modified_binary_search(input_arr:, target:)
+  print "\n Input Arr :: #{hsh[:input_arr].inspect}, Target :: #{target}"
+  print "\n Output :: #{output}, Modified Binary Search :: #{res} \n\n"
 end
