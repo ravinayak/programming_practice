@@ -9,18 +9,11 @@ require_relative '../graph'
 # Node in Undirected Graph with +ve edge weights:
 # 1. All edge weights are same in the Undirected Graph:
 #    BFS guarantees that when we encounter the target node for the 1st
-#    time, the path found is the Shortest Path. This is break BFS
+#    time, the path found is the Shortest Path. This is because BFS
 #    encounters nodes in increasing order of distance from Source. Hence
 #    it is safe to break from Loop, when we have updated distance of
 #    node (= destination node) with respect to dequeued node
-# 2. If all Edge weights are NOT SAME in Undirected Graph:
-#    We must not exit when we find destination node for the 1st time,
-#    this is because at this time, we have found destination node with
-#    fewest edges, and the total weight of these edges may not be the
-#    least weight. A path with more number of Edges could potentially
-#    have less weight. Hence "break" should not be used in the loop
-#    We must continue exploring all nodes until queue becomes empty
-# 3. We must mark a node as visited when the node is DEQUEUED and not
+# 2. We must mark a node as visited when the node is DEQUEUED and not
 #    when it is ENQUEUED. If we mark a node as visited, when we ENQUEUE
 #    any future attempts to visit that node through different paths will
 #    be ignored, even if the alternate path might provide useful
@@ -43,8 +36,13 @@ require_relative '../graph'
 #           Step 5: Dequeue node 4, visited[4] = true
 #           Step 6: Enqueue nodes 3 (node 0 is visited)
 #           Thus, node 3 gets enqueued more than once
-#
-# NOTE: BFS does not work for Undirected Graph with -ve Weight Edges
+# 3. BFS should not be used for Undirected Graphs with UnEQUAL WEIGHTS.
+#    Djikstra's algo should be used, we can hack BFS to make it work
+#    but BFS is not meant for such graphs. BFS assumes level order
+#    traversal by definition, and also that the 1st time a node is
+#    encountered, it has the shortest path, since we have reached it
+#    using fewest EDGES
+# 4. BFS does not work for Undirected Graph with -ve Weight Edges
 #
 
 # explores paths in order of increasing distance from the source node.
@@ -54,7 +52,7 @@ require_relative '../graph'
 # |      | \
 # |      |  \
 # 4 ---- 3 -- 2
-def shortest_distance(node1:, node2:, graph:, same_weights:)
+def shortest_distance(node1:, node2:, graph:)
   queue = Queue.new
   visited = {}
 
@@ -70,17 +68,23 @@ def shortest_distance(node1:, node2:, graph:, same_weights:)
     visited[node] = true
 
     graph.adj_matrix[node].each do |neighbor_weight|
-      neighbor, weight = neighbor_weight
-      # If a node has been processed, meaning, distance of all its neighbors
-      # (adjacency matrix) has been updated by evaluating distance from
-      # current node, this node has been used for calculation of minimum
-      # distance. This node will be encountered again when we enqueue its
-      # neighbor because it is an undirected graph and there is a 2-way
-      # path between every set of nodes which has an edge. Since, this
-      # node and its adjacency matrix has been processed, we would be
-      # doing duplicate work if we enqueued it again, which is redundant
-      # Hence we mark the node as visited, and skip it if it is encountered
-      # again
+      # Undirected Graph with Equal Edge Weights:
+      #  • In an unweighted or equally weighted graph, BFS will naturally
+      #    explore nodes in increasing order of distance from the source.
+      #    In this case, once you mark a node as visited and process it, you
+      #    should skip it when encountered again, because BFS guarantees that
+      #    the first time you visit a node, you’ve found the shortest path to it.
+      # Weighted Graph (Unequal Edge Weights):
+      #  • In a graph with unequal edge weights, simply skipping a node because
+      #    it’s been visited before can be problematic. The reason is that there 
+      #    might be a shorter path to that node through a different route, even
+      #    after the node has been visited once. A longer path with more edges
+      #    may have fewer weights assigned to it and hence may have less distance
+      #    from source. BFS guarantee of level order traversal does not hold in
+      #    such a use case
+      #  • In this case, you can’t mark nodes as visited immediately when dequeued,
+      #    and you need to relax edges (like in Dijkstra’s algorithm), ensuring that
+      #    every possible shorter path is considered.
       next if visited[neighbor]
 
       distance[neighbor] = distance[node] + weight if
@@ -90,14 +94,7 @@ def shortest_distance(node1:, node2:, graph:, same_weights:)
       # distance of destination node from the source  is the shortest distance possible
       # from source. At this time, we have updated distance of destination node by
       # evaluating distance[node] + 1, hence it is safe to break from the loop
-
-      # If all EDGE WEIGHTS ARE NOT SAME, if we encounter a node for the 1st time, we
-      # have found the node with fewest number of edges, but this may have weights
-      # allocated to it such that it has larger total weight than other path to the
-      # same node from source which has lesser weights. Breaking from a loop for the
-      # 1st time will prevent us from exploring other longer paths which may have
-      # less weights and give us incorrect answer
-      break if same_weights && (neighbor == node2)
+      break if (neighbor == node2)
 
       queue.enqueue(data: neighbor)
     end
@@ -200,24 +197,11 @@ def shortest_path_data
     6 => [[1, 1], [5, 1]]
   }
   vertices_one = [0, 1, 2, 3, 4, 5, 6]
-  adj_matrix_two = {
-    0 => [[1, 1], [2, 4]],
-    1 => [[0, 1], [4, 5], [3, 1]],
-    2 => [[0, 4], [4, 1]],
-    3 => [[1, 1], [5, 8]],
-    4 => [[1, 5], [2, 1], [5, 1]],
-    5 => [[4, 1], [3, 8]]
-  }
-  vertices_two = [0, 1, 2, 3, 4, 5]
 
   [
     {
       adj_matrix: adj_matrix_one,
       vertices: vertices_one
-    },
-    {
-      adj_matrix: adj_matrix_two,
-      vertices: vertices_two
     }
   ]
 end
