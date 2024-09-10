@@ -58,6 +58,10 @@ Steps of Dijkstra’s Algorithm
    processed, and we can avoid pushing into min-heap
    => Purpose of pushing a node to MinHeap is to compute the MINIMUM DISTANCE
    from SOURCE to that NODE
+   NOTE: In Dijkstra’s algorithm, if a node is inserted into the min-heap
+   more than once (i.e., after its distance is updated), it doesn’t break the
+   correctness of the algorithm, but it can lead to redundant work and
+   inefficiency.
 8. Termination:
    • The algorithm terminates when all nodes have been processed (i.e., visited
    or removed from the priority queue).
