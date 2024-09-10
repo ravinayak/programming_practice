@@ -5,12 +5,32 @@ require_relative '../graph'
 # BFS traversal of a Graph to find the shortest path between 2 nodes
 # and to find if a graph is connected
 
+# BFS can be used to find shortest path from Source Node to Destination
+# Node in Undirected Graph with +ve edge weights:
+# 1. All edge weights are same in the Undirected Graph:
+#    BFS guarantees that when we encounter the target node for the 1st
+#    time, the path found is the Shortest Path. This is break BFS
+#    encounters nodes in increasing order of distance from Source. Hence
+#    it is safe to break from Loop, when we have updated distance of
+#    node (= destination node) with respect to dequeued node
+# 2. If all Edge weights are NOT SAME in Undirected Graph:
+#    We must not exit when we find destination node for the 1st time,
+#    this is because at this time, we have found destination node with
+#    fewest edges, and the total weight of these edges may not be the
+#    least weight. A path with more number of Edges could potentially
+#    have less weight. Hence "break" should not be used in the loop
+#    We must continue exploring all nodes until queue becomes empty
+#
+# NOTE: BFS does not work for Undirected Graph with -ve Weight Edges
+
+# explores paths in order of increasing distance from the source node.
+
 # Find the shortest path between nodes "0" and "3"
 # 0 ---- 1
 # |      | \
 # |      |  \
 # 4 ---- 3 -- 2
-def shortest_distance(node1:, node2:, graph:)
+def shortest_distance(node1:, node2:, graph:, same_weights:)
   queue = Queue.new
   queue.enqueue(data: node1)
   visited = {}
@@ -22,11 +42,37 @@ def shortest_distance(node1:, node2:, graph:)
     node = queue.dequeue
     visited[node] = true
 
-    graph.adj_matrix[node].each do |neighbor|
-      distance[neighbor] = distance[node] + 1 if distance[node] + 1 < distance[neighbor]
-      break if neighbor == node2
+    graph.adj_matrix[node].each do |neighbor_weight|
+      neighbor, weight = neighbor_weight
+      # If a node has been processed, meaning, distance of all its neighbors
+      # (adjacency matrix) has been updated by evaluating distance from
+      # current node, this node has been used for calculation of minimum
+      # distance. This node will be encountered again when we enqueue its
+      # neighbor because it is an undirected graph and there is a 2-way
+      # path between every set of nodes which has an edge. Since, this
+      # node and its adjacency matrix has been processed, we would be
+      # doing duplicate work if we enqueued it again, which is redundant
+      # Hence we mark the node as visited, and skip it if it is encountered
+      # again
+      next if visited[neighbor]
 
-      queue.enqueue(data: neighbor) unless visited[neighbor]
+      distance[neighbor] = distance[node] + weight if
+           distance[node] + weight < distance[neighbor]
+      # If all EDGE WEIGHTS ARE SAME, BFS explores nodes in increasing order of distance
+      # from source. This implies that 1st time when we encounter destination node,
+      # distance of destination node from the source  is the shortest distance possible
+      # from source. At this time, we have updated distance of destination node by
+      # evaluating distance[node] + 1, hence it is safe to break from the loop
+
+      # If all EDGE WEIGHTS ARE NOT SAME, if we encounter a node for the 1st time, we
+      # have found the node with fewest number of edges, but this may have weights
+      # allocated to it such that it has larger total weight than other path to the
+      # same node from source which has lesser weights. Breaking from a loop for the
+      # 1st time will prevent us from exploring other longer paths which may have
+      # less weights and give us incorrect answer
+      break if same_weights && (neighbor == node2)
+
+      queue.enqueue(data: neighbor)
     end
   end
 
@@ -57,7 +103,50 @@ def connectivity_check(graph:)
 end
 
 def test_connectivity
-  graph_arr = [
+  graph = []
+  shortest_path_data.each do |adj_matrix_vertex_hsh|
+    adj_matrix = adj_matrix_vertex_hsh[:adj_matrix]
+    vertices = adj_matrix_vertex_hsh[:vertices]
+
+    graph << Graph.new(adj_matrix:, vertices:)
+  end
+
+  shortest_dist_arr = [
+    {
+      graph: graph[0],
+      output: 4,
+      same_weights: true
+    },
+    {
+      graph: graph[1],
+      output: 6,
+      same_weights: false
+    }
+  ]
+  puts
+  connectivity_check_arr.each do |graph_hsh|
+    graph = graph_hsh[:graph]
+    output = graph_hsh[:output]
+
+    result = connectivity_check(graph:)
+    str = ' Graph Connectivity Check => '
+    puts "#{str}Expected Output :: #{output}, Result :: #{result}"
+  end
+
+  shortest_dist_arr.each do |graph_hsh|
+    graph = graph_hsh[:graph]
+    output = graph_hsh[:output]
+    same_weights = graph_hsh[:same_weights]
+    result = shortest_distance(node1: 0, node2: 5, graph:, same_weights:)
+
+    str = ' Expected Distance between nodes 0 and node 5 :: '
+    puts "#{str}#{output}, Result :: #{result}"
+  end
+  puts
+end
+
+def connectivity_check_arr
+  [
     {
       graph: Graph.connected_undirected_graph,
       output: true
@@ -67,19 +156,39 @@ def test_connectivity
       output: false
     }
   ]
+end
 
-  graph_arr.each do |graph_hsh|
-    graph = graph_hsh[:graph]
-    output = graph_hsh[:output]
-    result = connectivity_check(graph:)
+def shortest_path_data
+  adj_matrix_one = {
+    0 => [[1, 1], [2, 1]],
+    1 => [[0, 1], [3, 1], [6, 1]],
+    2 => [[0, 1], [3, 1]],
+    3 => [[1, 1], [2, 1], [4, 1]],
+    4 => [[3, 1], [5, 1]],
+    5 => [[4, 1]],
+    6 => [[1, 1], [5, 1]]
+  }
+  vertices_one = [0, 1, 2, 3, 4, 5, 6]
+  adj_matrix_two = {
+    0 => [[1, 1], [2, 4]],
+    1 => [[0, 1], [4, 5], [3, 1]],
+    2 => [[0, 4], [4, 1]],
+    3 => [[1, 1], [5, 8]],
+    4 => [[1, 5], [2, 1], [5, 1]],
+    5 => [[4, 1], [3, 8]]
+  }
+  vertices_two = [0, 1, 2, 3, 4, 5]
 
-    puts " Expected Output :: #{output}, Result :: #{result}"
-  end
-
-  str = ' Expected Distance between nodes 0 and node 2 :: 2'
-  graph = graph_arr[0][:graph]
-  result = shortest_distance(node1: 0, node2: 2, graph:)
-  puts "#{str}, Result :: #{result}"
+  [
+    {
+      adj_matrix: adj_matrix_one,
+      vertices: vertices_one
+    },
+    {
+      adj_matrix: adj_matrix_two,
+      vertices: vertices_two
+    }
+  ]
 end
 
 test_connectivity
