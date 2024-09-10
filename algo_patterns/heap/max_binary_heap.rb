@@ -68,6 +68,10 @@ class MaxBinaryHeap
     #
     def insert_key(k:, arr:, heap_size:)
       arr_updated = prepare_arr_for_heap(arr:)
+
+      return empty_size_one_insert(key: k, arr: arr_updated, heap_size:) if
+        [0, 1].include?(heap_size)
+
       max_heap_arr = build_max_heap(arr: arr_updated, n: heap_size)
 
       heap_size += 1
@@ -138,6 +142,12 @@ class MaxBinaryHeap
       end
 
       arr
+    end
+
+    def empty_size_one_insert(key:, arr:, heap_size:)
+      heap_size += 1
+      arr[heap_size] = key
+      arr[1..heap_size]
     end
 
     # Helper method to implement max_heapify
@@ -231,6 +241,17 @@ class MaxBinaryHeap
     end
   end
 end
+
+# arr = [1, 3, 5, 6]
+# str = 'Empty Heap but not Array, Inserting 50 element => '
+
+# print "#{str}Arr :: #{arr.inspect}, "
+# print "Heap :: #{MaxBinaryHeap.insert_key(k: 50, arr:, heap_size: 0)}\n"
+
+# arr = [50]
+# str = 'In arr [50], inserting 100 :: '
+# puts "#{str}, Heap :: #{MaxBinaryHeap.insert_key(k: 100, arr:, heap_size: 1)}"
+# puts
 
 # arr = [1, 300, -50, 100, -200, -250, 19, 57, 65, 500, -350, -550, -600, 1900, 2100]
 # puts "Sorted Array :: #{MaxBinaryHeap.heapsort(arr:, n: arr.length)}"
