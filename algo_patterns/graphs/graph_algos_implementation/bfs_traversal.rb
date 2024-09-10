@@ -64,8 +64,8 @@ def shortest_distance(node1:, node2:, graph:, same_weights:)
   distance[node1] = 0
 
   until queue.empty?
-		# Mark node as visited as soon as it is dequeued for BFS traversal
-		# in Graph
+    # Mark node as visited as soon as it is dequeued for BFS traversal
+    # in Graph
     node = queue.dequeue
     visited[node] = true
 
@@ -114,8 +114,8 @@ def connectivity_check(graph:)
 
   until queue.empty?
     vertex = queue.dequeue
-		# Mark node as visited as soon as it is dequeued for BFS traversal
-		# in Graph
+    # Mark node as visited as soon as it is dequeued for BFS traversal
+    # in Graph
     visited[vertex] = true
 
     graph.adj_matrix[vertex].each do |neighbor|
