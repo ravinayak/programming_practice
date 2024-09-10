@@ -1,12 +1,27 @@
 # frozen_string_literal: true
 
-require_relative '../../data_structures/queue'
 require_relative '../../heap/min_binary_heap'
 require_relative '../graph'
 
+# Why Skipping Inside the Adjacency List in Dijkstra’s Algorithm is Incorrect:
+
+# 1. The core idea of Dijkstra’s algorithm is to relax the edges. This means
+#    that every time you reach a node, you check if going through that node
+#    provides a shorter path to its neighbors. If you skip checking neighbors
+#    because they are marked as “visited” early on, you might miss opportunities
+#    to find a shorter path via the current node.
+# 2. Dijkstra’s algorithm guarantees the shortest path only when the node is
+#    dequeued (extracted from the heap). At this point, you know that the node
+#    has the minimum distance, but its neighbors may still have not been updated
+#    with their shortest distance. You need to update (relax) the neighbors even
+#    if they were previously visited.
+# 3. Why visited check at extraction works: The reason we mark nodes as visited
+#    at the point of extraction from the heap is because, once extracted, we know
+#    for sure that the shortest path to that node has been found. However, its
+#    neighbors still need to be checked for potential updates.
+
 # Djikstra's algorithm implementation
 def djikstras(graph:, source_node:, destination_node:)
-  Queue.new
   visited = {}
 
   distance = Hash.new { |h, k| h[k] = Float::INFINITY }
@@ -21,7 +36,52 @@ def djikstras(graph:, source_node:, destination_node:)
     # if this node has been processed, all the neighbors
     # of this node have been udpated for minimum distance
     # from the source node, hence we can skip it
+    # This is different from bfs_traversal where we skip
+    # iterating over a node if inside iteration over
+    # adjacency list of that node if its neighbor has 
+    # been visited
     next if visited[node]
+
+    # Mark this node as visited, it can be marked here
+    # or at the end of processing all its neighbors
+    # This will prevent redundant work, since a node
+    # can be inserted twice into min-heap with different
+    # values of distance
+    # A --1--- B --1--> C
+    #  \      /
+    #   5    3
+    #    \  /
+    #      D
+    # In the above graph,
+    # Step 1: distance[A] = 0, B and D will be put into
+    #         min-heap with values of 1 and 5
+    # Step 2: B will be extracted, and distances of its
+    #         neighbors - C (1), and D (3) will be updated
+    #         distance[D] = 3 + 1 = 4 < existing distance[D]
+    #         D will be put into min-heap with a value of
+    #         4
+    # Step 3: So min-heap will have 2 entries for D, one
+    #         with a value of 5, and the other with a value
+    #         of 4.
+    # Step 4: Min-Heap extraction guarantees that D will be
+    #         extracted with a value of 4 and its neighbors
+    #         will be processed with this value
+    # Step 5: But D will be extracted again with a value of
+    #         '5', here it is critical to use this check of
+    #          visited[node], since this node has already
+    #          been processed, it will simply add more time
+    #          to compute distance of neighbors which will
+    #          never get updated from their existing values
+    #   => This is because when D was extracted and its
+    #      neighbors were processed for distance computation
+    #      they were evaluated with a distance of 4, with
+    #      increased distance of 5, they will ONLY get
+    #      higher values of distance from SOURCE, and so
+    #      they will be NEVER BE UPDATED leading to a 
+    #      waste of cycle. This can be avoided if we skip
+    #      the node since it was visited and processed before
+    #
+    visited[node] = true
 
     graph.adj_matrix[node]&.each do |neighbor_weight|
       neighbor, weight = neighbor_weight
