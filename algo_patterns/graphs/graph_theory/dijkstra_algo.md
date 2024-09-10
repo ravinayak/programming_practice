@@ -50,7 +50,15 @@ Steps of Dijkstra’s Algorithm
 6. If this tentative distance is smaller than the previously known distance
    for the neighbor, update the neighbor’s distance and add it to the priority
    queue.
-7. Termination:
+7. If this tentative distance is NOT smaller than the previously known distance
+   for the neighbor, we do NOT Update the neighbor's distance, and we ALSO DO
+   NOT ADD IT to the PRIORITY Queue. Adding it again would only lead to
+   redundant work and make the algorithm less Efficient. Since the minimum
+   distance to this node has already been computed, the node has been
+   processed, and we can avoid pushing into min-heap
+   => Purpose of pushing a node to MinHeap is to compute the MINIMUM DISTANCE
+   from SOURCE to that NODE
+8. Termination:
    • The algorithm terminates when all nodes have been processed (i.e., visited
    or removed from the priority queue).
 
