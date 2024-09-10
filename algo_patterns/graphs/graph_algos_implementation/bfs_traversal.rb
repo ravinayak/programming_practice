@@ -20,8 +20,32 @@ require_relative '../graph'
 #    least weight. A path with more number of Edges could potentially
 #    have less weight. Hence "break" should not be used in the loop
 #    We must continue exploring all nodes until queue becomes empty
+# 3. We must mark a node as visited when the node is DEQUEUED and not
+#    when it is ENQUEUED. If we mark a node as visited, when we ENQUEUE
+#    any future attempts to visit that node through different paths will
+#    be ignored, even if the alternate path might provide useful
+#    information. This is important in certain algorithms where different
+#    paths need to be explored before determining the optimal route
+#    This will compute distance for the node with fewest edges, and if edge
+#    weights are assigned such that longer path has less weights, we
+#    shall end up computing longer distance from source to that node
+#      => Correct Approach: Marking Nodes as Visited on Dequeue
+#    Consider a graph like below:
+#       0 ---- 1
+#       |      | \
+#       |      |  \
+#       4 ---- 3 -- 2
+#       => In this graph, we
+#           Step 1: Dequeue node 0, visited[0] = true
+#           Step 2: Enqueue nodes 1 and 4
+#           Step 3: Dequeue node 1, visited[1] = true
+#           Step 4: Enqueue nodes 3 and 2
+#           Step 5: Dequeue node 4, visited[4] = true
+#           Step 6: Enqueue nodes 3 (node 0 is visited)
+#           Thus, node 3 gets enqueued more than once
 #
 # NOTE: BFS does not work for Undirected Graph with -ve Weight Edges
+#
 
 # explores paths in order of increasing distance from the source node.
 
@@ -32,13 +56,16 @@ require_relative '../graph'
 # 4 ---- 3 -- 2
 def shortest_distance(node1:, node2:, graph:, same_weights:)
   queue = Queue.new
-  queue.enqueue(data: node1)
   visited = {}
+
+  queue.enqueue(data: node1)
 
   distance = Hash.new { |h, k| h[k] = Float::INFINITY }
   distance[node1] = 0
 
   until queue.empty?
+		# Mark node as visited as soon as it is dequeued for BFS traversal
+		# in Graph
     node = queue.dequeue
     visited[node] = true
 
@@ -87,10 +114,14 @@ def connectivity_check(graph:)
 
   until queue.empty?
     vertex = queue.dequeue
+		# Mark node as visited as soon as it is dequeued for BFS traversal
+		# in Graph
     visited[vertex] = true
 
     graph.adj_matrix[vertex].each do |neighbor|
-      queue.enqueue(data: neighbor) unless visited[neighbor]
+      next if visited[neighbor]
+
+      queue.enqueue(data: neighbor)
     end
   end
 
@@ -114,7 +145,7 @@ def test_connectivity
   shortest_dist_arr = [
     {
       graph: graph[0],
-      output: 4,
+      output: 3,
       same_weights: true
     },
     {
