@@ -110,6 +110,14 @@ class UnionFind
     edges = AdjacencyMatrix.process_vertex_array(adj_matrix:, vertices:)
     uf = UnionFind.new(size: vertices.length)
 
+    # For each edge in the graph, we try to find roots of vertices which
+    # form the edge, if the roots are same, they belong to the same set
+    # and we have a found an edge between 2 vertices in a connected
+    # component of the graph, which clearly means there is a CYCLE
+    # Algorithm works by merging connected vertices in graph into a single
+    # set. Since the vertices are connected, they belong to the SAME SET,
+    # hence we perform UNION OPERATION on them
+    # Edge (u, v) => "u" is connected to "v"
     edges.each do |edge|
       u, v = edge
       return true if uf.find(x: u) == uf.find(x: v)
