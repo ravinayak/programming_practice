@@ -24,6 +24,14 @@ require_relative 'union_find'
 
 # MST ensures that for V vertices, there are V-1 edges
 
+# Kruskals algorithm can find MST for undirected graphs even
+# if they have negative weights. It cannot handle directed
+# graphs and this is due to the nature of Spanning Trees
+
+# The concept of a spanning tree itself applies only to undirected
+# graphs because a spanning tree requires the graph to be connected,
+# and directed graphs don’t necessarily have the same connectivity.
+
 # Why V-1 Edges?
 # •  Initially, each vertex is in its own set, so we have V sets
 #   (one per vertex).
