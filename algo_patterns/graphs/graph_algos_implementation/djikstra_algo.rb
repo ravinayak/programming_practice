@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../heap/min_binary_heap'
+require_relative '../../priority_queue/priority_queue_min_heap'
 require_relative '../graph'
 
 # Why Skipping Inside the Adjacency List in Dijkstra’s Algorithm is Incorrect:
@@ -21,24 +21,30 @@ require_relative '../graph'
 #    neighbors still need to be checked for potential updates.
 
 # Djikstra's algorithm implementation
-def djikstras(graph:, source_node:, destination_node:)
+def djikstras(graph:, source_node:, destination_node: nil)
   visited = {}
 
   distance = Hash.new { |h, k| h[k] = Float::INFINITY }
   distance[source_node] = 0
 
-  min_heap = MinBinaryHeap.build_min_heap(arr: [], heap_size: 0)
-  min_heap.insert_key(key: source_node)
+  pq_min_heap = PriorityQueueMinHeap.new(arr: [], heap_size: 0)
+  pq_min_heap.insert_object(object: { element: source_node, key: 0 })
 
-  until min_heap.empty?
+  until pq_min_heap.empty?
     # Extract minimum element from min-heap
-    node = min_heap.extract_min
+    min_element = pq_min_heap.extract_min
+    node = min_element[:element]
+
+    # Stop if we have reached the destination node
+    # return [distance[destination_node], distance] if node == destination_node
+
+
     # if this node has been processed, all the neighbors
     # of this node have been udpated for minimum distance
     # from the source node, hence we can skip it
     # This is different from bfs_traversal where we skip
     # iterating over a node if inside iteration over
-    # adjacency list of that node if its neighbor has 
+    # adjacency list of that node if its neighbor has
     # been visited
     next if visited[node]
 
@@ -77,14 +83,13 @@ def djikstras(graph:, source_node:, destination_node:)
     #      they were evaluated with a distance of 4, with
     #      increased distance of 5, they will ONLY get
     #      higher values of distance from SOURCE, and so
-    #      they will be NEVER BE UPDATED leading to a 
+    #      they will be NEVER BE UPDATED leading to a
     #      waste of cycle. This can be avoided if we skip
     #      the node since it was visited and processed before
     #
     visited[node] = true
 
-    graph.adj_matrix[node]&.each do |neighbor_weight|
-      neighbor, weight = neighbor_weight
+    graph.adj_matrix[node]&.each do |neighbor, weight|
       # If current distance of neighbor is less than the
       # distance of current node from source + weight of
       # the edge from current node to neighbor, then the
@@ -95,12 +100,13 @@ def djikstras(graph:, source_node:, destination_node:)
       # min-heap
       if distance[neighbor] > distance[node] + weight
         distance[neighbor] = distance[node] + weight
-        min_heap.insert_key(key: neighbor)
+        obj = { element: neighbor, key: distance[neighbor] }
+        pq_min_heap.insert_object(object: obj)
       end
     end
   end
 
-  distance[destination_node]
+  [distance[destination_node], distance]
 end
 
 def shortest_path_data
@@ -165,7 +171,7 @@ def test
   shortest_dist_arr.each do |graph_hsh|
     graph = graph_hsh[:graph]
     output = graph_hsh[:output]
-    result = djikstras(graph:, source_node: 0, destination_node: 5)
+    result, _distance = djikstras(graph:, source_node: 0, destination_node: 5)
 
     str = ' Expected Distance between nodes 0 and node 5 :: '
     puts "#{str}#{output}, Result :: #{result}"

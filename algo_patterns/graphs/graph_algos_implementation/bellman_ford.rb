@@ -63,6 +63,10 @@ def relax_edges(graph:, distance:)
     # represents the edges from vertex "u" to other
     # vertices with their weights
     graph.adj_matrix.each_pair do |u, neighbor_weight|
+      # Only relax edges for vertices that have been reached
+      # (distance is not infinity)
+      next if distance[u] == Float::INFINITY
+
       # v, weight is the tuple which is split into
       # vertex and weight
       neighbor_weight.each do |v, weight|
@@ -84,6 +88,9 @@ end
 # @param [Integer] source
 def negative_cycle_exists?(graph:, distance:)
   graph.adj_matrix.each_pair do |u, neighbor_weight|
+    # Skip unreachable vertices
+    next if distance[u] == Float::INFINITY
+
     # v, weight is the tuple which is split into
     # vertex and weight
     neighbor_weight.each do |v, weight|
@@ -164,4 +171,4 @@ def test
   end
 end
 
-test
+# test
