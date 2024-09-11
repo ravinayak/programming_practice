@@ -96,7 +96,9 @@ def kruskals_algo(graph:)
     uf.union(x: u, y: v)
   end
 
-  mst
+  total_cost = mst.reduce(0) { |sum, edge_weight| sum + edge_weight[2] }
+
+  [mst, total_cost]
 end
 
 def graph
@@ -114,8 +116,9 @@ end
 
 def test
   edges, vertices, g = graph
+  mst, total_cost = kruskals_algo(graph: g)
   puts " Input Edges :: #{edges.inspect}, Vertices :: #{vertices.inspect}"
-  puts " MST :: #{kruskals_algo(graph: g)}"
+  puts " MST :: #{mst}, Total Cost :: #{total_cost}"
 end
 
 test
