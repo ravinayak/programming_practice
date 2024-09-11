@@ -46,6 +46,24 @@ require_relative '../graph'
 # not naturally handle the complexity of directed edges and their
 # order.
 
+# Time Complexity
+
+# • Find: With path compression, the time complexity of Find is
+# nearly constant, O(α(n)), where α is the inverse Ackermann function,
+# which grows very slowly and is practically constant for all real-world
+# inputs.
+# • Union: With union by rank or size, the union operation also
+# takes O(α(n)).
+
+# Thus, both Find and Union are nearly constant in practice, and the overall
+# time complexity for m operations on n elements is O(m \* α(n)).
+
+# In practice, the time complexity is almost linear, meaning the time it takes
+# to perform m operations on n elements is approximately O(m), because the α(n)
+# term is so small that it behaves like a constant in real-world cases
+
+# "m" operations of Union Find on "n" elements => O(m) time => Linear Time
+
 # Class to implement UnionFind data structure
 # rubocop:disable Naming/VariableName
 class UnionFind
@@ -167,4 +185,4 @@ def test
   puts "Cycle Should Exist :: #{cycle_check}"
 end
 
-test
+# test
