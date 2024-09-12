@@ -14,13 +14,13 @@ require_relative '../../priority_queue/priority_queue_min_heap'
 # and uses this estimate to select the best node possible
 # which has shortest path in the fastest time
 #  => Heuristic function is generally provided by domain
-#       experts, and is domain specific
+#  experts, and is domain specific
 # a. g(n): Cost of path from start node to current
-#           node "n". This is accurate
+#    node "n". This is accurate
 # b. h(n): Heuristic estimate of path from start node to
-#           node "n". This is an estimate
+#    node "n". This is an estimate
 # c. f(n): Total cost of path from start node to current
-#           node "n"
+#    node "n"
 #  => g(n) provides accuracy to algorithm
 #  => h(n) provides estimation to select best fit fastest
 
