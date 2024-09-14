@@ -36,7 +36,8 @@ class Spreadsheet
   end
 
   def col_cell_location(cell_char:)
-    raise 'Invalid Colum Location, Must be between A and Z' if cell_char > 'Z' || cell_char < 'A'
+    raise 'Invalid Colum Location, Must be between A and Z' if
+     cell_char > 'Z' || cell_char < 'A'
 
     cell_char.ord - 'A'.ord
   end
