@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Combination Sum II - Elements of array sum to target - Elements can be reused
+# Combination Sum II - Elements of array sum to target - Elements CANNOT be reused
 # only once
 
 # @param [Array] candidates_arr
@@ -60,11 +60,20 @@ def backtrack_comb_sum_two(candidates:, results:, target:, start_index:, combina
     # when it returns from this recursion, start_index = 2, "2" is popped off and we move to the next
     # index in the array -> 3
     # Here we encounter same element '2', Any combinations which will be tried at recursion step 3, will
-    # be same as recursions tried previously. This will lead to duplicates and also wasted recursion calls
+    # be same as recursions tried previously. 
+    # This is because combinations bakctracking algorithm will use "2" at start index "2", and combine
+    # with every other element in the array
+    #   1. Combinations WITH "2" at index "3" which will be like [2, 2, ....]
+    #   2. Combinations WITHOUT "2" at index "3", which will be like [2, ....]
+    # Step 2 represents all combinations which can be formed by using "2" at index "3", and hence will
+    # only give us duplicates, wasting time, recursive calls + Answer asks not to include duplicates
+    # which means we would have to do uniq which will require another O(n log n) to sort and find/remove
+    # duplicates
+    # This will lead to duplicates and also wasted recursion calls
     # index => 3, start_index => 2, satisfies the condition and next element in candidates array is same
     # as previous element, which means all possible combinations have been tried in previous iteration. So
     # we can safely skip it
-    # Replcaing index > start_index by index - 1 > 0 will not work because it will skip possible
+    # Replacing index > start_index by index - 1 > 0 will not work because it will skip possible
     # combinations which could lead to solution
     # index > start_index ties the comparison to current level of recusion ensuring that only in current
     # level of recusion, elements are skipped if they result in duplicate combinations and repeat recursions

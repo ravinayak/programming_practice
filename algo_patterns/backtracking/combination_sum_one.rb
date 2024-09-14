@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# Elements CAN be REUSED
 
 # Time Complexity:
 #   1. The worst-case time complexity can be approximated as O(n^(target/min)), where
@@ -41,13 +42,20 @@ def backtrack_comb_sum(candidates:, combinations:, start_index:, results:, targe
   if target.zero?
     # This implies that combinations has elements which sum up to target
     #
-    # If you use this, results will contain references to the same combinations array
+    # If you use below code, 
+    #   => results << combinations (Shallow copy)
+    # results will contain references to the same combinations array
     # that's being modified throughout the backtracking process. By the end of the algorithm,
-    # all entries in results would point to the same (empty) array.
-
-    # This creates a shallow copy of the combinations array at the moment it's added to results.
-    # This way, each entry in results is a separate array, preserving the state of combinations
-    # at that point in the backtracking process.
+    # all entries in results would point to the same (empty) array. In Ruby, objects are 
+    # copied/inserted into arrays or hashes through reference, which means any changes to 
+    # the original object will be reflected in the array which contains that object. To get
+    # independent copies, we have to do a deep copy
+    #   Ex: if arr is 1D array => arr.dup
+    #   Ex: if arr is 2D array => arr.map(&:dup) => arr.map { |one_d_array| one_d_array.dup }
+    #     => Map over each element of the array and create a copy of it
+    #   Ex: if arr is 3D array => 
+    #     => deep_copy = arr.map { |two_d_array| two_d_array.map { |one_d_array| one_d_array.dup } }
+    #     => Map over each element of each element of array and create a copy of it
 
     # In short, .dup is required to create independent copies of the combinations array, ensuring
     # that results contains distinct combinations rather than multiple references to the same,
