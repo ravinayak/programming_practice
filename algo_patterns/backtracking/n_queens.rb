@@ -27,6 +27,23 @@
 # because it depends on the number of valid partial solutions that are explored before backtracking,
 # but O(n!) serves as the upper bound
 
+# Reasoning for  O(n!)  Time Complexity:
+
+# 1. Choosing a Column for Each Queen:
+#   • In the first row, there are n possible columns where we can place the queen.
+#   • In the second row, after placing a queen in the first row, there are fewer valid columns
+#     to place the next queen. Typically, we have at most n-1 columns to choose from
+#     (because of the column and diagonal constraints).
+#   • In the third row, after placing queens in the first two rows, there are at most n-2 valid
+#     columns.
+#   • This pattern continues until the last row, where we have only one valid column left.
+# 2. Combinatorial Nature:
+#   • At each row, the number of valid columns decreases because we are not only eliminating the
+#     columns where the queens from previous rows are placed but also accounting for the diagonals
+#     where no queen can be placed.
+#   • In the worst-case scenario, the number of valid column choices follows a decreasing pattern
+#     similar to the factorial function:
+
 # N Queens problem solutionimplementation
 # Board is initialized as an array of arrays where each index of the outer array
 # represents rows, and each index of the inner arrays represents column
