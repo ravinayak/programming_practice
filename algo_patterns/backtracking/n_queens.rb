@@ -1,3 +1,22 @@
+# In the N Queens Problem, two queens can attack each other under the following conditions:
+
+#   1.  Same Row: If two queens are placed on the same row, they can attack each other.
+#   In chess, queens can move horizontally along the row. Hence, no two queens can be 
+#   placed on the same row.
+#   2.  Same Column: If two queens are placed in the same column, they can attack each
+#   other because queens can move vertically along the column. Therefore, no two queens
+#   can be placed in the same column.
+#   3.  Diagonally: Two queens can attack each other if they are placed on the same
+#   diagonal. Queens can move diagonally in two directions:
+#     •  Top-left to bottom-right diagonal (also known as the main diagonal): This
+#     happens when the absolute difference between their row indices is equal to the
+#     absolute difference between their column indices. In mathematical terms, if two
+#     queens are placed at positions (row1, col1) and (row2, col2), they are on the same
+#     diagonal if:
+#       => |row1 - row2| = |col1 - col2|
+#     •  Top-right to bottom-left diagonal (also known as the anti-diagonal): This is
+#     handled similarly by checking the absolute difference in row and column indices.
+
 # frozen_string_literal: true
 
 # Time Complexity : O(n!)
