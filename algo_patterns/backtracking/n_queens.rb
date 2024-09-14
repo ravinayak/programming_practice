@@ -1,7 +1,7 @@
 # In the N Queens Problem, two queens can attack each other under the following conditions:
 
 #   1.  Same Row: If two queens are placed on the same row, they can attack each other.
-#   In chess, queens can move horizontally along the row. Hence, no two queens can be 
+#   In chess, queens can move horizontally along the row. Hence, no two queens can be
 #   placed on the same row.
 #   2.  Same Column: If two queens are placed in the same column, they can attack each
 #   other because queens can move vertically along the column. Therefore, no two queens
@@ -59,8 +59,10 @@ def safe_arrangement_util(board:, row:, col:, n:)
   # to find the appropriate row for which no queen can attack current queen. Since queens can
   # attack diagonally, and we increment from left to right, there are only two possibilities
   # for diagonal attack
-  #  - Left Upper diagonal (queens can be placed in any row on cols to left of current col)
-  #  - Left Lower diagonal (queens can be placed in any row on cols to left of current col)
+  #  - Left Upper diagonal
+  #     => queens can be placed in any row < CURRENT ROW on cols to left of current col
+  #  - Left Lower diagonal
+  #     => queens can be placed in any row > CURRENT ROW on cols to left of current col
   #  - Right diagonal is out of question since we only move from left to right meaning there
   #    can be no queens to the right of current col, we backtrack to the left
 
@@ -85,17 +87,24 @@ def safe_arrangement_util(board:, row:, col:, n:)
   #  - 2. Increment row by 1
   #  - 3. Decrement col by 1
   #  - 4. Increment should not make row > n - 1, decrement must not make col < 0
-  #  - 3. Maximum iterations of decrement will be min(n - (row + 1), col)
-  #        a. n - (row + 1) => Ensures that row can only increase till n - 1 if this is
-  #           the minimum. Say n = 7, row = 3, col = 4.
-  #             => [7 - (3 + 1), 4].min = [3, 4].min = 3. Only 3 iterations are allowed
+  #  - 3. Maximum iterations of decrement will be min((n - 1) - row, col)
+  #        a. (n - 1) - row
+  #             => Row values can only increase till (n-1), which is the maximum possible
+  #                value for any Row, i.e Units of Increment possible for row = (n - 1) - row
+  #             => This is same as finding the number of steps a given number must take to
+  #                reach another number,
+  #                Say 3 wants to find number of steps it must take to reach 7
+  #                (7 - 3) => 4 steps => 4, 5, 6, 7 => 4 steps
+  #             => Ensures that row can only increase till n - 1 if this is the minimum.
+  #                Say n = 7, row = 3, col = 4.
+  #             => [(7 - 1) - 3, 4].min = [3, 4].min = 3. Only 3 iterations are allowed
   #                which means row can only increase till 6
   #        b. col => This is because if this is minimum and is selected, "col" number of
   #               iterations will be allowed where col at the end will become 0 which is correct
   #  - 4. Start of iteration will be 1, if we use 0, it will consider placement as an attack
   #       which is incorrect and always fail
   #
-  (1..[(n - (row + 1)), col].min).each do |i|
+  (1..[((n - row) - 1), col].min).each do |i|
     return false if board[row + i][col - i] == 1
   end
   # We do not have to check if a queen can be attacked by another queen in the same column because
