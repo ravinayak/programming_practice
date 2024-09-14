@@ -54,8 +54,8 @@ def safe_arrangement_util(board:, row:, col:, n:)
   # of the current column for specified row. Since row is constant and col value will increase
   # from left to right until "col" (current col) board[row][i] will be used
   #
-  (0...col).each do |i|
-    return false if board[row][i] == 1
+  (1..col).each do |i|
+    return false if board[row][col - i] == 1
   end
 
   # Queens can be placed in a col in any row since we iterate over all rows for a given col
