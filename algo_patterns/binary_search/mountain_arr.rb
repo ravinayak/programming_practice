@@ -69,6 +69,11 @@
 # @return [Integer] index
 #
 def find_peak_in_mountain_arr(arr)
+  # Base cases: if arr is empty of arr has a length of 1
+  return nil if arr.empty?
+
+  return arr[0] if arr.length == 1
+
   low = 0
   high = arr.length - 1
 
@@ -77,6 +82,10 @@ def find_peak_in_mountain_arr(arr)
   # the element with its neighbors. Both left and right neighbors of peak
   # element will be less than the peak element
   #
+  # In this code, both low and high converge to the peak element, which is
+  # found at mid, in this case low = high. We must not use
+  # low <= high, or we shall end up in Inifinite Recursion, as low and high
+  # will converge and become equal at the peak element
   while low < high
     mid = (low + high) / 2
 
@@ -121,18 +130,38 @@ end
 # @param [Array<Integer>] arr
 # @return [Integer|nil]
 def find_peak_in_mountain_arr_duplicates(arr)
+  # Base cases: if arr is empty of arr has a length of 1
+  return nil if arr.empty?
+
+  return arr[0] if arr.length == 1
+
   low = 0
   high = arr.length - 1
 
+  # When low = high, we reach the index of peak element in the array
+  # A simple test to validate that this is the peak element is to compare
+  # the element with its neighbors. Both left and right neighbors of peak
+  # element will be less than the peak element
+  #
+  # In this code, both low and high converge to the peak element, which is
+  # found at mid, in this case low = high. We must not use
+  # low <= high, or we shall end up in Inifinite Recursion, as low and high
+  # will converge and become equal at the peak element
   while low < high
     mid = low + (high - low) / 2
 
-    if mid + 1 < arr.length && arr[mid] < arr[mid + 1]
-      # Ascending part, move right
-      low = mid + 1
-    elsif mid.positive? && arr[mid - 1] > arr[mid]
-      # Descending part, move left
-      high = mid - 1
+    # We check if mid + 1 is accessible, and we compare elements at mid with
+    # mid + 1 to find if they are not duplicates.
+    # The 1st condition to check is to ensure that mid, mid+1 which is typically
+    # used to decide ascending/descending part of array are not duplicates
+    # If they are not duplicates we can use the normal logic for finding peak
+    # element as non-duplicates
+    if mid + 1 <= arr.length - 1 && arr[mid] != arr[mid + 1]
+      if arr[mid] < arr[mid + 1]
+        low = mid + 1
+      else
+        high = mid
+      end
     else
       # Potential peak or plateau
       # Check if it's a true peak or just a plateau in the ascending part
@@ -188,7 +217,9 @@ arr_one = [
   [0, 2, 2, 4, 4, 5, 7, 7, 8, 8, 9, 9, 5, 3, 2, 0],
   [1, 4, 10, 13, 14, 24, 69, 69, 79, 70, 65, 55, 45, 35, 25, 15, 5],
   [24, 69, 100, 99, 79, 78, 67, 26, 19],
-  [1, 2, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7, 9, 10, 25, 25, 25, 15, 10, 10, 8, 8, 5, 3, 2]
+  [1, 2, 2, 2, 3, 4, 4, 5, 5, 5, 6, 7, 9, 10, 25, 25, 25, 15, 10, 10, 8, 8, 5, 3, 2],
+  [45, 23, 21, -5],
+  [0, 20, 25, 45]
 ]
 
 arr_one.each do |input_arr|
