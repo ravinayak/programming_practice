@@ -73,14 +73,26 @@ class BinaryTree
     curr = root
     st = Stack.new
     puts '********** Non Recursive In Order Traversal ***********************************'
+    # It is extremely important to check both stack not being empty and current not being
+    # nil. This is because there will be many times in this traversal when stack becomes
+    # empty but there is still a current node which needs to be processed. Consider the
+    # use case when entire subtree of root along with root has been traversed. At this
+    # point the stack is empty because the last node in it - root has been popped, and
+    # current = current.right, which means current is set to the right child of root
+    # and the entire right subtree has NOT BEEN PROCESSED. If we use !stack.empty? and not
+    # curr, entire right subtree will not be processed
     while curr || !st.empty?
+      # Before pushing onto stack, we want to validate that current is NOT NIL
+      # Entire left subtree of current is pushed onto Stack, alongwith the current node
       while curr
         st.push(data: curr)
         curr = curr.left
       end
-
+      # We have reache a node which does not have any left, or its entire left subtree has
+      # been processed, hence pop it and print its data
       curr = st.pop
       print " #{curr.data} "
+      # Since entire left subtree has been processed, we move to the right subtree of current
       curr = curr.right
     end
     puts "\n******************************************************************************"
