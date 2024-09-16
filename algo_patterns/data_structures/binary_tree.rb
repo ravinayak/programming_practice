@@ -14,7 +14,7 @@ class BinaryTree
   attr_accessor :root
 
   def initialize(data: nil)
-    @root = BinaryTreeNode.new(data: data) unless data.nil?
+    @root = BinaryTreeNode.new(data:) unless data.nil?
   end
 
   # Inserts data in BinaryTree
@@ -22,9 +22,9 @@ class BinaryTree
   # @return [BinaryTreeNode] root
   #
   def insert(data:)
-    return self.root = BinaryTreeNode.new(data: data) if root.nil?
+    return self.root = BinaryTreeNode.new(data:) if root.nil?
 
-    recursive_insert(node: root, data: data)
+    recursive_insert(node: root, data:)
   end
 
   # Search data in BinaryTree
@@ -34,7 +34,7 @@ class BinaryTree
   def search(data:)
     return { node: nil, result: false } if root.nil?
 
-    recursive_search(node: root, data: data)
+    recursive_search(node: root, data:)
   end
 
   # Pre-order Traversal
@@ -135,7 +135,7 @@ class BinaryTree
     # Stack st1 is used to simply determine the correct order in which elements
     # should be pushed onto Stack st2 for printing. Hence once it is empty, we
     # can break from it
-    while !st1.empty?
+    until st1.empty?
       current = st1.pop
       # Stack 2 maintains the correct order in which data of nodes should be printed
       # Clearly, it should contain node, node.left, node.right in this order:
@@ -168,7 +168,7 @@ class BinaryTree
     # Stack st2 is used for printing all the elements by popping them off the stack
     # It contains elements in the correct order, so we just have to pop them and
     # print them
-    while !st2.empty?
+    until st2.empty?
       current = st2.pop
       print current.data
     end
@@ -236,11 +236,11 @@ class BinaryTree
   def recursive_search(node:, data:)
     return { node: nil, result: false } if node.nil?
 
-    return { node: node, result: true } if node.data == data
+    return { node:, result: true } if node.data == data
 
-    return recursive_search(node: node.left, data: data) if node.data > data
+    return recursive_search(node: node.left, data:) if node.data > data
 
-    recursive_search(node: node.right, data: data)
+    recursive_search(node: node.right, data:)
   end
 
   # Recursively inserts data in BinaryTree following left/right depending upon if
@@ -250,12 +250,12 @@ class BinaryTree
   # @return [BinaryTreeNode]
   #
   def recursive_insert(node:, data:)
-    return BinaryTreeNode.new(data: data) if node.nil?
+    return BinaryTreeNode.new(data:) if node.nil?
 
     if node.data >= data
-      node.left = recursive_insert(node: node.left, data: data)
+      node.left = recursive_insert(node: node.left, data:)
     else
-      node.right = recursive_insert(node: node.right, data: data)
+      node.right = recursive_insert(node: node.right, data:)
     end
 
     node
