@@ -127,6 +127,53 @@ class BinaryTree
     puts "\n******************************************************************************"
   end
 
+  def non_rec_only_code_post_order
+    st1 = Stack.new
+    st2 = Stack.new
+    current = root
+    st1.push(data: current)
+    # Stack st1 is used to simply determine the correct order in which elements
+    # should be pushed onto Stack st2 for printing. Hence once it is empty, we
+    # can break from it
+    while !st1.empty?
+      current = st1.pop
+      # Stack 2 maintains the correct order in which data of nodes should be printed
+      # Clearly, it should contain node, node.left, node.right in this order:
+      # a. node.left
+      # b. node.right
+      # c. node
+      # Nodes are popped from Stack st1, and pushed into Stack st2, so right node of
+      # current must remain on top of st1, so that it is processed 1st, and pushed
+      # onto Stack st2. When the entire subtree of current has been processed and
+      # pushed onto stack st2, we will process left subtree of current and push onto
+      # stack st2
+      # This is reverse of what we do in Pre-Order traversal in which left must remain
+      # on top of stack, so we push node.right and then node.left
+      # Pre-Order: Order of pushing onto Stack
+      # a. node.right
+      # b. node.left
+      # Post-Order: Order of pushing onto Stack
+      # a. node.left
+      # b. node.right
+      # Pre-order is easier to remember, so remember that Post is reverse of Pre for
+      # pushing and Post requires 2 stacks
+      # In Pre-Order as well, we pop from stack, in Post we push this onto another Stack
+      # whereas in Pre-Order, we print the nodes data, and push its right, left children
+      # in that order
+      st2.push(data: current)
+      st1.push(data: current.left) if curr.left
+      st2.push(data: current.right) if curr.right
+    end
+
+    # Stack st2 is used for printing all the elements by popping them off the stack
+    # It contains elements in the correct order, so we just have to pop them and
+    # print them
+    while !st2.empty?
+      current = st2.pop
+      print current.data
+    end
+  end
+
   private
 
   # Push elements onto stack 2 and stack 1
