@@ -526,4 +526,69 @@ ON em1.manager_id = m.employee_id
 
 # Find and list overlapping bookings for the same room, which is crucial for managing conflicts and optimizing room usage
 
+bookings => booking_id, room_id, start_date, end_date
+This is a classic case of self_join, for Overlaps we have the condition
+a. a1.start_time <= a2.end_time
+b. a1.end_time >= a2.start_time
+To avoid duplicate pairing with itself, or duplicate pairs of the form (a, b), (b, a)
+a. a1.booking_id < a2.booking_id
+
+SELECT
+b1.room_id as room_id,
+b1.booking_id as booking_one_id,
+b1.start_date as booking_one_start_date,
+b1.end_date as booking_one_end_date,
+b2.booking_id as booking_two_id,
+b2.start_date as booking_two_start_date,
+b2.end_date as booking_two_end_date
+FROM
+bookings b1
+INNER JOIN
+bookings b2
+ON
+b1.room_id = b2.room_id
+WHERE
+b1.start_date <= b2.end_date
+AND
+b1.end_date >= b2.start_date
+AND
+b1.booking_id < b2.booking_id
+ORDER BY
+b1.booking_id
+
 # Identify customers who have the same address, useful for merging duplicate records or family/group targeting
+
+Same address => Self Join
+
+SELECT
+c1.customer_id as customer_one_id,
+c2.customer_id as customer_two_id,
+c1.name as customer_one_name,
+c2.name as customer_two_name,
+c1.address as customer_address
+FROM
+customers c1
+INNER JOIN
+customers c2
+ON
+c1.address = c2.address
+WHERE
+c1.customer_id < c2.customer_id
+ORDER BY
+c1.customer_id
+
+# Identify employees with the same job title
+
+# Find Pairs of students with the same birth date
+
+# Find products with similar price ranges
+
+# List orders with overlapping order dates for the same customer
+
+# Identify employees with the same manager
+
+# Find flights departing from the same airport at overlapping times
+
+# Find pairs of courses with overlapping schedules
+
+# Find pairs of employees in the same role for different projects

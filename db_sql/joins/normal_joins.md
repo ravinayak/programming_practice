@@ -29,7 +29,9 @@ INNER JOIN courses
 ON courses.course_id = ers.course_id
 INNER JOIN advisors
 ON advisors.advisor_id = students.advisor_id
+
 select course_id from enrollments where enrollments.student_id=1
+
 select \* from courses where course_id = 201
 
 select movies.release_year, movies.movie_title, actors.actor_name, directors.director_name
@@ -49,10 +51,6 @@ INNER JOIN supplierorders
 on suppliers.supplier_id = supplierorders.supplier_id
 INNER JOIN orders
 on supplierorders.order_id = orders.order_id
-
-select column_name, data_type, is_nullable, column_default
-from information_schema.columns
-where table_name = 'populations'
 
 select country_name, city_name, population
 from countries
@@ -164,7 +162,6 @@ or2.end_date AS order_two_end_date
 FROM orders_overlap or1
 INNER JOIN orders_overlap or2
 ON or1.customer_id = or2.customer_id -- Ensure both orders are from the same customer
-AND or1.order_id != or2.order_id -- Avoid comparing the same order with itself
 AND or1.order_date <= or2.end_date -- Order 1 starts before or when Order 2 ends
 AND or1.end_date >= or2.order_date -- Order 1 ends after or when Order 2 starts
 WHERE or1.order_id < or2.order_id -- Avoid duplicate pairs (e.g., (1, 2) and (2, 1))
@@ -193,7 +190,6 @@ INNER JOIN flights f2
 on f1.departure_airport = f2.departure_airport
 where f1.departure_time <= f2.arrival_time
 AND f1.arrival_time >= f2.departure_time
-AND f1.flight_id != f2.flight_id
 AND f1.flight_id < f2.flight_id
 order by f1.flight_id
 
