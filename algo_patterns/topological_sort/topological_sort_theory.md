@@ -20,4 +20,8 @@ Topological sort can only be implemented for DAG:
    an order, we must have a node which should be the last node. In a cycle, there will not be any
    last node, and hence no order can be established
 
+In Topological sort every node which appears after a set of nodes requires that A subset of nodes before it must
+be completed before the allocated node can be completed. This subset may include all the nodes before it or only
+a subset of nodes before it depending upon the dependencies outlined in DAG. The subset of nodes may also be empty
+
 https://www.youtube.com/watch?v=i9Uo7B1WiEE&list=PL7g1jYj15RUOjoeZAJsWjwV8XUo9r0hwc&index=17
