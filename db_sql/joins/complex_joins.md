@@ -579,16 +579,253 @@ c1.customer_id
 
 # Identify employees with the same job title
 
+employees => name, department_id, salary
+employees_job => employee_id, name, job_title
+
+Simple Query: Generates all employees with same job title with employee_id, name, job_title for
+pairs of employees that share the same job title
+
+SELECT
+em1.name as employee_one_name,
+em2.name as employee_two_name,
+em1.employee_id as employee_one_id,
+em2.employee_id as employee_two_id,
+em1.job_title as employee_job_title
+FROM
+employees_job em1
+INNER JOIN
+employees_job em2
+ON
+em1.job_title = em2.job_title
+WHERE
+em1.employee_id < em2.employee_id
+ORDER BY
+em1.employee_id
+
+NOTE: Employees with the same job title, along with department_id and salary of employees.
+This is complex as we have to perform 2 additional LEFT OUTER JOINS on employees table
+to fetch department_id, salary for employees of em1 and em2 table separately
+LEFT OUTER JOIN is CRUCIAL because we want to keep the rows from previous INNER JOIN intact
+without losing them in case "name" of any of the employee_one, employee_two does not match
+with the employees table "name"
+
+SELECT
+em1.employee_id as employee_one_id,
+em2.employee_id as employee_two_id,
+em1.name as employee_one_name,
+em2.name as employee_two_name,
+em1.job_title as employee_job_title,
+e1.department_id as employee_one_department_id,
+e1.salary as employee_one_salary,
+e2.department_id as employee_two_department_id,
+e2.salary as employee_two_salary
+FROM
+employees_job em1
+INNER JOIN
+employees_job em2
+ON
+em1.job_title = em2.job_title
+LEFT OUTER JOIN
+employees e1
+ON
+e1.name = em1.name
+LEFT OUTER JOIN
+employees e2
+ON
+e2.name = em2.name
+WHERE
+em1.employee_id < em2.employee_id
+ORDER BY
+em1.employee_id
+
 # Find Pairs of students with the same birth date
+
+students_birth => student_id, birth_date, name
+
+SELECT
+sb1.student_id as student_one_id,
+sb2.student_id as student_two_id,
+sb1.name as student_one_name,
+sb2.name as student_two_name,
+sb1.birth_date as student_birth_date
+FROM
+students_birth sb1
+INNER JOIN
+students_birth sb2
+ON
+sb1.birth_date = sb2.birth_date
+WHERE
+sb1.student_id < sb2.student_id
+ORDER BY
+sb1.student_id
 
 # Find products with similar price ranges
 
+SELECT
+pp1.product_id as product_one_id,
+pp2.product_id as product_two_id,
+pp1.product_name as product_one_name,
+pp2.product_name as product_two_name,
+pp1.price as product_price,
+p1.category_id as product_one_category_id,
+p2.category_id as product_two_category_id,
+p1.manufacturer_id as product_one_manufacturer_id,
+p2.manufacturer_id as product_two_manufacturer_id
+FROM
+products_price pp1
+INNER JOIN
+products_price pp2
+ON
+pp1.price = pp2.price
+LEFT JOIN
+products p1
+ON
+pp1.product_id = p1.product_id
+LEFT JOIN
+products p2
+ON
+pp2.product_id = p2.product_id
+WHERE
+pp1.product_id < pp2.product_id
+ORDER BY
+pp1.product_id
+
 # List orders with overlapping order dates for the same customer
+
+SELECT
+oo1.order_id as order_one_id,
+oo2.order_id as order_two_id,
+oo1.customer_id as order_customer_id,
+oo1.order_date as order_one_order_date,
+oo2.order_date as order_two_order_date,
+oo1.end_date as order_one_end_date,
+oo2.end_date as order_two_end_date
+FROM
+orders_overlap oo1
+INNER JOIN
+orders_overlap oo2
+ON
+oo1.customer_id = oo2.customer_id
+WHERE
+oo1.order_id < oo2.order_id
+AND
+oo1.order_date <= oo2.end_date
+AND
+oo1.end_date >= oo2.order_date
+ORDER BY
+oo1.order_id
 
 # Identify employees with the same manager
 
+employees_manager => employee_id, manager_id, name
+em1.employee_id != em1.manager_id =>
+=> This is to avoid joining employees with their managers because
+manager_id of manager is same as employee_id
+=> We only want to join non-manager employees together if they
+have the same manager, we dont want to join and employee and a manger
+if they have same manager_id. IN current table a manager has the
+employee_id value in manager_id field
+
+SELECT
+em1.employee_id as employee_one_id,
+em2.employee_id as employee_two_id,
+em1.manager_id as employee_manager,
+em1.name as employee_one_name,
+em2.name as employee_two_name,
+m1.name as manager_name
+FROM
+employees_manager em1
+INNER JOIN
+employees_manager em2
+ON
+em1.manager_id = em2.manager_id
+INNER JOIN
+employees_manager m1
+ON
+m1.employee_id = em1.manager_id
+WHERE
+em1.employee_id < em2.employee_id
+AND
+em1.employee_id != em1.manager_id
+AND
+em2.employee_id != em1.manager_id
+ORDER BY
+em1.manager_id
+
 # Find flights departing from the same airport at overlapping times
+
+flights => flight_id, departure_time, arrival_time, departure_airport
+
+SELECT
+f1.flight_id as flight_one_id,
+f2.flight_id as flight_two_id,
+f1.departure_airport as flight_departure_airport,
+f1.departure_time as flight_one_departure_time,
+f1.arrival_time as flight_one_arrival_time,
+f2.departure_time as flight_two_departure_time,
+f2.arrival_time as flight_two_arrival_time
+FROM
+flights f1
+INNER JOIN
+flights f2
+ON
+f1.departure_airport = f2.departure_airport
+WHERE
+f1.flight_id < f2.flight_id
+AND
+f1.departure_time <= f2.arrival_time
+AND
+f1.arrival_time >= f2.departure_time
+ORDER BY
+f1.flight_id
 
 # Find pairs of courses with overlapping schedules
 
+courseschedule => course_id, start_time, end_time, course_name
+
+SELECT
+c1.course_id as course_one_id,
+c1.start_time as course_one_start_time,
+c1.end_time as course_one_end_time,
+c1.course_name as course_one_name,
+c2.course_id as course_two_id,
+c2.start_time as course_two_start_time,
+c2.end_time as course_two_end_time,
+c2.course_name as course_two_name
+FROM
+courseschedule c1
+INNER JOIN
+courseschedule c2
+ON
+c1.start_time <= c2.end_time
+AND
+c1.end_time >= c2.start_time
+WHERE
+c1.course_id < c2.course_id
+ORDER BY
+c1.course_id
+
 # Find pairs of employees in the same role for different projects
+
+employees_projectroles => employee_id, project_id, name, role
+
+SELECT
+ep1.employee_id as employee_one_id,
+ep1.project_id as employee_one_project_id,
+ep1.name as employee_one_name,
+ep1.role as employee_role,
+ep2.employee_id as employee_two_id,
+ep2.project_id as employee_two_project_id,
+ep2.name as employee_two_name
+FROM
+employees_projectroles ep1
+INNER JOIN
+employees_projectroles ep2
+ON
+ep1.role = ep2.role
+AND
+ep1.project_id != ep2.project_id
+WHERE
+ep1.employee_id < ep2.employee_id
+ORDER BY
+ep1.employee_id
