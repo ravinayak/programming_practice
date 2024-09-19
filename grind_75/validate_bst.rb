@@ -73,6 +73,15 @@ def dfs_bst_validity_check(node:, dfs_bst_valid:, min:, max:)
   # Base case of Recursion
   return if node.nil?
 
+  # This is the reverse condition of valid BST node, to determine this condition, always
+  # think of [node.left.data, node.data], [node.right.data, node.data]
+  # => node.left.data <= node.data ; node.right.data > node.data
+  # => node.left.data <= max; node.right.data > min (For > symbol, think "> min" because
+  #    "> max" is Illogical thought, if we are at max, nothing should be greater than us)
+  # => So for a node to be valid, range check
+  # => node.data <= max && node.data > min
+  # => Reverse of this condition for invalid node:
+  # => node.data > max || node.data <= min
   if node.data <= min || node.data > max
     dfs_bst_valid[:is_valid] = false
     return
@@ -140,7 +149,7 @@ def level_bst_validity_check(root:, level_bst_valid:)
         new_max = node.data
         # Manually update the data on node to 85
         # to invalidate given BST
-        node.data = 85 if node.data == 60
+        # node.data = 85 if node.data == 60
         # Push node in queue to process that node
         queue.enqueue(data: [node.left, new_min, new_max])
       end

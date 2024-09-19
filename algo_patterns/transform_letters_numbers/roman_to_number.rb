@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Normal roman letters are written from largest to smallest, i.e. in Non-Increasing Order
+# Two consecutive values may be equal, or previous larger than next (Because two consecutive
+# values can be equal, we say Non-Increasing Order over Decreasing Order)
+# largest to smallest
+# Always think: XXV = 25
+# NOTE: Only for a subtractive pair, we have smallest to largest such as IX (Increasing Order)
 # Converts roman letters to numbers
 
 ROMAN_LETTER_NUM_HSH = {
