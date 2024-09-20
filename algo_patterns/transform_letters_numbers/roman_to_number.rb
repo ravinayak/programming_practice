@@ -26,6 +26,10 @@ ROMAN_LETTER_NUM_HSH = {
 
 LETTERS_TO_PREPEND = %w[I X C].freeze
 
+# To Remember, the order we can use following Abbreviation:
+# IVF => Pregnancy => IVX
+# LC => Leave Certificate (For college admissions)
+# DM => District Magistrate
 ROMAN_LETTER_NUM_HSH_ALT = {
   'I' => 1,
   'V' => 5,
