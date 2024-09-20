@@ -89,6 +89,10 @@ def dfs_bst_validity_check(node:, dfs_bst_valid:, min:, max:)
 
   dfs_bst_validity_check(node: node.left, dfs_bst_valid:, min:, max: node.data) if node.left
 
+  # If on DFS on left node proved BST is invalid, we should not recurse on the right, and
+  # simply return
+  return unless dfs_bst_valid[:is_valid]
+
   dfs_bst_validity_check(node: node.right, dfs_bst_valid:, min: node.data, max:) if node.right
 
   nil
