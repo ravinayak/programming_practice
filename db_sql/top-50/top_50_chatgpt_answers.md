@@ -424,3 +424,176 @@ select oi.order_id, COUNT(DISTINCT oi.product_id) as distinct_products_ordered
 from order_items oi
 group by oi.order_id
 HAVING COUNT(DISTINCT oi.product_id) > 3
+
+-- Fetch customers who have spent more than $1000 in total
+select c.customer*id, SUM(oi.quantity * oi.price) as total*amount_spent
+from customers c
+INNER JOIN orders o
+on c.customer_id = o.customer_id
+INNER JOIN order_items oi
+on oi.order_id = o.order_id
+group by c.customer_id
+HAVING SUM(oi.quantity * oi.price) > 1000
+
+-- Find the month with the highest total sales
+select EXTRACT(MONTH from o.order_date) as order_month, SUM(oi.quantity \* oi.price) as total_spent_amount
+from orders o
+INNER JOIN order_items oi
+on o.order_id = oi.order_id
+group by EXTRACT(MONTH from o.order_date)
+order by total_spent_amount DESC
+LIMIT 1
+
+-- find the top 5 products which have been ordered most number of times (not quantity)
+-- and their suppliers
+WITH product_times_ordered AS (
+select oi.product_id, COUNT(oi.order_id) as times_ordered
+from order_items oi
+INNER JOIN orders o
+on o.order_id = oi.order_id
+group by oi.product_id
+order by times_ordered DESC
+LIMIT 5
+)
+select s.supplier_id, pto.product_id, pto.times_ordered
+from supplies s
+INNER JOIN product_times_ordered as pto
+on pto.product_id = s.product_id
+
+-- find the top 5 most orderes products (quantity) and their suppliers
+WITH product_quantity_ordered as (
+select oi.product_id, SUM(oi.quantity) as quantity_ordered
+from order_items oi
+group by oi.product_id
+order by quantity_ordered DESC
+LIMIT 5
+)
+
+select s.supplier_id, pqo.product_id, pqo.quantity_ordered
+from supplies s
+INNER JOIN product_quantity_ordered as pqo
+on pqo.product_id = s.product_id
+
+-- retrieve products that were never ordered by a specific customer
+-- Complex Query
+select p1.product_id
+from products p1
+where NOT EXISTS (
+select 1
+from (
+select oi.product_id
+from orders o
+INNER JOIN order_items oi
+on o.order_id = oi.order_id
+where o.customer_id = 1
+) as products_ordered
+where products_ordered.product_id = p1.product_id
+)
+
+-- retrieve products that were never ordered by a specific customer
+-- Simple Query
+
+SELECT p.product_id
+FROM products p
+WHERE NOT EXISTS (
+SELECT 1
+FROM orders o
+INNER JOIN order_items oi ON o.order_id = oi.order_id
+WHERE o.customer_id = 1
+AND oi.product_id = p.product_id
+);
+
+-- List suppliers who supplied products in every month of the current year
+select s.supplier_id, COUNT(DISTINCT EXTRACT(MONTH FROM s.supply_date)) as supply_months
+from supplies s
+where EXTRACT(YEAR from s.supply_date) = EXTRACT(YEAR FROM CURRENT_DATE)
+group by s.supplier_id
+HAVING COUNT(DISTINCT EXTRACT(MONTH FROM s.supply_date)) = 12
+
+-- Fetch orders placed on the same date as the highest order total
+-- Complex Query
+select o.order_id, o.order_date
+from orders o
+where EXISTS(
+select 1 from
+(select o.order_id, (oi.quantity \* oi.price) as order_total, o.order_date as highest_order_date
+from orders o
+INNER JOIN order_items oi
+on o.order_id = oi.order_id
+ORDER BY order_total DESC
+LIMIT 1) as highest_order
+where highest_order.highest_order_date = o.order_date
+)
+
+-- fetch orders placed on the same date as the highest order total
+-- SIMPLER Query
+select o.order_id, o.order_date, highest_order.order_total
+from orders o
+INNER JOIN (select o.order_id, (oi.quantity \* oi.price) as order_total, o.order_date as highest_order_date
+from orders o
+INNER JOIN order_items oi
+on o.order_id = oi.order_id
+ORDER BY order_total DESC
+LIMIT 1) as highest_order
+on highest_order.highest_order_date = o.order_date
+
+-- list products supplied by exactly one supplier
+select s.product_id, COUNT(s.supplier_id) as supplier_count
+from supplies s
+group by s.product_id
+HAVING COUNT(s.supplier_id) = 1
+
+-- Step 1: Identify the top 10 highest spending customers
+-- Avoid using IN wherever possible
+WITH top_10_customers AS (
+SELECT o.customer_id, SUM(oi.quantity \* oi.price) AS total_spent
+FROM orders o
+INNER JOIN order_items oi ON o.order_id = oi.order_id
+GROUP BY o.customer_id
+ORDER BY total_spent DESC
+LIMIT 10
+)
+
+-- Step 2: Fetch the products ordered by these top 10 customers
+SELECT DISTINCT oi.product_id
+FROM order_items oi
+INNER JOIN orders o ON oi.order_id = o.order_id
+WHERE EXISTS (
+SELECT 1
+FROM top_10_customers tc
+WHERE tc.customer_id = o.customer_id
+);
+
+-- Get the products ordered by at least 3 different customers in the past 6 months
+select oi.product_id, COUNT(DISTINCT o.customer_id) as customer_count
+from orders o
+INNER JOIN order_items oi
+on o.order_id = oi.order_id
+where EXTRACT(YEAR from o.order_date) = EXTRACT(YEAR from CURRENT_DATE)
+AND o.order_date >= CURRENT_DATE - INTERVAL '180 days'
+group by oi.product_id
+HaVING COUNT(DISTINCT o.customer_id) >=3
+
+-- Retrieve the orders that contain at least one product from the "Furniture" category
+select DISTINCT o.order_id, o.customer_id
+from orders o
+INNER JOIN order_items oi
+on o.order_id = oi.order_id
+INNER JOIN products p
+on oi.product_id = p.product_id
+where p.category = 'Furniture'
+
+-- Get customers who ordered both a product from the "Electrnoics" and "Books" categories
+-- For each customer_id grouping, there will be Multiple Rows with different product_id,
+-- for such grouping, we have to check if there exists at least one product which has the
+-- category 'Electronics' and there exists at least one product which has the category 'Books'
+select o.customer_id
+from orders o
+INNER JOIN order_items oi
+on o.order_id = oi.order_id
+INNER JOIN products p1
+on oi.product_id = p1.product_id
+where p1.category IN ('Electronics', 'Books')
+group by o.customer_id
+HAVING COUNT(DISTINCT CASE when p1.category = 'Electronics' THEN p1.product_id END) > 0
+AND COUNT(DISTINCT CASE when p1.category = 'Books' THEN p1.product_id END) > 0
