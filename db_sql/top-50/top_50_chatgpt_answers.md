@@ -281,3 +281,146 @@ from products p
 INNER JOIN order_items oi
 on p.product_id = oi.product_id
 group by p.product_id
+
+-- This will give incorrect results, for products which have been ordered but never been
+-- supplied. It matches all products that have been ordered with supplies table and in
+-- this join, it will match with all the products which have been supplied but do not
+-- match the product ordered, giving us incorrect results
+select p.product_id
+from products p
+INNER JOIN order_items oi
+ON oi.product_id = p.product_id
+INNER JOIN supplies s
+ON s.product_id != p.product_id
+
+-- Products that have been ordered but never supplied
+-- Products Joined with Orders => All products which have been ordered
+-- Left outer JOin with supplies table lists all products which match supplies product_id
+-- BUT also keeps records from ordered products which do not have a match with s.product_id
+-- MEANING ordered products with product_id that have no matching entry in supplies table,
+-- implying that these products were never supplied. For all these rows in the JOIN result
+-- of LEFT OUTER JOIN, s.product_id IS NULL
+select DISTINCT p.product_id, p.product_name
+from products p
+INNER JOIN order_items oi
+on p.product_id = oi.product_id
+LEFT OUTER JOIN supplies s
+on s.product_id = p.product_id
+where s.product_id IS NULL
+
+-- Ordered but never supplied => product must have been ordered + product not supplied despite of being ordered
+-- AND Operator ensures that only when product_id satisfies both conditions, the product_id will be selected
+select DISTINCT p.product_id, p.product_name
+from products p
+WHERE EXISTS(
+Select 1
+from order_items oi
+where oi.product_id = p.product_id
+)
+AND NOT EXISTS (
+select 1
+from supplies s
+where s.product_id = p.product_id
+)
+
+-- Suppliers that have supplied products which were ordered more than 50 times
+select DISTINCT s.supplier_id
+from supplies s
+INNER JOIN (
+Select oi.product_id
+from order_items oi
+group by oi.product_id
+HAVING COUNT(oi.order_id) > 50
+) as products_ordered
+on products_ordered.product_id = s.product_id
+
+-- Total Number of products ordered in each month for the past year
+select oi.product_id, EXTRACT(YEAR from o.order_date) as order_year, EXTRACT(MONTH from o.order_date) as order_month, SUM(oi.quantity) as quantity_ordered
+from orders o
+INNER JOIN order_items oi
+on o.order_id = oi.order_id
+where EXTRACT(YEAR from o.order_date) = EXTRACT(YEAR from CURRENT_DATE) - 1
+group by oi.product_id, EXTRACT(YEAR from o.order_date), EXTRACT(MONTH from o.order_date)
+order by oi.product_id, order_year, order_month
+
+SELECT
+o1.customer_id,
+EXTRACT(MONTH FROM o1.order_date) AS order_month_one,
+EXTRACT(MONTH FROM o2.order_date) AS order_month_two,
+EXTRACT(YEAR FROM o1.order_date) AS order_year_one,
+EXTRACT(YEAR FROM o2.order_date) AS order_year_two
+FROM
+orders o1
+INNER JOIN
+orders o2
+ON o1.customer_id = o2.customer_id
+WHERE
+(
+ABS(EXTRACT(MONTH FROM o1.order_date) - EXTRACT(MONTH FROM o2.order_date)) = 1
+AND EXTRACT(YEAR FROM o1.order_date) = EXTRACT(YEAR FROM o2.order_date)
+)
+OR (
+ABS(EXTRACT(MONTH FROM o1.order_date) - EXTRACT(MONTH FROM o2.order_date)) = 11
+AND ABS(EXTRACT(YEAR FROM o1.order_date) - EXTRACT(YEAR FROM o2.order_date)) = 1
+)
+GROUP BY
+o1.customer_id, order_month_one, order_month_two, order_year_one, order_year_two
+ORDER BY
+o1.customer_id, order_year_one, order_month_one;
+
+-- Select top 5 customers who placed the highest number of distinct orders
+select c.customer_id, COUNT(DISTINCT o.order_id) as total_orders
+from customers c
+INNER JOIN orders o
+on o.customer_id = c.customer_id
+group by c.customer_id
+order by total_orders DESC
+LIMIT 5
+
+-- Select top 5 customers who placed the highest number of distinct orders
+select c.customer_id, COUNT(DISTINCT o.order_id) as total_orders
+from customers c
+INNER JOIN orders o
+on o.customer_id = c.customer_id
+group by c.customer_id
+order by total_orders DESC
+LIMIT 5
+
+-- products that were ordered in every month of the current year
+-- Condition >= 12 is logically incorrect because even if a product was ordered more than once in a month
+-- and only once in every other month, because, we are using DISTINCT, that month in which the product
+-- was ordered more than once will be counted only exactly once
+select oi.product_id, COUNT(DISTINCT EXTRACT(month from o.order_date)) as distinct_months_ordered
+from order_items oi
+INNER JOIN orders o
+on o.order_id = oi.order_id
+where EXTRACT(YEAR from o.order_date) = EXTRACT(YEAR from CURRENT_DATE)
+group by oi.product_id
+HAVING COUNT(DISTINCT EXTRACT(month from o.order_date)) = 12
+
+-- Total Quantity of products supplied in the current year
+-- This is complex and NOT NEEDED because a simple sum of
+-- quantity_supplied for supplies of current year will give
+-- us the total quantity supplied for all products in current year
+select SUM(supplied_products_quantity.quantity_supplied)
+from (
+Select s.product_id, SUM(s.quantity_supplied) as quantity_supplied
+from supplies s
+where EXTRACT(YEAR from s.supply_date) = EXTRACT(YEAR from CURRENT_DATE)
+group by s.product_id
+) as supplied_products_quantity
+
+-- Total Quantity of products supplied in current year
+select SUM(quantity_supplied) as total_supplied_quantity
+from supplies s
+where EXTRACT(YEAR from s.supply_date) = EXTRACT(YEAR from CURRENT_DATE)
+
+SELECT COALESCE(SUM(s.quantity_supplied), 0) AS total_quantity_supplied
+FROM supplies s
+WHERE EXTRACT(YEAR FROM s.supply_date) = EXTRACT(YEAR FROM CURRENT_DATE);
+
+-- Orders that contain more than 3 unique products
+select oi.order_id, COUNT(DISTINCT oi.product_id) as distinct_products_ordered
+from order_items oi
+group by oi.order_id
+HAVING COUNT(DISTINCT oi.product_id) > 3
