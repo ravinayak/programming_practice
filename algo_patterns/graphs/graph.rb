@@ -4,7 +4,7 @@
 class Graph
   attr_accessor :vertices, :adj_matrix
 
-  def initialize(vertices: [], adj_matrix: {})
+  def initialize(vertices: [], adj_matrix: Hash.new { |h, k| h[k] = [] })
     @vertices = vertices
     @adj_matrix = adj_matrix
   end
