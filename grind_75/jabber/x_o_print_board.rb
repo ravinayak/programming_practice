@@ -99,6 +99,7 @@ class BoardDisplay
       i = 0
       mgroupx.times do |k|
         mx.times do |l|
+          # CRITICAL! => This is extremely important
           grid[row + j][mx * k + l] = display_chars[i]
         end
         # Switch to another character in display_chars to flip the pattern of chars being displayed
