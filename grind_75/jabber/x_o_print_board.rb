@@ -103,6 +103,10 @@ class BoardDisplay
           grid[row + j][mx * k + l] = display_chars[i]
         end
         # Switch to another character in display_chars to flip the pattern of chars being displayed
+        # If X is being displayed in the 1st group in current row, O should be displayed in the 2nd group in
+        # current row, and again X so on, regular flipping between 0 and 1
+        # However, at the start of next row in the same y-group, the 1st character of the 1st group should
+        # always be 0th character, hence we reset i=0 at the start of my.times when we move to the next row
         i = evaluate_i(i:)
       end
     end
