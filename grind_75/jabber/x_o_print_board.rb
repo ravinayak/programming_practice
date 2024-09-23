@@ -52,7 +52,7 @@ class BoardDisplay
       # display_chars.reverse! allows us to persist the state in the array, so that it can be flipped
       # back and forth between those arrangements
       #
-      display_same_pattern_rows(grid_dimensions:, display_chars: display_chars.reverse!, row: i * 2, grid:)
+      display_same_pattern_rows(grid_dimensions:, display_chars: display_chars.reverse!, row: i * my, grid:)
     end
 
     print_grid(grid:)
