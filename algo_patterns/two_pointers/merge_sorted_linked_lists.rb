@@ -10,9 +10,6 @@ require_relative '../data_structures/linked_list'
 def merge_sorted_linked_lists(list_one:, list_two:)
   display_lists(list_one:, list_two:)
 
-  list_one.head
-  list_two.head
-
   # The * operator is used here for array destructuring (also known as splat operator in Ruby)
   # It unpacks the array returned by calc_node_with_smaller_val into individual variables
   # This is equivalent to:
@@ -20,7 +17,10 @@ def merge_sorted_linked_lists(list_one:, list_two:)
   # curr = result[0]
   # node_list_one = result[1]
   # node_list_two = result[2]
-  curr, node_list_one, node_list_two = *calc_node_with_smaller_val(list_one:, list_two:)
+  node_list_one = list_one.head
+  node_list_two = list_two.head
+
+  curr, node_list_one, node_list_two = *calc_node_with_smaller_val(node_list_one:, node_list_two:)
   head_merged_list = curr
 
   while !node_list_one.nil? && !node_list_two.nil?
@@ -55,14 +55,15 @@ def display_merged_sorted_list(head_merged_list:)
 end
 
 # Initialize curr with the node whose data is less
-# @param [LinkedList] list_one
-# @param [LinkedList]	list_two
+# @param [LinkedList] node_list_one
+# @param [LinkedList]	node_list_two
 # @return [Array<Node>]
 #
-def calc_node_with_smaller_val(list_one:, list_two:)
-  return [list_one.head, list_one.head.next, list_two.head] if list_one.head.data < list_two.head.data
+def calc_node_with_smaller_val(node_list_one:, node_list_two:)
+  return [node_list_one, node_list_one.next, node_list_two.next] if
+    node_list_one.next.data < node_list_two.next.data
 
-  [list_two.head, list_one.head, list_two.head.next]
+  [node_list_two, node_list_one.next, node_list_two.next]
 end
 
 # Assign next node to curr based on the data comparison of nodes
