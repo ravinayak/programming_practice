@@ -24,15 +24,17 @@
 
 # In all these constants, Zero is always included, for the 1st constant it makes
 # logical sense because it represents english words for numbers < 20
+# In other constants - TENS_BETWEEN_20_AND_HUNDRED, THOUSANDS, the constant Zero
+# is kept for Indexing Purposes
 
 BELOW_TWENTY = %w[Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven
                   Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen].freeze
-# In this case, Zero and Ten are kept simply for correct indexing, this constant
+# In TENS_BETWEEN_20_AND_HUNDRED, Zero and Ten are kept simply for correct indexing, this constant
 # is ONLY used for conversion to english word for 20 <= number < 100
 # Say we have 21, divide by 10 + remainder of divide by 10 => We will index into
 # this constant and above constant to get the english words
-# At index 2 (in the constant arr below), we should have Twenty (num/10 = 2),
-# at index 1 (in below_twenty constant arr) we should have One (num % 10 = 1)
+# At index 2 (in the constant TENS_BETWEEN_20_AND_HUNDRED), we should have Twenty (num/10 = 2),
+# at index 1 (in the constant BELOW_TWENTY) we should have One (num % 10 = 1)
 # 21 => Twenty One
 
 TENS_BETWEEN_20_AND_HUNDRED = %w[Zero Ten Twenty Thirty Forty Fifty Sixty
@@ -53,6 +55,9 @@ def convert_to_english_util(num:, below_twenty:, tens_between_20_and_100:)
   # We compare with 20 but divide by 10 in the next condition to get the right index for
   # english word representation
   if num < 20
+    # num = 0 => At index 0 in BELOW_TWENTY, we have Zerop
+    # num = 19 => At index 19 in BELOW_TWENTY, we have Nineteen
+    # num works as index in BELOW_TWENTY array to give us the English word
     result = below_twenty[num]
   elsif num < 100
     # Ex: 45 => 45/10 = 4 => tens_between_20_and_100[4] = Forty + 45 % 10 = 5 => below_twenty[5] = " " + Five
@@ -85,7 +90,7 @@ def convert_to_english_util(num:, below_twenty:, tens_between_20_and_100:)
     result = "#{below_twenty[num / 100]} Hundred " +
              # It is important to call this utility in recursion, this will handle the use case when number in ten's
              # place is between 0 and 20. The logic below without using recursion will give incorrect result
-             convert_to_english_util(num: num % 100, below_twenty:, tens_between_20_and_100:) # rubocop:disable Naming/VariableNumber
+             (num % 100 == 0 ? '' : ' ' + convert_to_english_util(num: num % 100, below_twenty:, tens_between_20_and_100:)) # rubocop:disable Naming/VariableNumber
 
     # The following logic is incorrect and will give incorrect result
     # num_remainder = num % 100
