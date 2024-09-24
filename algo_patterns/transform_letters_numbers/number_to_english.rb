@@ -90,7 +90,11 @@ def convert_to_english_util(num:, below_twenty:, tens_between_20_and_100:)
     result = "#{below_twenty[num / 100]} Hundred " +
              # It is important to call this utility in recursion, this will handle the use case when number in ten's
              # place is between 0 and 20. The logic below without using recursion will give incorrect result
-             (num % 100 == 0 ? '' : ' ' + convert_to_english_util(num: num % 100, below_twenty:, tens_between_20_and_100:)) # rubocop:disable Naming/VariableNumber
+             (if (num % 100).zero?
+                ''
+              else
+                " #{convert_to_english_util(num: num % 100, below_twenty:, tens_between_20_and_100:)}"
+              end)
 
     # The following logic is incorrect and will give incorrect result
     # num_remainder = num % 100
@@ -157,7 +161,10 @@ def test
     { num: 123, english: 'One Hundred Twenty Three' },
     { num: 12_345, english: 'Twelve Thousand Three Hundred Forty Five' },
     { num: 1_234_567, english: 'One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven' },
-    { num: 12_115, english: 'Twelve Thousand One Hundred Fifteen' }
+    { num: 12_115, english: 'Twelve Thousand One Hundred Fifteen' },
+    { num: 12_000, english: 'Twelve Thousand' },
+    { num: 900, english: 'Nine Hundred' },
+    { num: 12_000_000, english: 'Twelve Million' }
   ]
   nums_translations.each do |num_english_hsh|
     num = num_english_hsh[:num]
