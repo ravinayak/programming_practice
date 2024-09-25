@@ -60,15 +60,14 @@ def longest_palindrome(str:)
   return [0, nil] if str.strip.empty?
 
   # This keeps track of start_index of longest palindrome
-  start_idx = 0
+  start_idx = -1
   # This keeps track of length of longest palindrome. This
-  # should always be initialized to 0, even if we guarantee
-  # that execution will enter this code only when we have
-  # a single character. This is because condition
-  #  length > max_length will never execute if 
-  #  length = max_length = 1
+  # should always be initialized to (<= 0)
+  # This is because if we initialize it to 1, for the 1st
+  # character in the string (when we start expanding around arr[0])
+  #  => length > max_length will never execute since length = max_length = 1
   # use length >= max_length if max_length = 1
-  max_length = 0
+  max_length = -1
 
   # Iterate over each character in string and try to find
   # even, odd length palindromes possible with that index
@@ -106,19 +105,32 @@ def expand_around_center(str:, left:, right:)
   # should not be a part of valid palindrome,
   # str[left].strip == '' => Stripping empty space will give us ''
   # left, right upper bounds check + Char same check + Empty space check
-  while left >= 0 && right < str.length && str[left] == str[right] &&
+  while left > -1 && right < str.length && str[left] == str[right] &&
         str[left].strip != '' && str[right].strip != ''
     left -= 1
     right += 1
   end
 
-  # For even length palindromes, if char at left != char at right, there
-  # is no valid palindrome. In this case, right = left + 1
-  # right - left - 1 = -1 => A palindrome which starts at right but has
-  # a length of -1 => No Palindrome => nil (which is expected result)
+  # While loop terminates with the following conditions:
+  # 1. palindrome = str[(left + 1)..(right - 1)]
+  # 2. left points to index - 1, where index represents start of palindrome
+  # 3. right points to index + 1, where index represents end of palindrome
+  # 4. y - x = Number of steps from "x + 1" to reach "y" including "x + 1" and "y"
+  # 5. right - left = Length between "left + 1"  and "right" including "right"
+  #    => "right" = end_index + 1     => end_index    = right - 1
+  #    => "left"  = start_index - 1   => start_index  = left + 1
+  #    => Length of Palindrome = end_index - start_index + 1 
+  #    => We add 1 because start_index includes palindrome character
+  #    => (end_index - start_index) excludes start_index character
+  #    => (right - 1) - (left + 1) + 1 = right - 1 - left - 1 + 1
+  #    => right - left - 1
 
   # Start index of palindrome = left + 1
   # Length of palindrome = right - left - 1 (logic for -1 explained above)
+  # We return only start index, and length of palindrome because only these 2
+  # values are needed to create palindrome from string. We can also return
+  # end_index but it is redundant
+  # str[start_index, length_of_palindrome] = Palindrome String
   [left + 1, right - left - 1]
 end
 
@@ -142,6 +154,11 @@ def test
     },
     {
       str: 'cbbd',
+      length: 2,
+      pal: 'bb'
+    },
+    {
+      str: 'defabdcbbcdbafed',
       length: 2,
       pal: 'bb'
     }
