@@ -66,6 +66,10 @@ def longest_palindrome(str:)
   # This is because if we initialize it to 1, for the 1st
   # character in the string (when we start expanding around arr[0])
   #  => length > max_length will never execute since length = max_length = 1
+  #  => And typically when we write algorithm to update a maximum, we always
+  #     check if current value is > current maximum (not equal for update)
+  #     (current_val > current_max) AND NOT (current_val >= current_max)
+  # To be safe, we assign start_idx = -1, max_length = -1
   # use length >= max_length if max_length = 1
   max_length = -1
 
