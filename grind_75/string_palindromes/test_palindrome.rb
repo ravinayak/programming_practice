@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# This function checks if a string is palindrome without using
+# reverse method, many interviewers ask for such implementation
+# Easiest way to check if a string is a Palindrome is to check
+# 	str == str.reverse
+
+# @param [STring] str
+# @return [Boolean]
 def test_for_palindrome?(str:)
   # Base Case
   return true if str.empty? || str.length == 1
@@ -7,6 +14,26 @@ def test_for_palindrome?(str:)
   return even_len_str_palindrome?(str:) if str.length.even?
 
   odd_len_str_palindrome?(str:) if str.length.odd?
+end
+
+# Test for Palindrome using reverse method
+# @param [String] str
+# @return [Boolean]
+def test_palindrome_using_reverse?(str:)
+  # Base Case: str is empty length or has a length of 1
+  return true if str.empty? || str.length == 1
+
+  end_idx = str.length - 1
+  start_idx = 0
+
+  while start_idx <= end_idx
+    return false unless str[start_idx] == str[end_idx]
+
+    start_idx += 1
+    end_idx -= 1
+  end
+
+  true
 end
 
 # Algorithm: For an even length string, to check for palindrome
@@ -112,7 +139,9 @@ end
 def test
   input_arr.each do |input_hsh|
     result = test_for_palindrome?(str: input_hsh[:str])
-    print "\n String :: #{input_hsh[:str]}, Expected :: #{input_hsh[:output]}, Result :: #{result} \n"
+    res_reverse = test_palindrome_using_reverse?(str: input_hsh[:str])
+    print "\n String :: #{input_hsh[:str]}, Expected :: #{input_hsh[:output]}, "
+    print " Result :: #{result}, Result using Reverse :: #{res_reverse} \n"
   end
   print "\n"
 end
