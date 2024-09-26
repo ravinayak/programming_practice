@@ -3,8 +3,26 @@
 require_relative '../../algo_patterns/data_structures/binary_tree_node'
 require_relative '../../algo_patterns/data_structures/binary_tree'
 # Algorithm: Described in the markdown file
-# Time Complexity: O(n) => Each element of both arrays has to be processed at least once
-# Space Complexity: O(n) => "n" nodes to store data + left, right pointers
+
+# Time Complexity: O(n) => 
+# a. Each element of both arrays has to be processed at least once to
+#    form the binary tree
+# b. We have to find index of root element in inorder array, if Set/Hash is
+#    used, it would probably keep the elements in sorted order, and
+#    would require O(n) time to build the set/hash with a fast lookup of O(1)
+#       => O(n) [to build set/hash] + O(1) for any lookup
+# c. For each level order, we have to find if an element belongs to left/right
+#    level, and this would require us to scan through the entire level order
+#    array => O(n) * O(1) [fast lookup of Hash/Set] = O(n)
+# d. Total TC: O(n) + O(n) + O(n) * O(1) = O(n)
+
+# Space Complexity: O(n) 
+# a. "n" nodes to store data + left, right pointers in BT
+# b. "n" elements Max in 2 sets = 2 * O(n)
+# c. "n" elements Max in 4 arrays 
+#        => (left, right inorder + left/right pre-order/post-order/level) = 4 * O(n)
+# d. "n" Max Depth of Recursion Tree
+# e. 2 * O(n) + 4 * O(n) + O(n) + O(n) = O(n)
 
 # @param [Array<Integer>] inorder
 # @param [Array<Integer>] level
@@ -46,6 +64,10 @@ def bt_from_inorder_level(inorder:, level:)
   right_inorder = inorder[(index_root_data_in_inorder + 1)..(-1)]
 
   # Faster Lookup
+  # We cannot create these sets beforehand because they are created dynamically for each 
+  # left/right inorder array created above. Indices of elements across recursion in these
+  # sets are going to be different since left/right inorder arrays are different and the
+  # elements occupy different indices in them compared to previous recursive calls
   left_inorder_set = Set.new(left_inorder)
   right_inorder_set = Set.new(right_inorder)
 
