@@ -1,4 +1,6 @@
-# There is a robot on an m x n grid. The robot is initially located 
+# frozen_string_literal: true
+
+# There is a robot on an m x n grid. The robot is initially located
 # at thetop-left corner (i.e., grid[0][0]). The robot tries to move
 # to the bottom-rightcorner (i.e., grid[m - 1][n - 1]). The robot can
 # only move either down or right at any point in time.
@@ -28,7 +30,7 @@
 # of unique paths that a robot can take, it is easy to calculate based on
 # combinatorics.
 # Since robot can only move down a cell, or right along the column, at each
-# step user has two choices - 
+# step user has two choices -
 #  1. User can move down
 #  2. User can move right along the column
 # If user takes only down moves - "m - 1"
@@ -40,9 +42,9 @@
 # whether to go down, or to go right along the column. Each step user can
 # select and make a choice for going down, the total steps are "m + n - 2",
 # out of these choices, user has to select "m - 1" down moves. This can be
-# solved using combinatorics = C(m + n - 2, m - 1) 
-#  = ( Factorial (m + n - 2) / Factorial (m - 1) ) / ( (m + n - 2) - (m - 1))
-#  = ( Factorial (m + n - 2) / Factorial (m - 1) ) / n - 1
+# solved using combinatorics = C(m + n - 2, m - 1)
+#  = ( Factorial (m + n - 2) / ( Factorial (m - 1) ) * Factorial ((m + n - 2) - (m - 1))))
+#  = ( Factorial (m + n - 2) / ( Factorial (m - 1) ) / Factorial (n - 1) )
 # b. Dynamic Programming: If we wan to calculate the total number of paths,
 # and also the actual paths which the robot can take, we must use DP
 
@@ -59,7 +61,7 @@
 #  b. dp[i][j] = Array of vertices traversed to reach [i][j]
 #     = [[0, 0], [1, 0], [1, 1], ....] => Every vertex traversed to reach this
 #     cell is included in this array
-#  c. dp[i][j] 
+#  c. dp[i][j]
 #     => dp[i][j] = dp[i][j] + dp[i-1][j].map { |path| path << [i, j]}
 #     => This is done to ensure that every path in dp[i-1][j] now contains the
 #        new cell (i, j) since robot has traversed and reached this new cell.
@@ -67,3 +69,118 @@
 #        we add (i, j) to each such list
 #     => We add it to the existing array of paths for dp[i][j]
 #     => Array 1 + Array 2 = Array 3 (= contains elements from both arrays)
+
+# @param [Integer] n
+# @return [Integer]
+def factorial(n:)
+  product = 1
+  n.downto(1) do |x|
+    product *= x
+  end
+
+  product
+end
+
+# @param [Integer] m
+# @param [Integer] n
+# @return [Integer]
+def total_paths_combinatorics(m:, n:)
+  total_set_of_moves = m + n - 2
+  fact_total_set = factorial(n: total_set_of_moves)
+  fact_down_moves = factorial(n: m - 1)
+  fact_diff = factorial(n: n - 1)
+
+  (fact_total_set / (fact_down_moves * fact_diff))
+end
+
+# @param [Integer] m
+# @param [Integer] n
+# @return [Integer]
+def total_paths(m:, n:)
+  total_combinatorics = total_paths_combinatorics(m:, n:)
+  paths = total_paths_dp(m:, n:)
+
+  [total_combinatorics, paths]
+end
+
+# @param [Integer] m
+# @param [Integer] n
+# @return [Array<Array<Integer, Integer>>]
+def total_paths_dp(m:, n:)
+  # At any time, we only need 2 rows with n-1 columns to calculate
+  # DP array, hence we initialize DP array with only 2 rows
+  # Each DP array for a column is initialized with an empty array
+  dp = Array.new(m) { Array.new(n) { [] } }
+
+  # Base Case:
+  # Case 1: When robot is at 1st row, robot can only come from left
+  # Case 2: When robot is at 1st col, robot can only come from above row
+  # column. dp[0][0] = [[0, 0]] because this is the starting point
+  dp[0][0] = [[[0, 0]]]
+
+  # Initialization of 0th row and 0th column is essential because without
+  # properly populating these, we shall end up with incorrect calculations
+  # for remaining rows, columns
+  # Code below will mutate the existing paths for dp[0][k - 1] which should
+  # not be the case, Every dp array element should store correct result of
+  # paths for that cell(i, j), this is because we are using "<<" which
+  # concatenates [[0, k]] to the existing array
+  # When we use map, and if we use "+" instead of "<<", it will return a
+  # new array, and not mutate the existing path array
+
+  # dp[0][k] = dp[0][k - 1].map { |path| path << [[0, k]] }
+
+  (1...n).each do |k|
+    dp[0][k] = dp[0][k - 1].map { |path| path + [[0, k]] }
+  end
+
+  (1...m).each do |i|
+    dp[i][0] = dp[i - 1][0].map { |path| path + [[i, 0]] }
+
+    (1...n).each do |j|
+      dp[i][j] += dp[i - 1][j].map { |path| path + [[i, j]] } if i.positive?
+
+      dp[i][j] += dp[i][j - 1].map { |path| path + [[i, j]] } if j.positive?
+    end
+  end
+
+  dp[m - 1][n - 1]
+end
+
+def input_arr
+  [
+    {
+      m: 3,
+      n: 7,
+      output: 28
+    },
+    {
+      m: 3,
+      n: 2,
+      output: 3
+    }
+  ]
+end
+
+def test
+  input_arr.each do |input_hsh|
+    m = input_hsh[:m]
+    n = input_hsh[:n]
+    input = "#{m}, #{n}"
+    output = input_hsh[:output]
+
+    res_comb, paths = total_paths(m:, n:)
+
+    print "\n Input :: #{input}, Total Paths :: #{output}, \n"
+    print " Total Paths Combinatorics :: #{res_comb}, Total Paths DP :: #{paths.size}\n"
+    print "\n Paths Below :: \n"
+    paths.each do |path|
+      path.each do |vertices_arr|
+        print " #{vertices_arr.inspect}, "
+      end
+      print "\n"
+    end
+  end
+end
+
+test
