@@ -4,22 +4,24 @@ require_relative '../../algo_patterns/data_structures/binary_tree_node'
 require_relative '../../algo_patterns/data_structures/binary_tree'
 # Algorithm: Described in the markdown file
 
-# Time Complexity: O(n) => 
+# Time Complexity: O(n) =>
 # a. Each element of both arrays has to be processed at least once to
 #    form the binary tree
-# b. We have to find index of root element in inorder array, if Set/Hash is
-#    used, it would probably keep the elements in sorted order, and
-#    would require O(n) time to build the set/hash with a fast lookup of O(1)
-#       => O(n) [to build set/hash] + O(1) for any lookup
+# b. We have to find index of root element in inorder array, Set/Hash cannot
+#    be used because inorder array changes with every recursive call, and
+#    indices of elements change. Pre-Processing of inorder to prepare a Hash/Set
+#    to improve lookup will give incorrect results
+#       => inorder array is not sorted, so we cannot use BinarySearch
+#       => O(n) [Linear Scan to find index] * n (recursive calls) = n * O(n) = O(n^2)
 # c. For each level order, we have to find if an element belongs to left/right
 #    level, and this would require us to scan through the entire level order
 #    array => O(n) * O(1) [fast lookup of Hash/Set] = O(n)
-# d. Total TC: O(n) + O(n) + O(n) * O(1) = O(n)
+# d. Total TC: O(n) + O(n^2) + O(n) * O(1) = O(n^2)
 
-# Space Complexity: O(n) 
+# Space Complexity: O(n)
 # a. "n" nodes to store data + left, right pointers in BT
 # b. "n" elements Max in 2 sets = 2 * O(n)
-# c. "n" elements Max in 4 arrays 
+# c. "n" elements Max in 4 arrays
 #        => (left, right inorder + left/right pre-order/post-order/level) = 4 * O(n)
 # d. "n" Max Depth of Recursion Tree
 # e. 2 * O(n) + 4 * O(n) + O(n) + O(n) = O(n)
@@ -55,6 +57,8 @@ def bt_from_inorder_level(inorder:, level:)
   return BinaryTreeNode.new(data: inorder[0], left: nil, right: nil) if inorder.size == 1
 
   root_data = level[0]
+  # Inorder array changes with every recursive call, hence we cannot prepare a hash
+  # beforehand to improve lookup speed, since array changes, index of elements also change
   index_root_data_in_inorder = inorder.index(root_data)
 
   # Add this to prevent issues if the root_data is not found in inorder
@@ -64,7 +68,7 @@ def bt_from_inorder_level(inorder:, level:)
   right_inorder = inorder[(index_root_data_in_inorder + 1)..(-1)]
 
   # Faster Lookup
-  # We cannot create these sets beforehand because they are created dynamically for each 
+  # We cannot create these sets beforehand because they are created dynamically for each
   # left/right inorder array created above. Indices of elements across recursion in these
   # sets are going to be different since left/right inorder arrays are different and the
   # elements occupy different indices in them compared to previous recursive calls
