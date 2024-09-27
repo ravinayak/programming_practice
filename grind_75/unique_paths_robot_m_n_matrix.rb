@@ -116,6 +116,16 @@ def total_paths_dp(m:, n:)
   # Case 1: When robot is at 1st row, robot can only come from left
   # Case 2: When robot is at 1st col, robot can only come from above row
   # column. dp[0][0] = [[0, 0]] because this is the starting point
+
+  # Remember that every dp array element is an array of arrays where
+  # inner array is an array of pair of vertices
+  # dp array element = Array of paths
+  # Each path = Array of Array of Vertices Pairs
+  # [path1, path2, path3]
+  # path1 = [vertex_pairs_arr]
+  # vertex_pairs = [v1, v2]
+  # Each path = [ [ [v1, v2], [v2, v3], [v4, v5] ], ..... ]
+  # Path is an array of array of array of vertex pairs
   dp[0][0] = [[[0, 0]]]
 
   # Initialization of 0th row and 0th column is essential because without
@@ -129,6 +139,15 @@ def total_paths_dp(m:, n:)
   # new array, and not mutate the existing path array
 
   # dp[0][k] = dp[0][k - 1].map { |path| path << [[0, k]] }
+
+  # We must use [[0, k]] and NOT [0, k] because it will give us incorrect
+  # result for Ruby Array Handling
+  # dp[x][y] = [ [ [x1, y1], [x2, y2], [x3, y3] ], [ [x4, y4], [x5, y5] ], ... ]
+  # path = [ [x1, y1], [x2, y2], [x3, y3] ]
+  # This IS INCORRECT
+  # path + [i, j] = [ [x1, y1], [x2, y2], [x3, y3], i, j ]
+  # This is CORRECT
+  # path + [[i, j]] = [ [x1, y1], [x2, y2], [x3, y3], [i, j] ]
 
   (1...n).each do |k|
     dp[0][k] = dp[0][k - 1].map { |path| path + [[0, k]] }
