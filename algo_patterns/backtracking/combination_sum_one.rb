@@ -1,5 +1,14 @@
 # frozen_string_literal: true
+
 # Elements CAN be REUSED
+# As compared to Combinations sum II problem, where elements cannot be reused but
+# each element can be reused only 1nce, we cannot remove duplicates since each
+# element even if it is a duplicate can be reused once, and therefore more
+# combinations are possible with the duplicate element being present
+# BUT IN THIS USE CASE, where elements can be reused, duplicates will only cause
+# redundant calls to recursion and generate duplicate solutions. Hence to avoid
+# the whole problem of duplicate handling, we can prepare beforehand by calling
+# uniq on the array and sorting it
 
 # Time Complexity:
 #   1. The worst-case time complexity can be approximated as O(n^(target/min)), where
@@ -16,7 +25,9 @@ def combination_sum(target:, candidates_arr:)
   results = []
   combinations = []
   start_index = 0
-  candidates = candidates_arr.sort
+  # Remove duplicates since elements can be reused, to avoid duplicate solutions
+  # and redundant calls to recursion
+  candidates = candidates_arr.uniq.sort
   backtrack_comb_sum(candidates:, combinations:, start_index:, results:, target:)
 
   results
@@ -42,18 +53,18 @@ def backtrack_comb_sum(candidates:, combinations:, start_index:, results:, targe
   if target.zero?
     # This implies that combinations has elements which sum up to target
     #
-    # If you use below code, 
+    # If you use below code,
     #   => results << combinations (Shallow copy)
     # results will contain references to the same combinations array
     # that's being modified throughout the backtracking process. By the end of the algorithm,
-    # all entries in results would point to the same (empty) array. In Ruby, objects are 
-    # copied/inserted into arrays or hashes through reference, which means any changes to 
+    # all entries in results would point to the same (empty) array. In Ruby, objects are
+    # copied/inserted into arrays or hashes through reference, which means any changes to
     # the original object will be reflected in the array which contains that object. To get
     # independent copies, we have to do a deep copy
     #   Ex: if arr is 1D array => arr.dup
     #   Ex: if arr is 2D array => arr.map(&:dup) => arr.map { |one_d_array| one_d_array.dup }
     #     => Map over each element of the array and create a copy of it
-    #   Ex: if arr is 3D array => 
+    #   Ex: if arr is 3D array =>
     #     => deep_copy = arr.map { |two_d_array| two_d_array.map { |one_d_array| one_d_array.dup } }
     #     => Map over each element of each element of array and create a copy of it
 

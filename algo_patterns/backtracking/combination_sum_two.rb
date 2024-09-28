@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-# Combination Sum II - Elements of array sum to target - Elements CANNOT be reused
-# only once
+# Combination Sum II - Elements of array sum to target -
+# Elements CANNOT be reused
+# Elements can be used only once, duplicates are not allowed in solutions
 
 # @param [Array] candidates_arr
 # @param [Integer] target
@@ -60,7 +61,7 @@ def backtrack_comb_sum_two(candidates:, results:, target:, start_index:, combina
     # when it returns from this recursion, start_index = 2, "2" is popped off and we move to the next
     # index in the array -> 3
     # Here we encounter same element '2', Any combinations which will be tried at recursion step 3, will
-    # be same as recursions tried previously. 
+    # be same as recursions tried previously.
     # This is because combinations bakctracking algorithm will use "2" at start index "2", and combine
     # with every other element in the array
     #   1. Combinations WITH "2" at index "3" which will be like [2, 2, ....]

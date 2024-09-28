@@ -3,6 +3,8 @@
 # Given an array nums of distinct integers, return all the possible permutations
 # You can return the answer in any order.
 
+# NOTE: Formula to calcualte TOTAL NUM OF PERMUTATIONS FOR N ELEMENTs = factorial(n)
+
 # Example 1:
 # Input: nums = [1,2,3]
 # Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
@@ -83,7 +85,16 @@ def test
   values = [
     {
       input_arr: [1, 2, 3],
-      output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
+      # Ouput here states the order in which the elements of the array will be
+      # combined in permutations for the given algorithm to generate all unique
+      # permutations
+      # [1, 2, 3] => 1st iteration, 1st recursion, start = 0, index = 0
+      # [1, 3, 2] => 1st iteration, 2nd recursion, start = 1, index = 2
+      # [2, 1, 3] => 2nd iteration, 1st recursion, start = 0, index = 1
+      # [2, 3, 1] => 2nd iteration, 2nd recursion, start = 1, index = 2
+      # [3, 2, 1] => 3rd iteration, 1st recursion, start = 0, index = 2
+      # [3, 1, 2] => 3rd iteration, 2nd recursion, start = 1, index = 2
+      output: [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 2, 1], [3, 1, 2]]
     },
     {
       input_arr: [0, 1],
