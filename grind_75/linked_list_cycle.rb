@@ -17,10 +17,10 @@ require_relative '../algo_patterns/data_structures/linked_list'
 def detect_cycle(head:)
   return { cycle: false } if head.nil? || head.next.nil?
 
-  # Initialize both slow/fast pointers to head.next like finding
+  # Initialize both slow/fast pointers to head like finding
   # middle of a linked list
-  slow = head.next
-  fast = head.next
+  slow = head
+  fast = head
 
   # fast moves 2x, so we have to check both fast and fast.next of
   # not becoming nil
@@ -39,7 +39,9 @@ def detect_cycle(head:)
     # Both fast & fast.next are not nil, so it is safe
     fast = fast.next.next
     slow = slow.next
-    return { cycle: true } if fast == slow
+
+    # If slow and fast meet, there's a cycle
+    return { cycle: true } if slow == fast
   end
 
   # We have reached end of linked list and no cycle was detected

@@ -37,7 +37,8 @@ def middle_linked_list(head:)
   # condition of checking fast && fast.next, and letting
   # the iteration loop stop whenever fast becomes NIL
   # slow in this case will be the middle element
-  slow = fast = head
+  slow = head
+  fast = head
 
   # This condition is logical because we are going to access
   # a. fast = fast -> next -> next
