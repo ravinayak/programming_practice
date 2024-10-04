@@ -4,7 +4,7 @@
 class PriorityQueueMinHeap
   attr_accessor :arr, :heap_size
 
-  def initialize(arr:, heap_size:)
+  def initialize(arr: [], heap_size: 0)
     @arr = prep_arr(arr:)
     @heap_size = heap_size
   end
@@ -132,13 +132,14 @@ end
 #   pq_min_heap =
 #     PriorityQueueMinHeap.build_priority_queue(arr: objs_arr, heap_size: 5)
 
-#   puts "Objects inserted into Priority Queue :: #{objs_arr.inspect}"
-#   puts "Priority Queue :: #{pq_min_heap.arr.inspect}"
+#   print "\n Objects inserted into Priority Queue :: #{objs_arr.inspect}"
+#   print " \n Priority Queue :: #{pq_min_heap.arr.inspect}"
 #   pq_min_heap.insert_object(object: { element: -5, key: -5 })
-#   puts "Inserting element with key -5 :: #{pq_min_heap.arr[1]}"
+#   print "\n \n Inserting element with key -5 :: #{pq_min_heap.arr[1]}"
+#   print "\n Priority Queue Post Insertion :: #{pq_min_heap.arr.inspect}"
 #   min_element = pq_min_heap.extract_min
-#   puts "Min Element extracted :: #{min_element}"
-#   puts "Post Min Element Extraction :: #{pq_min_heap.arr.inspect}"
+#   print "\n \n Min Element extracted :: #{min_element}"
+#   print "\n Post Min Element Extraction :: #{pq_min_heap.arr.inspect}\n\n"
 # end
 
 # test
