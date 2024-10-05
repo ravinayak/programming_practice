@@ -100,14 +100,27 @@ class SerializeDeSerializeBT
   private
 
   def deserialize_pre_order_bt(data_arr:, index_hsh:)
+    # If node is nil we increase the index to process '#'
+    # and return nil
     if data_arr[index_hsh[:index]] == NIL_CHAR
       index_hsh[:index] += 1
       return nil
     end
 
+    # If node is NOT NIL, a new node is created with data on
+    # node, index is incremented. Because a hash is used, index
+    # increments persist across Recursion. Elements in array
+    # which have been processed are not processed again
     node = BinaryTreeNode.new(data: data_arr[index_hsh[:index]])
     index_hsh[:index] += 1
 
+    # When NIL node is encountered, it returns from the recursion
+    # and assigns it to node.left or node.right. And the node
+    # with left/right subtree is returned to Previous Recursion
+    # where it is assigned as left/right child of node
+    # This way the entire tree is built (both left/right subtrees)
+    # when we reach back at root in recursion. And Finally we
+    # return Root
     node.left = deserialize_pre_order_bt(data_arr:, index_hsh:)
     node.right = deserialize_pre_order_bt(data_arr:, index_hsh:)
 
@@ -115,6 +128,14 @@ class SerializeDeSerializeBT
   end
 
   def pre_order_serialize_bt(node:, serialize_bt:)
+    # serialize_bt is a string which appends data on nodes and a '#'
+    # if node is nil, this value is returned from the recursion only
+    # when node is nil
+    # serialize_bt is called with right node in recursion and the value
+    # for this string is returned and assigned back to the string
+    # in previous string where the node was called with left/right
+    # In this way, the entire binary tree is processed and serialized
+    # string is generated
     if node.nil?
       serialize_bt += "#{NIL_CHAR} "
       return serialize_bt
