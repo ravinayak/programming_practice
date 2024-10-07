@@ -9,6 +9,10 @@ class MinBinaryHeap
     @heap_size = heap_size
   end
 
+  def root_element
+    arr[1]
+  end
+  
   def self.build_min_heap(arr:, heap_size:)
     min_heap = MinBinaryHeap.new(arr:, heap_size:)
 
