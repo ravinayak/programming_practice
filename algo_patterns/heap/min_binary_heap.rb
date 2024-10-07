@@ -4,7 +4,7 @@
 class MinBinaryHeap
   attr_accessor :arr, :heap_size
 
-  def initialize(arr:, heap_size:)
+  def initialize(arr: [], heap_size: 0)
     @arr = prep_arr(arr:)
     @heap_size = heap_size
   end
@@ -108,14 +108,11 @@ class MinBinaryHeap
   end
 
   def prep_arr(arr:)
-    updated_arr = []
-    index = 1
-
-    arr.each do |element|
-      updated_arr[index] = element
-      index += 1
+    arr_updated = [nil]
+    arr.each_with_index do |element, index|
+      arr_updated[index + 1] = element
     end
-    updated_arr
+    arr_updated
   end
 end
 
