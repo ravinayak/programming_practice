@@ -5,7 +5,7 @@
 #
 # Class implements Binary Heap
 #
-class MaxBinaryHeap
+class MaxBinaryHeap # rubocop:disable Metrics/ClassLength
   attr_accessor :arr, :heap_size
 
   def initialize(arr:, heap_size:)
@@ -41,7 +41,7 @@ class MaxBinaryHeap
     max_element
   end
 
-  def max_heapify(arr:, i:, heap_size:, max_heap_obj_flag: false)
+  def max_heapify(arr:, i:, heap_size:)
     max_heap = MaxBinaryHeap.new(arr:, heap_size:)
     max_heap = max_heapify_helper(arr: max_heap.arr, i:, heap_size: max_heap.heap_size)
     max_heap.arr[1..heap_size]
