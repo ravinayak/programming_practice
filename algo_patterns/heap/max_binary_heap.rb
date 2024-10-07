@@ -8,23 +8,29 @@
 class MaxBinaryHeap # rubocop:disable Metrics/ClassLength
   attr_accessor :arr, :heap_size
 
-  def initialize(arr:, heap_size:)
+  def initialize(arr: [], heap_size: 0)
     @arr = prep_arr(arr:)
     @heap_size = heap_size
   end
 
   def insert_key(k:)
-    @arr = MaxBinaryHeap.insert_key(k:, arr: @arr, heap_size: @heap_size)
+    @arr = [nil, MaxBinaryHeap.insert_key(k:, arr: @arr, heap_size: @heap_size, max_heap_obj_flag: true)].flatten
+    @heap_size = @arr.length - 1
+    @arr
   end
 
   def increase_key(i:, new_key:)
-    @arr = MaxBinaryHeap.increase_key(i:, new_key:, arr: @arr, heap_size: @heap_size,
-                                      max_heap_obj_flag: true)
+    @arr = [nil, MaxBinaryHeap.increase_key(i:, new_key:, arr: @arr, heap_size: @heap_size,
+                                            max_heap_obj_flag: true)].flatten
+    @heap_size = @arr.length - 1
+    @arr
   end
 
   def decrease_key(i:, new_key:)
-    @arr = MaxBinaryHeap.decrease_key(i:, new_key:, arr: @arr, heap_size: @heap_size,
-                                      max_heap_obj_flag: true)
+    @arr = [nil, MaxBinaryHeap.decrease_key(i:, new_key:, arr: @arr, heap_size: @heap_size,
+                                            max_heap_obj_flag: true)].flatten
+    @heap_size = @arr.length - 1
+    @arr
   end
 
   def root_element
@@ -54,14 +60,7 @@ class MaxBinaryHeap # rubocop:disable Metrics/ClassLength
   private
 
   def prep_arr(arr:)
-    updated_arr = []
-    index = 1
-
-    arr.each do |element|
-      updated_arr[index] = element
-      index += 1
-    end
-    updated_arr
+    MaxBinaryHeap.send(:prepare_arr_for_heap, arr:)
   end
 
   class << self
@@ -105,9 +104,9 @@ class MaxBinaryHeap # rubocop:disable Metrics/ClassLength
     #
     def build_max_heap(arr:, n:, max_heap_obj_flag: false)
       # index = n/2 = 0 in this case, so no processing takes place
-      return [nil, arr[0]] if n == 1
-
       arr = update_arr(arr:, max_heap_obj_flag:)
+      return [nil, arr[1]] if n == 1
+
       index = n / 2
 
       while index >= 1
@@ -125,8 +124,7 @@ class MaxBinaryHeap # rubocop:disable Metrics/ClassLength
     # @return [Array]
     #
     def insert_key(k:, arr:, heap_size:, max_heap_obj_flag: false)
-      return empty_size_one_insert(key: k, arr:, heap_size:, max_heap_obj_flag:) if
-        [0, 1].include?(heap_size)
+      return empty_size_one_insert(key: k, arr:, heap_size:, max_heap_obj_flag:) if heap_size.zero?
 
       max_heap_arr = build_max_heap(arr:, n: heap_size, max_heap_obj_flag:)
 
@@ -254,7 +252,7 @@ class MaxBinaryHeap # rubocop:disable Metrics/ClassLength
     # @return [Array]
     #
     def prepare_arr_for_heap(arr:)
-      arr_updated = []
+      arr_updated = [nil]
       arr.each_with_index do |element, index|
         arr_updated[index + 1] = element
       end
