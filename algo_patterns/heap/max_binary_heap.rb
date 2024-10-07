@@ -174,7 +174,7 @@ class MaxBinaryHeap # rubocop:disable Metrics/ClassLength
     #
     def extract_max(arr:, heap_size:, max_heap_obj_flag: false)
       arr_updated = update_arr(arr:, max_heap_obj_flag:)
-      puts arr_updated.inspect
+
       exchange_nodes(i: heap_size, index_to_exchange: 1, arr: arr_updated)
 
       max_element = arr_updated[heap_size]
@@ -254,7 +254,7 @@ class MaxBinaryHeap # rubocop:disable Metrics/ClassLength
     # @return [Array]
     #
     def prepare_arr_for_heap(arr:)
-      arr_updated = [nil]
+      arr_updated = []
       arr.each_with_index do |element, index|
         arr_updated[index + 1] = element
       end
