@@ -4,7 +4,7 @@ require 'fileutils'
 
 # Define the directory where the screenshots are located
 # Replace 'screenshots_directory' with the path to your directory containing the screenshots
-directory_path = File.expand_path('~/Desktop/Videos')
+directory_path = File.expand_path('~/Desktop/Videos/6-SystemDesignScreenshots')
 
 # Get all the screenshot files in the directory (assuming .png or .jpg for this example)
 screenshots = Dir.glob("#{directory_path}/*.{png,jpg,jpeg}")
@@ -19,7 +19,7 @@ sorted_screenshots.each_with_index do |file, index|
   extension = File.extname(file)
 
   # Define the new filename, starting with number 1, without padding (e.g., 1.png, 2.png)
-  new_filename = "#{directory_path}/#{index + 1}#{extension}"
+  new_filename = "#{directory_path}/#{index + 2}#{extension}"
 
   # Rename the file
   FileUtils.mv(file, new_filename)
