@@ -92,7 +92,7 @@ class TrieWithParentPointers
     end
   end
 
-  def search(prefix:, new_search_flag: true)
+  def search(prefix:, node_cached: nil, trie_index_cached: nil, new_search_flag: true)
     # Stateful servers will maintain the curr_trie_node and curr_trie_index for the
     # last character searched by user in a single search where user is typing
     # many characters in the Search in one try. Load Balancer will tell the client
@@ -143,9 +143,11 @@ class TrieWithParentPointers
       # and return the value for the next node
       # @curr_trie_node = redis.get('<web_server_name>:<process_id>:<user_id>:<ip_address>:curr_trie_node')
       # @curr_trie_index = redis.get('<web_server_name>:<process_id>:<user_id>:<ip_address>:curr_trie_index')
-      # @curr_trie_node = @curr_trie_node.children[prefix.last]
-      # @curr_trie_index += 1
-      # return @curr_trie_node.value unless @curr_trie_node.nil?
+      @curr_trie_index = trie_index_cached
+      @curr_trie_node = node_cached
+      @curr_trie_node = @curr_trie_node.children[prefix[-1]]
+      @curr_trie_index += 1
+      return @curr_trie_node.value unless @curr_trie_node.nil?
 
       # This is a new character from the word which we could not find, hence we shall insert into trie
       # Value for this character can be:
@@ -153,22 +155,23 @@ class TrieWithParentPointers
       #    2. top k terms/words for the last found character, i.e. prev_trie_node or curr_trie_node.parent
       # word to be checked for insertion should span from 0th index to curr_trie_index which includes
       # the character that could not be found in Trie
-      # word = prefix[0..curr_trie_index]
+      word = prefix[0..trie_index_cached]
 
-      # prefix_stack = ['']
+      prefix_stack = ['']
       # Prefix stack should contain all the characters from 0 through curr_trie_index - 1, so that in
       # Match condition, we get true
       # when prefix_stack.join('') = word[0..trie_index]
-      # (curr_trie_index - 1).times { |i| prefix_stack.push(word[i]) }
-
-      # data = curr_trie_node.parent.value || 1
-      # word_char = word[curr_trie_index]
-      # trie_index_hsh = { trie_index: curr_trie_index - 1 }
-      # index = word.length - 1
-      # word_len = word.length
-      # word_with_data_hsh = { word:, word_char:, data:, word_len:, index:, trie_index_hsh: }
-      # node = curr_trie_node.parent
-      # insert_util(node:, data_hsh:, prefix_stack:)
+      trie_index_cached.times { |i| prefix_stack.push(word[i]) }
+      data = data || node_cached.value || 1
+      word_char = word[trie_index_cached]
+      trie_index_hsh = { trie_index: trie_index_cached }
+      index = word.length - 1
+      word_len = word.length
+      data_hsh = { word:, word_char:, data:, word_len:, index:, trie_index_hsh: }
+      node = node_cached
+      @curr_trie_node = insert_util(node:, data_hsh:, prefix_stack:)
+      @curr_trie_index += 1
+      @curr_trie_node.value
     end
   end
 
@@ -282,6 +285,16 @@ def word_list_with_data
   ]
 end
 
+def find_node_in_trie(trie_obj:, prefix:)
+  node = trie_obj.root
+  index = 0
+  prefix.chars.each do |prefix_char|
+    node = node.children[prefix_char]
+    index += 1
+  end
+  [node, index]
+end
+
 def test
   trie_obj = TrieWithParentPointers.new
   trie_obj.insert(word_list_with_data:)
@@ -289,26 +302,49 @@ def test
   print "\n\n Searching for bcde"
   print "\n Expected Search Result :: [\"bcdezy\", \"bcdexy\", \"bcdexz\"]"
   print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for ab"
   search_res = trie_obj.search(prefix: 'ab')
   print "\n Expected Search Result :: [\"abxy\", \"abxz\", \"abyz\"]"
   print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for b"
   search_res = trie_obj.search(prefix: 'b')
   print "\n Expected Search Result :: [\"bxy\", \"bxz\", \"byz\"]"
   print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for atef"
   search_res = trie_obj.search(prefix: 'atef')
   print "\n Expected Search Result :: [\"atefxy\", \"atefxz\", \"atefyz\"]"
   print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for atefg"
   search_res = trie_obj.search(prefix: 'atefg')
   print "\n Expected Search Result :: [\"atefxy\", \"atefxz\", \"atefyz\"]"
   print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for atefg"
   search_res = trie_obj.search(prefix: 'atefg')
   print "\n Expected Search Result :: [\"atefxy\", \"atefxz\", \"atefyz\"]"
   print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for f"
   search_res = trie_obj.search(prefix: 'f')
   print "\n Expected Search Result :: []"
   print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for btef"
   search_res = trie_obj.search(prefix: 'btef')
   print "\n Expected Search Result :: [\"bxy\", \"bxz\", \"byz\"]"
+  print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for abc with new_search_flag turned off"
+  prefix = 'abc'
+  node, index = find_node_in_trie(trie_obj:, prefix:)
+  search_res = trie_obj.search(prefix: 'abcd', new_search_flag: false, node_cached: node, trie_index_cached: index)
+  print "\n Expected Search Result :: [\"abcdxy\", \"abcdxz\", \"abcdyz\"]"
+  print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for abcde with new_search_flag turned off, char 'e' does not exist, inserting into Trie"
+  prefix = 'abcd'
+  node, index = find_node_in_trie(trie_obj:, prefix:)
+  search_res = trie_obj.search(prefix: 'abcde', new_search_flag: false, node_cached: node, trie_index_cached: index)
+  print "\n Expected Search Result :: [\"abcdxy\", \"abcdxz\", \"abcdyz\"]"
+  print "\n Res                    :: #{search_res.inspect}\n\n"
+  print "\n\n Searching for abcde with new_search_flag turned off, char 'e' does exist, should not insert into Trie"
+  search_res = trie_obj.search(prefix: 'abcde')
+  print "\n Expected Search Result :: [\"abcdxy\", \"abcdxz\", \"abcdyz\"]"
   print "\n Res                    :: #{search_res.inspect}\n\n"
 end
 
