@@ -21,3 +21,7 @@ Metrics/PerceivedComplexity:
   Max: 20
 Style/ConditionalAssignment:
   Enabled: false
+Style/NegativeCondition:
+  Enabled: false
+Style/UnlessElse:
+  Enabled: false
