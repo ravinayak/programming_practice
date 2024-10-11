@@ -28,17 +28,21 @@ class BeerSong
   private
 
   def verse_text(verse_num:)
-    if verse_num <=99 && verse_num >=2
-      return verse_text = top_verse_99_1(verse_num:) + "\n" + bottom_verse_99_2(verse_num:) + "\n"
-    elsif verse_num == 1
-      return verse_text = top_verse_99_1(verse_num:) + "\n" + BOTTOM_VERSE_ONE + "\n"
-    elsif verse_num == 0
-      return verse_text = TOP_VERSE_ZERO + "\n" + BOTTOM_VERSE_ZERO + "\n"
+    case verse_num
+    # Range operator always words with lower_val..higher_val, it will not work if we use
+    # higher_val..lower_val, for ex: 2..99 is valid but 99..2 is invalid and no iteration
+    # will be performed
+    when 2..99
+      verse_text = top_verse_99_1(verse_num:) + "\n" + bottom_verse_99_2(verse_num:) + "\n"
+    when 1
+      verse_text = top_verse_99_1(verse_num:) + "\n" + BOTTOM_VERSE_ONE + "\n"
+    when 0
+      verse_text = TOP_VERSE_ZERO + "\n" + BOTTOM_VERSE_ZERO + "\n"
     end
   end
 
   def top_verse_99_1(verse_num:)
-    bottle_text = bottles_plural(verse_num)
+    bottle_text = verse_num > 1 ? 'bottles' : 'bottle'
     "#{verse_num} #{bottle_text} of beer on the wall, #{verse_num} #{bottle_text} of beer."
   end
 
