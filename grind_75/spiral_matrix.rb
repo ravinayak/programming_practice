@@ -108,6 +108,12 @@ def spiral_order_traversal(board:)
     right -= 1
 
     # If a row is still left to traverse, move from right to left
+    # When we traverse bottom row from right to left, we are traversing
+    # a row, we can only traverse a row if a row exists which has not
+    # been processed yet. The condition to ensure that a row exists such
+    # that it has not been processed is
+    #   top <= bottom => Row exists which has not been processed
+    # Same logic applies for column, when we check for left <= right
     # Element at bottom-right has been traversed, decrementing right
     # prevents traversing it again
     if top <= bottom
