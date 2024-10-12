@@ -149,6 +149,9 @@ def level_bst_validity_check(root:, level_bst_valid:)
         # Initialize 2 new variables, it will alter the existing
         # min, max values which are needed for the right node
         # range update
+        # Used these variables simply for explanation purposes, ideally
+        # we can simply use the following code without these variables:
+        # queue.enqueue(data: [node.left, min, node.data])
         new_min = min
         new_max = node.data
         # Manually update the data on node to 85
@@ -162,6 +165,7 @@ def level_bst_validity_check(root:, level_bst_valid:)
 
       new_min = node.data
       new_max = max
+      # queue.enqueue(data: [node.right, node.data, max])
       queue.enqueue(data: [node.right, new_min, new_max])
     end
 
