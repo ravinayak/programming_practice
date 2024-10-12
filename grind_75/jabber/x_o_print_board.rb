@@ -38,7 +38,7 @@ class BoardDisplay
   # @param [Integer] mgroupx
   # @param [Integer] mgroupy
   def print_chars(mx:, my:, mgroupx:, mgroupy:)
-    display_chars = %w[0 X]
+    display_chars = %w[O X]
     grid_dimensions = [mx, my, mgroupx, mgroupy]
     grid = prep_grid(grid_dimensions:)
 
@@ -121,14 +121,17 @@ class BoardDisplay
 
   # @param [Array<Array<Integer>>] grid
   def print_grid(grid:)
-    print "\n Printing Grid now :: \n"
+    str = ''
+    print "\n Printing Grid now :: \n  \t"
     (0...grid.length).each do |row|
-      print "\n"
+      print "\n  \t"
       (0...grid[0].length).each do |col|
+        str += grid[row][col]
         print grid[row][col]
       end
+      str += "\n"
     end
-    print "\n"
+    print "\n\n String generated through board and Output same :: #{str == output} \n\n"
   end
 end
 
@@ -146,7 +149,11 @@ def output
 end
 
 def test
-  puts output
+  print "\n Expected board output display :: "
+  output.split("\n").each do |str_line|
+    print "\n  \t" + str_line
+  end
+  print "\n"
   BoardDisplay.new.print_chars(mx: 3, my: 2, mgroupx: 4, mgroupy: 4)
 end
 
