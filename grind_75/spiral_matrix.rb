@@ -10,6 +10,9 @@ def spiral_order_traversal(board:)
   return [] if board.nil? || board.empty?
 
   # Board starts at [0,0] on top left where row = 0, col = 0
+  # rows = board.length => Elements in board indicate # of rows
+  # cols = board[0].length => Elements in board at any index
+  # represents number of cols in the board
   # Board ends at [m - 1, n - 1] on bottom right where
   #  row = m - 1, col = n - 1
   # Number of elements in board indicates rows, and for each
@@ -19,43 +22,53 @@ def spiral_order_traversal(board:)
   #  Row Information => For row x => board[x - 1]
   #    => board[x - 1] is an array with n elements
   # Column Information => Access [y - 1] element in array board[x - 1]
-  top = 0
-  bottom = board.length - 1
-  left = 0
-  right = board[0].length - 1
+  m = board.length
+  n = board[0].length
 
   # Algorithm: We move spirally in the following way
   # top <= bottom
-  #    => top represents the upper-most part of board, 0th row
-  #    => bottom represents the lower-most part of board, last row
+  #  => top represents the upper-most part of board, 0th row
+  #  => bottom represents the lower-most part of board,
+  #  => last row, (m -1)th row
   # left <= right
-  #    => left represents the left-most column of board, 0th column
-  #    => right represents the right-most column, (n - 1)th column
+  #  => left represents the left-most column of board, 0th column
+  #  => right represents the right-most column, (n - 1)th column
   # We move across the board, to move across the board there should
-  #  be some row, and some column which has not already been traversed
+  # be some row, and some column which has not already been traversed
   # We increment top, decrement right, decrement bottom, increment
   # left as we move spirally, hence,
-  #  To move there should be some row, some column which is not yet
+  # To move there should be some row, some column which is not yet
   # traversed
   #  Condition => top <= bottom, left <= right
   # top + , bottom -
   # top increases, bottom decreases as we move spirally, so board
-  # shrinks vertically, there should be some row to traverse, if
+  # shrinks horizontally, there should be some row to traverse, if
   # top > bottom, we have traversed all rows, and there is nothing
   # left to traverse
   # left +, right -
   # left increases, right decreases as we move along columns
-  # vertically, the board shrinks along horizontal line, if
+  # horizontally, the board shrinks along vertical line, if
   # left > right, we have traversed all columns and there is no column
   # left to traverse
   #  a. Along the top row, we move horizontally from left to right
   #      => col increases from left to right, and at the end we have
   #         processed top row,
   #      => top = top + 1
+  #     At the end of processing top row, we have processed element at
+  #     the rightmost end of the board in top row, which is (top, n-1)
+  #     Because we increment top, when we process from left to right
+  #     vertically from top to bottom, we do not process the element
+  #     at the rightmost end of the board (top, n-1) again because
+  #     top = top + 1. We start at (top + 1, n - 1)
   #  b. On reaching right, we move vertically down from top to bottom
   #      => row increases from top to bottom, and at the end we have
   #         processed right column,
   #      => right = right - 1
+  #    Same logic as above applies in this use case. We have processed
+  #    element at the bottom most part of the board, (m - 1, n - 1)
+  #    We decrement right, right = m - 2 now, and hence in next iteration
+  #    when we move from right to left, we do not process the same
+  #    element at rightmost end of the board again.
   #  c. Upon reaching bottom, we move horizontally from right to left
   #      => If there is still a row to process, if top > bottom, there
   #         is no row to process
@@ -72,8 +85,12 @@ def spiral_order_traversal(board:)
   # A 1D array which holds elements of array obtained by traversing
   # Spirally
   result = []
+  top = 0
+  bottom = m - 1
+  left = 0
+  right = n - 1
 
-  while top <= left && top <= bottom
+  while left <= right && top <= bottom
 
     (left..right).each do |i|
       result << board[top][i]
@@ -140,8 +157,8 @@ def test
     result = spiral_order_traversal(board:)
     print "\n\n Board :: #{board.inspect}\n"
     print "\n Output :: #{output.inspect}, "
-    print "Result :: #{result.inspect}, "
-    print "Correct Ouput :: #{result == output}\n\n"
+    print "\n Result :: #{result.inspect}, "
+    print "\n Correct Ouput :: #{result == output}\n\n"
   end
 end
 
