@@ -65,6 +65,12 @@ def sort_colors(arr:, low_element:, mid_element:, high_element:)
   # Tracks high_element, all elements right of high are high_element
   high = arr.length - 1
 
+  # mid < high is WRONG CONDITION, mid <= high is CORRECT,
+  # when mid = high, it is possible that the element referenced by index
+  # mid is Element1, and in this case, we must SWAP this element with the
+  # element referenced by "left", so that all elements left of "left" are
+  # Element1. If we skip processing this element, there will be an element
+  # right of "left" which is Element1 and this will give INCORRECT Answer
   while mid <= high
     if arr[mid] == low_element
       swap(arr:, i: mid, index_to_exchange: low)
