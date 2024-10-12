@@ -4,10 +4,14 @@ require_relative '../algo_patterns/sort/quicksort'
 # Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]]
 # such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 
-# Notice that the solution set must not contain duplicate triplets.
+# Notice that the solution set must not contain duplicate triplets. Each triplet
+# must contain unique set of elements, any arrangement of the same indices or
+# elements within a triplet qualifies as a duplicate.
+# Ex: [-1, -1, 2], [2, -1, -1], [-1, 2, -1] are all duplicates since they contain
+# same elements arranged in different orders
 
 # Example 1:
-# Input: nums = [-1,0,1,2,-1,-4]
+# Input: nums = [-1,0,1,2,-1,-4].
 # Output: [[-1,-1,2],[-1,0,1]]
 # Explanation:
 # nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.
@@ -31,12 +35,12 @@ require_relative '../algo_patterns/sort/quicksort'
 #  (n-3, n-2, n-1) a triplet possibility. At "n-2", we can only have 2 elements
 # pair and no triplet, so final range where we should stop is at "n-3"
 # 1. First step is to sort the array, so we can
-#      a. Skip duplicates
-#      b. Use Two-Pointer Technique
+#    a. Skip duplicates
+#    b. Use Two-Pointer Technique
 # 2. Use Hash to ensure that every TRIPLET found is inserted into hash as
-#     a key. This ensures that any new TRIPLET can be checked for duplication
-#     in hash to avoid TRIPLET DUPLICATES.
-#        => This is more of a precautionary measure
+# a key. This ensures that any new TRIPLET can be checked for duplication
+# in hash to avoid TRIPLET DUPLICATES.
+#   => This is more of a precautionary measure
 #
 #
 # We use Two-Poiner Technique, start at an index, say "i" in the iteration
@@ -49,29 +53,40 @@ require_relative '../algo_patterns/sort/quicksort'
 # previous elements, because those elements have already tried combining
 # with the current element to form triplets in previous iterations
 #  3. Sum Use Cases:
-#      a. If sum = given sum, we are good, put it in Hash after checking
-#         that the triplet combination does not exist already in hash
-#         i. We want to avoid any duplicate triplets, so for left, right, we
-#            must check for duplicate elements that have the same value as
-#            left, right indices, and increment/decrement left/right until
-#            we reach a unique element
-#        ii. When we have skipped duplicates, left/right still need to point
-#            to the next elements, skipping duplicates ends at an index where
-#            left/right point to the same element which has been tried in
-#            triplet
-#     b. sum < given sum,
-#        => array is sorted, so left is at a smaller value, increment it to
-#           get to a larger value. right is at a larger value
-#        => We increment only 1 of left/right at a time, this is because
-#           we want to try all possible combinations of (index, left, right)
-#           to find a triplet whose sum is specified sum
-#     c. sum > given sum,
-#        => array is sorted, so right is at a larger value, decrement it to
-#           get to a smaller value
+#   a. If sum = given sum, we are good, put it in Hash after checking
+#   that the triplet combination does not exist already in hash
+#     i. We want to avoid any duplicate triplets, so for left, right, we
+#     must check for duplicate elements that have the same value as
+#     left, right indices, and increment/decrement left/right until
+#     we reach a unique element
+#     ii. When we have skipped duplicates, left/right still need to point
+#     to the next elements, skipping duplicates ends at an index where
+#     left/right point to the same element which has been tried in
+#     triplet
+#   b. sum < given sum,
+#      => array is sorted, so left is at a smaller value, increment it to
+#      get to a larger value. right is at a larger value
+#      => We increment only 1 of left/right at a time, this is because
+#      we want to try all possible combinations of (index, left, right)
+#      to find a triplet whose sum is specified sum
+#  c. sum > given sum,
+#      => array is sorted, so right is at a larger value, decrement it to
+#      get to a smaller value
 # 4. In array next iteration, check if the current element is same as previous
 #    element, this is crucial to avoid trying to find triplets that have
 #    already been processed before and ALSO TO AVOID DUPLICATE TRIPLETS
-
+# 5. We do not have to worry about triplets that have different permutations
+#    because we are iterating in the array in increasing indices and hence
+#    we cannot have different permutations of the same triplet.
+#    Ex: [-1, 1, 0] => -1 is at index 1, 1 is at index 3, 0 is at index 4
+#    Because we iterate in increasing order of indices,
+#     a. -1 will never come again in any triplet (we skip over duplicates).
+#     b. [1, -1, 0] is also NOT POSSIBLE, since we only move forward in array
+#     with increase of indices and hence CANNOT COME BACK to a previous index
+#     Once we have processed index 1, we will not come back to index 1 again
+#     c. Hence we can store ANY TRIPLET found in a hash and simply check for
+#     that triplet to occur again, we do not have to worry about permutations
+#     for the same triplet
 # @param [Array] input_arr
 # @param [Integer] target_sum
 # @return [Array<Array<Integer>>]
@@ -82,8 +97,10 @@ def find_3_sum(input_arr:, target_sum:)
   # we can check if key exists to avoid duplicate triplets
   triplet_hsh = {}
 
-  # sort the array elements
-  sorted_arr = quicksort(arr: input_arr)
+  # sort the array elements, we take a dup of current array so that we
+  # do not change the order of elements in current array, we should not
+  # change input.
+  sorted_arr = quicksort(arr: input_arr.dup)
 
   # Maximum Range where index can increase to find triplets is n-3
   max_range = len - 3
@@ -91,6 +108,24 @@ def find_3_sum(input_arr:, target_sum:)
   # Iterate over array
   (0..max_range).each do |index|
     # skip if current element is a duplicate of previous element
+    # This condition is Necessary to prevent duplicate TRIPLETS in the
+    # solution 
+    # a. It helps to avoid processing duplicate triplets at the outermost
+    # loop level. 
+    # b. It ensures we don't start the two-pointer search from the same value
+    # multiple times.
+    # c. This check is Different from inner loop skipping: The duplicate
+    # skipping we do inside the while loop (for left and right pointers) is
+    # different. That skipping happens after we've found a valid triplet and
+    # is meant to avoid duplicate results within the current iteration.
+    # d. Efficiency: By skipping duplicates at this outer level, we avoid unnecessary
+    # iterations that would produce the same results, thus improving the algorithm's
+    # efficiency.
+    # 4. Correctness: Without this check, we might get duplicate triplets in our final
+    # result, even with the hash set we're using.
+    # Since the problem specifically states that the solution should NOT CONTAIN DUPLICATE
+    # TRIPLETS in solution, we must perform this step, it is NOT ONLY NECESSARY for
+    # improving Algorithm's Efficiency, it is ALSO NECESSARY for correctness of solution
     next if index.positive? && sorted_arr[index] == sorted_arr[index - 1]
 
     # left, right defined to try combination for triplets
@@ -111,7 +146,12 @@ def find_3_sum(input_arr:, target_sum:)
         # Skip over duplicates
         left += 1 while left < right && sorted_arr[left] == sorted_arr[left + 1]
 
-        # Next element to try triplet
+        # Next element to try triplet, left will stop in the previous while loop
+        # at a position which points to the same duplicate element that was present
+        # in the previous index position. If no duplicates exist, left will continue
+        # to point to the same index as before, since we have already tried combining
+        # current index with left, right, we must increment left, decrement right to
+        # try NEW COMBINATIONS. Same logic applies for RIGHT
         left += 1
 
         # Skip over duplicates
