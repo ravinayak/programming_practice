@@ -41,8 +41,8 @@ def bt_diameter_utility(node:, diameter_node_data:)
   left_height = bt_diameter_utility(node: node.left, diameter_node_data:)
   right_height = bt_diameter_utility(node: node.right, diameter_node_data:)
 
-  # Diameter of a node represents (as per problem statement) the maximum of
-  # (edges in the left subtree, edges in the right subtree) of the node
+  # Diameter of a node represents (as per problem statement) the maximum #
+  # of (edges in the left subtree, edges in the right subtree) of the node
   # We calculate the sum of left/right heights for the node.
   # Left height of a node represents the maximum number of nodes in the left
   # subtree of that node. Same for right height of the node.
