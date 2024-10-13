@@ -11,7 +11,7 @@
 
 # Example 2:
 # Input: nums = [1,2,3,5]
-# Output: false.
+# Output: false
 # Explanation: The array cannot be partitioned into equal sum subsets.
 
 # NOTE: Classical problem in CS
