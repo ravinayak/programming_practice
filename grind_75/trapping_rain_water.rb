@@ -59,9 +59,35 @@ def trapping_rain_water(input_arr:, width:)
   right_max = input_arr[right]
   water_trapped = 0
 
+  # In this iteration, we calculate the water which will be trapped
+  # at every index starting from 0
+  # a. At index 0, it calculates water trapped between index 0 and 1
+  # b. At index 1, it calculates water trapped between index 1 and 2
+  # c. At index right - 2, it calculates water trapped between index right - 2 and right - 1
+  # d. At index right - 1, it would calculate water trapped between index index right - 1 and right
+  # e. "right - 1" through "right" contains a bar, and there is no bar to the right of this bar
+  #    meaning this is the last bar, and therefore no water can be trapped at this index
+  # f. Hence, we compare left < right - 1 and not right, so that left can only grow till right - 2
+  # g. left < right => left can grow till right - 1, and we have seen at Step e, this would
+  #    calculate water trapped for last bar which is incorrect
   while left < right - 1
     if left_max < right_max
+      # Increment left to get the height of bar at current left, so we can find if there is a dip
+      # between previous bar and current bar by finding left_max which is shown below in calculations
       left += 1
+      # We increment left so that we can find the left_max by comparing existing left_max with
+      # current left represented by input_arr[left]
+      # a. left_max <= input_arr[left] => There is no dip between bars at left - 1, and left
+      #    Hence no water can be trapped in this area. In this calculation, it is reflected
+      #    by left_max = [left_max, input_arr[left]].max
+      #     => left_max will be = input_arr[left] since left_max < input_arr[left]
+      # b. left_max - input_arr[left] = 0 since left_max = input_arr[left]
+      # c. Thus when current bar is greater in height, there is no dip and hence no water is
+      #    trapped
+      # d. left_max > input_arr[left] => There is a dip at current left and hence water can be
+      #    trapped
+      # e. left_max - input_arr[left] > 0 => Multiplied by width gives us the amount of water
+      #    which can be trapped at left
       left_max = [left_max, input_arr[left]].max
 
       water_trapped += (left_max - input_arr[left]) * width

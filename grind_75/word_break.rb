@@ -30,7 +30,7 @@
 
 # Step 2:  For each position i in the string s, check all possible substrings s[j:i] where
 # 0 ≤ j < i. If dp[j] is True and s[j:i] is in wordDict, set dp[i] to True.
-#  => dp[i] = if the substring s[0:i] can be segmented into words in wordDict, and
+#  => dp[i] = true if the substring s[0:i] can be segmented into words in wordDict, and
 #     False otherwise
 #  => dp[i]
 #    = substring formed by including characters "0" through "i-1" of string
@@ -116,7 +116,14 @@ def word_break_with_combs(word:, word_dict:)
       # in word_dict because dp[0] is [""] and dp[0].empty? returns false
       # word[0...1] => word[0] => if it is included in word_dict, it will be included
       # in dp[1]
-      next unless !dp[j].empty? && word_dict.include?(word[j...i])
+      # if dp[j] is empty => we could not form any valid segments from 1st j characters of
+      # string such that the segments are included in word dictionary
+      # if !word_dict.include?(word[j...i]) => word_dict does not include segment formed by
+      # including characters from "j" through "i" (excluding i) of string, even if dp[j]
+      # contains segments which are included in word dictionary, the remaining segment formed
+      # by including chars "j"..."i" of string s are not included in word dictionary
+      # Hence we cannot form any valid segment for dp[i] through "j", so we skip this iteration
+      next if dp[j].empty? || !word_dict.include?(word[j...i])
 
       dp[j].each do |segment|
         # when dp[j] contains "" as segment, it will return segment.empty? as true
