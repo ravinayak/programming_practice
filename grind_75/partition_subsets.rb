@@ -11,7 +11,7 @@
 
 # Example 2:
 # Input: nums = [1,2,3,5]
-# Output: false
+# Output: false.
 # Explanation: The array cannot be partitioned into equal sum subsets.
 
 # NOTE: Classical problem in CS
@@ -46,7 +46,14 @@ def partition_into_k_subsets(input_arr:, k:)
     # and which sum upto the given target.
     # Every set forms a subset and is collected in sets array to give us
     # all the "k" subsets of input_arr which have equal sum
-    sets << set_adds_upto_target(input_arr:, visited:, target:)
+    set = set_adds_upto_target(input_arr:, visited:, target:)
+
+    # If we could not find a set which contains elements from input array
+    # that could addup to given target, we cannot find k sets to partition
+    # given input array, hence we return immediately from the method 
+    return [false, nil] if set.empty?
+
+    sets << set
   end
 
   [true, sets]
@@ -79,8 +86,9 @@ def set_adds_upto_target(input_arr:, target:, visited: nil)
   # set with other element to sum upto a specified target
   # If dp[j] = false => dp[j - element] = true => parent[j] = element, index
   # This is because [element, parent[dp[j-element]] sum upto j
-  # dp[0] = 0 => Consider element in array: 3, j = 3
-  #    => dp[3] = dp[j - element] = dp[3 - 3] = dp[0] = true
+  # dp[0] = 0
+  #  => Consider element in array: 3, j = 3
+  #  => dp[3] = dp[j - element] = dp[3 - 3] = dp[0] = true
   #  parent[3] = 3 because we can use element "3" to achieve the sum "3"
   # This is useful in backtracking to obtain the set of elements in input_arr
   # which add upto given target
@@ -98,19 +106,19 @@ def set_adds_upto_target(input_arr:, target:, visited: nil)
     # 1 to target, the same element can be considered more than once when
     # forming SETS,
     # Consider element = 5, j = 15
-    #   => Iterating from 1..target => 1..15 =>
-    #    => dp[5] will be evaluated 1st, then dp[10]
-    #    => dp[5] = true; j = 10 => dp[10] = dp[j - element] = dp[5] = true
-    #    => In this case, for dp[10], we are using dp[5] which means we
-    #       are using the element "5" twice in the set which is INCORRECT
-    #    => Iterating from target..1 => 15..1 =>
-    #    => dp[10] will be evaluated 1st, then dp[5]
-    #    => j = 10 => dp[10] = dp[j - element] = dp[10 - 5] = dp[5] = false
-    #    => This is because dp[5] is set to false and has not been evaluated yet
-    target.downto(1).each do |j|
-      # CRUCIAL => dp[j - element] will try to access an index which is -ve
-      # if j < element and give an array out of index bounds error
-      next if j < element
+    #  => Iterating from 1..target => 1..15 =>
+    #  => dp[5] will be evaluated 1st, then dp[10]
+    #  => dp[5] = true; j = 10 => dp[10] = dp[j - element] = dp[5] = true
+    #  => In this case, for dp[10], we are using dp[5] which means we
+    #     are using the element "5" twice in the set which is INCORRECT
+    #  => Iterating from target..1 => 15..1 =>
+    #  => dp[10] will be evaluated 1st, then dp[5]
+    #  => j = 10 => dp[10] = dp[j - element] = dp[10 - 5] = dp[5] = false
+    #  => This is because dp[5] is set to false and has not been evaluated yet
+    target.downto(element).each do |j|
+      # We go only till 'element' to avoid accessing negative indices in dp array
+      # This eliminates the need for the previous 'next if j < element' check
+      # and ensures we only consider valid combinations
 
       # dp[j] is not set, and can be set using element, and parent[dp[j-element]]
       # In this case, we set parent of "j" to current element and index
@@ -120,6 +128,10 @@ def set_adds_upto_target(input_arr:, target:, visited: nil)
       end
     end
   end
+
+  # If dp[target] is not true, it means we have not been able to find a combination
+  # of elements in the array which sums to given target, hence we return an [].
+  return [] unless dp[target]
 
   generate_set(target_sum: target, visited:, parent:)
 end
@@ -186,7 +198,7 @@ def test
   res_sets = set_adds_upto_target(input_arr:, target:)
   print "\n Set contains a subset which adds upto target => \n"
   print "\n Input Arr :: #{input_arr.inspect}, target :: #{target}"
-  print "\n Sets :: #{res_sets} \n"
+  print "\n Sets :: #{res_sets} \n\n"
 end
 
 test
