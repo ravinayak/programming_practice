@@ -38,7 +38,6 @@ def djikstras(graph:, source_node:, destination_node: nil)
     # Stop if we have reached the destination node
     # return [distance[destination_node], distance] if node == destination_node
 
-
     # if this node has been processed, all the neighbors
     # of this node have been udpated for minimum distance
     # from the source node, hence we can skip it
@@ -74,10 +73,10 @@ def djikstras(graph:, source_node:, destination_node: nil)
     #         will be processed with this value
     # Step 5: But D will be extracted again with a value of
     #         '5', here it is critical to use this check of
-    #          visited[node], since this node has already
-    #          been processed, it will simply add more time
-    #          to compute distance of neighbors which will
-    #          never get updated from their existing values
+    #         visited[node], since this node has already
+    #         been processed, it will simply add more time
+    #         to compute distance of neighbors which will
+    #         never get updated from their existing values
     #   => This is because when D was extracted and its
     #      neighbors were processed for distance computation
     #      they were evaluated with a distance of 4, with
@@ -98,11 +97,11 @@ def djikstras(graph:, source_node:, destination_node: nil)
       # to result in Redundant Work. We skip updating
       # the distance of neighbor and inserting into
       # min-heap
-      if distance[neighbor] > distance[node] + weight
-        distance[neighbor] = distance[node] + weight
-        obj = { element: neighbor, key: distance[neighbor] }
-        pq_min_heap.insert_object(object: obj)
-      end
+      next unless distance[neighbor] > distance[node] + weight
+
+      distance[neighbor] = distance[node] + weight
+      obj = { element: neighbor, key: distance[neighbor] }
+      pq_min_heap.insert_object(object: obj)
     end
   end
 
