@@ -17,6 +17,28 @@ class LinkedList
     @head = prepare_list
   end
 
+  def insert(data:)
+    print "\n Inserting data :: #{data}"
+    node = head
+    node = node.next until node.next.nil?
+    new_node = Node.new(data:)
+    node.next = new_node
+    print "\n Data inserted :: #{new_node.data}\n"
+  end
+
+  def search(data:)
+    print "\n Searching for data :: #{data}"
+    node = head
+    until node.next.nil?
+      if node.data == data
+        print "\n Search Result found :: #{node.data} \n"
+        return
+      end
+      node = node.next
+    end
+    print "\n Search not found\n"
+  end
+
   # Prepares linked list for given input array elements
   # @return [Node] 1st Node of linked list
   #
@@ -25,14 +47,16 @@ class LinkedList
     # This is the header node which is a dummy node and is initialized
     # with nil value. This serves as a start point for iteration over
     # linked list
-    node_previous = Node.new(data: nil)
-    header = node_previous
+    node_prev = Node.new(data: nil)
+    header = node_prev
+
     while curr_index < input_arr.length
-      node_next = Node.new(data: input_arr[curr_index])
-      node_previous.next = node_next
-      node_previous = node_next
+      new_node = Node.new(data: input_arr[curr_index])
       curr_index += 1
+      node_prev.next = new_node
+      node_prev = new_node
     end
+
     header
   end
 
@@ -64,5 +88,9 @@ class LinkedList
   end
 end
 
-# linked_list = LinkedList.new(input_arr: [1, 3, 6, 8, 9, 13, 19, 21, 26])
-# linked_list.traverse_list
+linked_list = LinkedList.new(input_arr: [1, 3, 6, 8, 9, 13, 19, 21, 26])
+linked_list.traverse_list
+linked_list.insert(data: 95)
+linked_list.search(data: 8)
+linked_list.search(data: 99)
+print "\n\n"
