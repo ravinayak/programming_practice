@@ -150,9 +150,10 @@ def total_paths_dp(m:, n:)
     dp[i][0] = dp[i - 1][0].map { |path| path + [i, 0] }
 
     (1...n).each do |j|
-      dp[i][j] += dp[i - 1][j].map { |path| path + [i, j] } if i.positive?
+      # if i.positive? is redundant since i >=1 and same for j
+      dp[i][j] += dp[i - 1][j].map { |path| path + [i, j] } # if i.positive?
 
-      dp[i][j] += dp[i][j - 1].map { |path| path + [i, j] } if j.positive?
+      dp[i][j] += dp[i][j - 1].map { |path| path + [i, j] } # if j.positive?
     end
   end
 
