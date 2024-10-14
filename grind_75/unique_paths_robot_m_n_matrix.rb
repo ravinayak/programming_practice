@@ -35,7 +35,7 @@
 #  2. User can move right along the column
 # If user takes only down moves - "m - 1"
 # If user reaches the bottom, and wants to go to the right bottom - "n - 1"
-# Total number of moves = m - 1 + n - 1 = m + n -2
+# Total number of moves = m - 1 + n - 1 = m + n - 2
 # Out of these total number of moves, user has to select "m - 1" moves, which
 # is equivalent to 'n - 1' right moves.
 # At each step starting from the start position (0, 0), robot has to select
@@ -118,15 +118,17 @@ def total_paths_dp(m:, n:)
   # column. dp[0][0] = [[0, 0]] because this is the starting point
 
   # Remember that every dp array element is an array of arrays where
-  # inner array is an array of pair of vertices
+  # inner array is an array of pair of vertices, where each array of
+  # pair of vertices represents a single path of all the vertices
+  # that have been traversed to reach the given vertex (i, j)
   # dp array element = Array of paths
   # Each path = Array of Array of Vertices Pairs
   # [path1, path2, path3]
   # path1 = [vertex_pairs_arr]
   # vertex_pairs = [v1, v2]
-  # Each path = [ [ [v1, v2], [v2, v3], [v4, v5] ], ..... ]
+  # Each path = [ [v1, v2], [v2, v3], [v4, v5] ],
   # Path is an array of array of array of vertex pairs
-  dp[0][0] = [[[0, 0]]]
+  dp[0][0] = [[0, 0]]
 
   # Initialization of 0th row and 0th column is essential because without
   # properly populating these, we shall end up with incorrect calculations
@@ -138,28 +140,19 @@ def total_paths_dp(m:, n:)
   # When we use map, and if we use "+" instead of "<<", it will return a
   # new array, and not mutate the existing path array
 
-  # dp[0][k] = dp[0][k - 1].map { |path| path << [[0, k]] }
-
-  # We must use [[0, k]] and NOT [0, k] because it will give us incorrect
-  # result for Ruby Array Handling
-  # dp[x][y] = [ [ [x1, y1], [x2, y2], [x3, y3] ], [ [x4, y4], [x5, y5] ], ... ]
-  # path = [ [x1, y1], [x2, y2], [x3, y3] ]
-  # This IS INCORRECT
-  # path + [i, j] = [ [x1, y1], [x2, y2], [x3, y3], i, j ]
-  # This is CORRECT
-  # path + [[i, j]] = [ [x1, y1], [x2, y2], [x3, y3], [i, j] ]
+  # dp[0][k] = dp[0][k - 1].map { |path| path << [0, k] }
 
   (1...n).each do |k|
-    dp[0][k] = dp[0][k - 1].map { |path| path + [[0, k]] }
+    dp[0][k] = dp[0][k - 1].map { |path| path + [0, k] }
   end
 
   (1...m).each do |i|
-    dp[i][0] = dp[i - 1][0].map { |path| path + [[i, 0]] }
+    dp[i][0] = dp[i - 1][0].map { |path| path + [i, 0] }
 
     (1...n).each do |j|
-      dp[i][j] += dp[i - 1][j].map { |path| path + [[i, j]] } if i.positive?
+      dp[i][j] += dp[i - 1][j].map { |path| path + [i, j] } if i.positive?
 
-      dp[i][j] += dp[i][j - 1].map { |path| path + [[i, j]] } if j.positive?
+      dp[i][j] += dp[i][j - 1].map { |path| path + [i, j] } if j.positive?
     end
   end
 
