@@ -21,7 +21,7 @@
 # LCS (longest common subsequence)
 
 # Optimized Space Complexity:
-#  O(n) => We can use 2 rows each of size "n" to calculate LCS, where
+# O(n) => We can use 2 rows each of size "n" to calculate LCS, where
 # n = min(m,n)
 # Optimized Space Complexity is possible because of the fact that calculation of
 # LCS requires only 2 rows at any time
@@ -70,7 +70,7 @@ def lcs_space_optimized(word1:, word2:)
   # curr_row => i
   # For any iteration of i,j over words to find LCS,
   #  prev_row[j] => Length of LCS for (i-1,j) i-1 chars of word1, j chars of word2
-  # curr_row[j-1] => Length of LCS for (i, j-1) i chars of word1, j-1 chars of word2
+  #  curr_row[j-1] => Length of LCS for (i, j-1) i chars of word1, j-1 chars of word2
   # We need these prev_row and one value in curr_row to calculate LCS
 
   # To find LCS in space-optimized way, we would need to initialize prev_row
