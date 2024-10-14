@@ -25,7 +25,7 @@ require_relative '../algo_patterns/data_structures/queue'
 # Explanation: The endWord "cog" is not in wordList, therefore there is no valid
 # transformation sequence.
 
-# Algorithm: To create a word ladder, we have to find all the words which differ by one
+# Algorithm: To create a word ladder, we have to find all the wo.rds which differ by one
 # character from the transitioning_word.
 # 1. For each word, in the word list, we prepare patterns where each character in the
 # word is replaced by another character such as '#'
@@ -113,12 +113,11 @@ def word_ladder(begin_word:, end_word:, word_list:)
         # enqueuing it
         queue_element = [neighbor, path + [neighbor]]
         queue.enqueue(data: queue_element)
-
-        # Clear the adjacency matrix for pattern, so that if we find this pattern
-        # again in iteration, we do not end up processing the same nodes again
-        # and waste cycles
-        adj_matrix[pattern] = []
       end
+      # Clear the adjacency matrix for pattern, so that if we find this pattern
+      # again in iteration, we do not end up processing the same nodes again
+      # and waste cycles
+      adj_matrix[pattern] = []
     end
   end
 
@@ -139,6 +138,12 @@ def input_arr
       end_word: 'cog',
       word_list: %w[hot dot dog lot log],
       output: [nil, []]
+    },
+    {
+      begin_word: 'banas',
+      end_word: 'fbmps',
+      word_list: %w[fanas fbmps banana apple bat fbnas fbmas],
+      output: [5, %w[banas fanas fbnas fbmas fbmps]]
     }
   ]
 end
@@ -150,9 +155,9 @@ def test
     path_length = input_hsh[:output][0]
     word_list = input_hsh[:output][1]
     res = word_ladder(begin_word:, end_word:, word_list:)
-    print "\n Input - Begin word :: #{begin_word}, End word :: #{end_word}"
+    print "\n Input - Begin word :: #{begin_word}, End word :: #{end_word}, Word List :: #{word_list.inspect}"
     print "\n Expected - Path Length :: #{path_length}, Word List :: #{word_list.inspect}"
-    print "\n Result - Path Length   :: #{res[0]}, Word LIst :: #{res[1].inspect}\n"
+    print "\n Result - Path Length   :: #{res[0]}, Word List :: #{res[1].inspect}\n"
   end
   print "\n"
 end
