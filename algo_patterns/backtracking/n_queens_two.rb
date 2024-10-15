@@ -153,7 +153,7 @@ end
 def place_n_queen_util(board:, col:, n:, solutions:)
   # Base case: If all queens are placed, return true
   if col >= n
-    solutions << board.map(&:dup) # board.dup will not work, iterate over all arrays and dup them
+    solutions << board.each.map(&:dup) # board.dup will not work, iterate over all arrays and dup them
     return
   end
 
