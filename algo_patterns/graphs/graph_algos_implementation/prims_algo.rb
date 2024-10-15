@@ -12,8 +12,9 @@ require_relative '../graph'
 # like Kruskals algo. The concept of Spanning Tree
 # itself applies to undirected Graphs, because for
 # a Spanning Tree to be defined, the graph must be
-# connected, and Directed Graphs do not have the
-# same connectivity
+# connected,
+# Directed Graphs do not have the same connectivity
+# which is expected for Spanning Tree
 
 # Prims algo constructs a MST by choosing a NEW VERTEX
 # with the minimum edge weight which connects this
@@ -92,40 +93,72 @@ require_relative '../graph'
 #   MST, it will be extracted and simply skipped in next iteration
 #   This saves redundant work
 
+# Why we do not choose an edge from an extracted node to another node
+# which is present in MST?
+
+# In Prim’s algorithm, the goal is to construct a minimum spanning tree
+# (MST) by selecting edges that connect new vertices to the already
+# constructed tree in a way that keeps the total weight minimal.
+
+# The reason you do not include an edge from an extracted node to a
+#   neighbor that is already present in the mst_vertices set (or array)
+#   is to prevent cycles in the MST and to maintain the correctness of
+#   the algorithm. Here’s why this is important:
+
+# 1. Preventing Cycles:
+
+#   •  The minimum spanning tree is a tree, which means it should have no
+#   cycles. If you include an edge that connects two vertices that are
+#   already in the MST, it would create a cycle, which violates the
+#   definition of a tree.
+#   •  By ensuring that you only select edges connecting a node that is
+#   not yet in the MST to the already constructed MST, you avoid
+#   introducing cycles.
+
+# 2. Ensuring Minimum Weight Selection:
+
+#   •  Prim’s algorithm works by expanding the MST one vertex at a time,
+#   always selecting the smallest possible edge that connects a new vertex
+#   (not in the MST) to the existing MST.
+#   •  If you include edges that connect vertices already in the MST, you
+#   are not expanding the tree, and you may end up selecting a suboptimal
+#   edge that doesn’t help grow the tree.
+
 def prims_algo(graph:)
   graph.vertices.length
 
   mst_edges = []
   mst_vertices = []
+  mst_costs = 0
   pq_min_heap = PriorityQueueMinHeap.new(arr: [], heap_size: 0)
 
-  obj = { element: graph.vertices[0], key: 0 }
+  obj = { element: graph.vertices[0], key: 0, edge: nil }
   pq_min_heap.insert_object(object: obj)
 
   until pq_min_heap.empty?
     min_element = pq_min_heap.extract_min
-    vertex, cost = min_element.values_at(:element, :key)
+    vertex, cost, edge = min_element.values_at(:element, :key, :edge)
 
     next if mst_vertices.include?(vertex)
 
-    mst_edges << [vertex, cost] if cost.positive?
+    if cost.positive?
+      mst_costs += cost
+      mst_edges << edge
+    end
+
     mst_vertices << vertex
 
     graph.adj_matrix[vertex].each do |neighbor_weight|
       neighbor, weight = neighbor_weight
       next if mst_vertices.include?(neighbor)
 
-      obj = { element: neighbor, key: weight }
+      obj = { element: neighbor, key: weight, edge: [vertex, neighbor, weight] }
       pq_min_heap.insert_object(object: obj)
     end
   end
 
-  total_cost = mst_edges.reduce(0) do |sum, neighbor_weight|
-    sum + neighbor_weight[1]
-  end
-
   # Return MST Edges
-  [mst_edges, total_cost]
+  [mst_edges, mst_costs]
 end
 
 def graph
