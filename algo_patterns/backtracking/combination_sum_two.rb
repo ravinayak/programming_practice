@@ -3,6 +3,10 @@
 # Combination Sum II - Elements of array sum to target -
 # Elements CANNOT be reused
 # Elements can be used only once, duplicates are not allowed in solutions
+# If Elements are present more than once (ex: 2, 2), they can be used
+# individually but only once meaning - (1, 2, 2) is allowed but (1, 2, 2, 2)
+# is not allowed since 2 is used more than once, it can only be used 2wice
+# since it occurs 2 times in the array
 
 # @param [Array] candidates_arr
 # @param [Integer] target
@@ -10,6 +14,14 @@
 #
 def combination_sum_two(candidates_arr:, target:)
   results = []
+  # candidates.uniq.sort would be incorrect here. Since elements CANNOT BE
+  # reused, frequency of occurrence of an element matters. If an element
+  # occurs 3 times, it can be used 3 times in a combination, if it occurs
+  # only 1nce, it can only be used 1nce in any combination
+  # (1, 2, 2), (1, 2) 
+  # uniq would remove duplicate elements and lower their frequency as compared
+  # to original input array and this would cause to lose many possible
+  # valid combinations
   candidates = candidates_arr.sort
   start_index = 0
   combinations = []
