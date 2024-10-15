@@ -7,14 +7,14 @@
 # iterate over the entire length of string, and for each index
 # position within the string, we look at 2 possible use cases:
 # 1. Odd-length palindromes: These are strings which are formed
-#     by including 2 chars around the current character, one on
-#     the left, and one on the right. The single character at
-#     current index in string is also a valid palindrome
-#  2. Even-length palindromes: These are strings which are formed
-#     by including 2 chars around the current character, one on
-#     the left, and one on the right. The two characters at
-#     current index in string form a valid palindrome if those
-#     characters match
+#    by including 2 chars around the current character, one on
+#    the left, and one on the right. The single character at
+#    current index in string is also a valid palindrome
+# 2. Even-length palindromes: These are strings which are formed
+#    by including 2 chars around the current character, one on
+#    the left, and one on the right. The two characters at
+#    current index in string form a valid palindrome if those
+#    characters match
 #                   0     1    2    3    4    5    6    7
 #  Consider str = ['a', 'b', 'c', 'd', 'c', 'f', 'g', 'h']
 #  Suppose we start at index 3 in str:
@@ -110,7 +110,7 @@ def expand_around_center(str:, left:, right:)
   # str[left].strip == '' => Stripping empty space will give us ''
   # left, right upper bounds check + Char same check + Empty space check
   while left > -1 && right < str.length && str[left] == str[right] &&
-        str[left].strip != '' && str[right].strip != ''
+        str[left].strip != ''
     left -= 1
     right += 1
   end
@@ -123,7 +123,7 @@ def expand_around_center(str:, left:, right:)
   # 5. right - left = Length between "left + 1"  and "right" including "right"
   #    => "right" = end_index + 1     => end_index    = right - 1
   #    => "left"  = start_index - 1   => start_index  = left + 1
-  #    => Length of Palindrome = end_index - start_index + 1 
+  #    => Length of Palindrome = end_index - start_index + 1
   #    => We add 1 because start_index includes palindrome character
   #    => (end_index - start_index) excludes start_index character
   #    => (right - 1) - (left + 1) + 1 = right - 1 - left - 1 + 1
@@ -138,7 +138,6 @@ def expand_around_center(str:, left:, right:)
   [left + 1, right - left - 1]
 end
 
-# rubocop:disable Metrics/MethodLength
 def test
   str_arr = [
     {
@@ -163,8 +162,8 @@ def test
     },
     {
       str: 'defabdcbbcdbafed',
-      length: 2,
-      pal: 'bb'
+      length: 16,
+      pal: 'defabdcbbcdbafed'
     }
   ]
 
@@ -178,5 +177,4 @@ def test
     puts "Result => Length :: #{max_length}, Pal :: #{longest_pal}"
   end
 end
-# rubocop:enable Metrics/MethodLength
 test
