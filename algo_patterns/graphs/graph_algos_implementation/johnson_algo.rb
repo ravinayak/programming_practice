@@ -1,17 +1,17 @@
 # frozen_string_literal: true
+
 # Breakdown of Dijkstra’s Complexity in Johnson’s Algorithm:
 
 #   • Dijkstra’s algorithm for finding the shortest paths from a single
 #   source has a time complexity of O(E log V), where:
 #   • E is the number of edges.
 #   • V is the number of vertices.
-#   • In Johnson’s Algorithm, you run Dijkstra’s algorithm from each 
+#   • In Johnson’s Algorithm, you run Dijkstra’s algorithm from each
 #   vertex in the graph, so the complexity becomes V * O(E log V).
 
 # Thus, for all vertices, the complexity of the Dijkstra part is:
 
 # O(V * (E * log V))
-
 
 # Overall Time Complexity of Johnson’s Algorithm:
 
@@ -22,7 +22,7 @@
 
 # 1. Bellman-Ford Step: O(V * E)
 
-#   • Bellman-Ford is run from the new vertex q, which takes O(V * E) 
+#   • Bellman-Ford is run from the new vertex q, which takes O(V * E)
 #   time.
 #   • This part computes the reweighting function h(v) for each vertex
 #   and detects if there are any negative-weight cycles.
@@ -36,7 +36,6 @@
 
 # O(V * (E * log V))
 
-
 # Combining the Two Steps:
 
 # To get the total time complexity of Johnson’s algorithm, we combine
@@ -49,7 +48,6 @@
 
 # O(V * E) + O(V * (E * log V)) = O(V * E + V * E * log V)
 
-
 # Now, depending on the structure of the graph, we get two cases:
 
 #   1. For Sparse Graphs:
@@ -61,7 +59,6 @@
 #   • If the graph is dense, E ≈ V^2, so the total time complexity becomes:
 
 # O(V * V^2 + V * V^2 * log V) = O(V^3 + V^3 * log V) = O(V^3 * log V)
-
 
 # Why is the Overall Complexity Often Written as O(V² log V + V * E)?
 
@@ -100,7 +97,7 @@ def johnson_algo(graph:)
 
   djikstra_algo_for_vertices(graph:, reweighted_graph:, all_pairs_shortest_paths:)
 
-  readjust_weights(graph:, all_pairs_shortest_paths:, h:)
+  readjust_weights(all_pairs_shortest_paths:, h:)
 
   # Return all pairs of shortest paths
   all_pairs_shortest_paths
@@ -156,8 +153,8 @@ end
 
 def readjust_weights(all_pairs_shortest_paths:, h:)
   # Adjust distances based on the reweighting function 'h'
-  all_pairs_shortest_paths.each do |u, distances|
-    distances.each do |v, distance|
+  all_pairs_shortest_paths.each do |u, distance_hsh|
+    distance_hsh.each_pair do |v, distance|
       all_pairs_shortest_paths[u][v] += h[v] - h[u] if distance < Float::INFINITY
     end
   end

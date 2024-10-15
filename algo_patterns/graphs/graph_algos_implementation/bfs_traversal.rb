@@ -67,7 +67,7 @@ def shortest_distance(node1:, node2:, graph:)
     node = queue.dequeue
     visited[node] = true
 
-    graph.adj_matrix[node].each do |neighbor_weight|
+    graph.adj_matrix[node].each do |_neighbor_weight|
       # Undirected Graph with Equal Edge Weights:
       #  • In an unweighted or equally weighted graph, BFS will naturally
       #    explore nodes in increasing order of distance from the source.
@@ -76,7 +76,7 @@ def shortest_distance(node1:, node2:, graph:)
       #    the first time you visit a node, you’ve found the shortest path to it.
       # Weighted Graph (Unequal Edge Weights):
       #  • In a graph with unequal edge weights, simply skipping a node because
-      #    it’s been visited before can be problematic. The reason is that there 
+      #    it’s been visited before can be problematic. The reason is that there
       #    might be a shorter path to that node through a different route, even
       #    after the node has been visited once. A longer path with more edges
       #    may have fewer weights assigned to it and hence may have less distance
@@ -91,10 +91,10 @@ def shortest_distance(node1:, node2:, graph:)
            distance[node] + weight < distance[neighbor]
       # If all EDGE WEIGHTS ARE SAME, BFS explores nodes in increasing order of distance
       # from source. This implies that 1st time when we encounter destination node,
-      # distance of destination node from the source  is the shortest distance possible
+      # distance of destination node from the source is the shortest distance possible
       # from source. At this time, we have updated distance of destination node by
       # evaluating distance[node] + 1, hence it is safe to break from the loop
-      break if (neighbor == node2)
+      break if neighbor == node2
 
       queue.enqueue(data: neighbor)
     end

@@ -133,8 +133,7 @@ Applications of Bellman-Ford Algorithm
 
     1.	Graphs with Negative Weights:
     •	The Bellman-Ford algorithm is used to find the shortest path in graphs with negative
-    	edge
-    	weights, where Dijkstra’s algorithm fails.
+    	edge weights, where Dijkstra’s algorithm fails.
     2.	Detecting Negative Weight Cycles:
     •	The algorithm can detect negative weight cycles, which can be important in financial
     	modeling, network routing, or any situation where infinite reductions in costs are
@@ -142,7 +141,7 @@ Applications of Bellman-Ford Algorithm
     3.	Routing Algorithms:
     •	Bellman-Ford is used in some network routing algorithms, such as Distance Vector Routing
     	Protocols (e.g., RIP – Routing Information Protocol), to compute the shortest paths and
-    		detect routing loops.
+    	detect routing loops.
 
 Limitations
 

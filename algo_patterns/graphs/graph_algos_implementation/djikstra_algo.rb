@@ -89,6 +89,9 @@ def djikstras(graph:, source_node:, destination_node: nil)
     visited[node] = true
 
     graph.adj_matrix[node]&.each do |neighbor, weight|
+      # If this node has been processed, we can safely skip it
+      next if visited[neighbor]
+
       # If current distance of neighbor is less than the
       # distance of current node from source + weight of
       # the edge from current node to neighbor, then the
