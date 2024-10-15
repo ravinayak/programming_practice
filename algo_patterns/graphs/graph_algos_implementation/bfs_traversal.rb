@@ -44,6 +44,23 @@ require_relative '../graph'
 #    using fewest EDGES
 # 4. BFS does not work for Undirected Graph with -ve Weight Edges
 #
+# Can we use BFS for finding shortest paths with unequal weight edges.
+# The short answer is: standard BFS alone is not suitable for finding
+# shortest paths in graphs with unequal edge weights. Let me explain why
+# and what alternatives exist.
+# 1. BFS and Equal Weights:
+#    BFS works perfectly for finding shortest paths when all edges have equal
+#    weights (or in unweighted graphs). It naturally explores nodes in order
+#    of their distance from the source.
+# 2. BFS and Unequal Weights:
+#    When edge weights are unequal, BFS loses its guarantee of finding the
+#    shortest path. This is because:
+#    BFS explores nodes based on the number of edges from the source, not the
+#    total weight of the path.
+#    A path with more edges but lower total weight could be shorter than a
+#    path with fewer edges but higher total weight.
+# BFS has exactly same algorithm as djikstras except that it uses queue
+# data structure while djikstras algo uses PriorityMinHeap
 
 # explores paths in order of increasing distance from the source node.
 
@@ -52,22 +69,32 @@ require_relative '../graph'
 # |      | \
 # |      |  \
 # 4 ---- 3 -- 2
-def shortest_distance(node1:, node2:, graph:)
+def shortest_distance(source_node:, destination_node:, graph:)
   queue = Queue.new
   visited = {}
 
-  queue.enqueue(data: node1)
+  queue.enqueue(data: source_node)
 
   distance = Hash.new { |h, k| h[k] = Float::INFINITY }
-  distance[node1] = 0
+  distance[source_node] = 0
 
   until queue.empty?
     # Mark node as visited as soon as it is dequeued for BFS traversal
     # in Graph
     node = queue.dequeue
+
+    # If all EDGE WEIGHTS ARE SAME, BFS explores nodes in increasing order of distance
+    # from source. This implies that 1st time when we encounter destination node,
+    # distance of destination node from the source is the shortest distance possible
+    # from source. At this time, we have updated distance of destination node by
+    # evaluating distance[node] + 1, hence it is safe to break from the loop
+    return distance[node] if node == destination_node
+
+    next if visited [node]
+
     visited[node] = true
 
-    graph.adj_matrix[node].each do |_neighbor_weight|
+    graph.adj_matrix[node]&.each do |neighbor, weight|
       # Undirected Graph with Equal Edge Weights:
       #  • In an unweighted or equally weighted graph, BFS will naturally
       #    explore nodes in increasing order of distance from the source.
@@ -87,20 +114,14 @@ def shortest_distance(node1:, node2:, graph:)
       #    every possible shorter path is considered.
       next if visited[neighbor]
 
-      distance[neighbor] = distance[node] + weight if
-           distance[node] + weight < distance[neighbor]
-      # If all EDGE WEIGHTS ARE SAME, BFS explores nodes in increasing order of distance
-      # from source. This implies that 1st time when we encounter destination node,
-      # distance of destination node from the source is the shortest distance possible
-      # from source. At this time, we have updated distance of destination node by
-      # evaluating distance[node] + 1, hence it is safe to break from the loop
-      break if neighbor == node2
+      next unless distance[neighbor] > distance[node] + weight
 
+      distance[neighbor] = distance[node] + weight
       queue.enqueue(data: neighbor)
     end
   end
 
-  distance[node2]
+  distance[destination_node]
 end
 
 def connectivity_check(graph:)
@@ -144,11 +165,6 @@ def test_connectivity
       graph: graph[0],
       output: 3,
       same_weights: true
-    },
-    {
-      graph: graph[1],
-      output: 6,
-      same_weights: false
     }
   ]
   puts
@@ -165,7 +181,7 @@ def test_connectivity
     graph = graph_hsh[:graph]
     output = graph_hsh[:output]
     same_weights = graph_hsh[:same_weights]
-    result = shortest_distance(node1: 0, node2: 5, graph:, same_weights:)
+    result = shortest_distance(source_node: 0, destination_node: 5, graph:)
 
     str = ' Expected Distance between nodes 0 and node 5 :: '
     puts "#{str}#{output}, Result :: #{result}"
