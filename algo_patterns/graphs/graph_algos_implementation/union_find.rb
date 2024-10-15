@@ -93,7 +93,7 @@ class UnionFind
     parent[x]
   end
 
-  def union(x:, y:)
+  def union(x:, y:).
     rootX = find(x:)
     rootY = find(x: y)
 

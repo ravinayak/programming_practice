@@ -16,7 +16,7 @@ Key Concepts
     •	Minimum Spanning Tree (MST): A spanning tree with the minimum sum of edge weights.
     •	Greedy Algorithm: Kruskal’s algorithm is greedy because it picks the smallest
     	possible edge at each step without regard for the global structure, only considering
-    		local decisions.
+    	local decisions.
 
 How Kruskal’s Algorithm Works
 
