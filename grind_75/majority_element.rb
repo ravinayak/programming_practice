@@ -19,7 +19,7 @@
 # 2. If the current element is the same as candidate, increment count.
 # 3. Otherwise, decrement count.
 # 4. If count = 0, and we are at an iteration in the array we set this element to
-#     the new candidate
+#    the new candidate
 # 5. The candidate at the end of the iteration will be the majority element.
 
 # The logic behind this is that if there is a majority element, resetting the
@@ -43,11 +43,13 @@ def find_majority_element(input_arr:)
 
     count += 1 if element == candidate
 
-    count - 1 if element != candidate
+    count -= 1 if element != candidate
   end
+  # Count the actual occurrences of the candidate
+  actual_count = input_arr.count(candidate)
 
-  # Return number of occurrences and candidate element
-  [count, candidate]
+  # Return actual number of occurrences and candidate element
+  [actual_count, candidate]
 end
 
 def test
