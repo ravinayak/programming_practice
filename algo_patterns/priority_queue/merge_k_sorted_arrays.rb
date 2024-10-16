@@ -13,6 +13,9 @@ require_relative 'priority_queue'
 #      insert the next largest element from this array into priority queue
 #   c. Repeat
 
+# NOTE: this code should be simplified and heap_size, arr, other details should be extracted
+# into PriorityQueue class
+
 # @param [Array<Array>] k_sorted_arrs
 # @return [Array]
 #

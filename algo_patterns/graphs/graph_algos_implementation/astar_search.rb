@@ -52,7 +52,7 @@ class AstarSearch
       node = pq_min_heap.extract_min[:element]
 
       # Reconstructs path if goal_node is found
-      return reconstruct_path(came_from:, current: node) if
+      return [g_score[node], reconstruct_path(came_from:, current: node)] if
         node == goal_node
 
       # if node has been processed, we skip it. It is possible to
@@ -66,7 +66,7 @@ class AstarSearch
       visited[node] = true
 
       # Process adjacency matrix for node, and update neighbors
-      process_adj_matrix(node:, g_score:, f_score:, pq_min_heap:)
+      process_adj_matrix(node:, g_score:, f_score:, pq_min_heap:, visited:)
     end
     nil
   end
@@ -100,8 +100,10 @@ class AstarSearch
   # @param [Hash] f_score
   # @param [PriorityQueueMinHeap] pq_min_heap
   # @return void
-  def process_adj_matrix(node:, g_score:, f_score:, pq_min_heap:)
+  def process_adj_matrix(node:, g_score:, f_score:, pq_min_heap:, visited:)
     graph.adj_matrix[node].each do |neighbor, cost|
+      next if visited[neighbor]
+
       tentative_g_score = g_score[node] + cost
       next unless tentative_g_score < g_score[neighbor]
 
@@ -118,9 +120,10 @@ class AstarSearch
   # @return [Array]
   def reconstruct_path(came_from:, current:)
     total_path = [current]
-    while came_from.key?(current)
-      current = came_from[current]
+    current = came_from[current]
+    while current
       total_path << current
+      current = came_from[current]
     end
     total_path.reverse
   end
@@ -151,9 +154,9 @@ def test
   graph, heuristic = graph_heuristic
 
   astar = AstarSearch.new(graph:, heuristic:)
-  path = astar.find_path(source_node: 0, goal_node: 5)
-  puts 'Expected Shortest Path :: [0, 1, 3, 4, 5]'
-  puts "A Start Search Result  :: #{path}"
+  weight, path = astar.find_path(source_node: 0, goal_node: 5)
+  puts 'Expected Shortest Path => Weight :: 4, Path :: [0, 1, 3, 4, 5]'
+  puts "A Start Search Result  => Weight :: #{weight}, Path :: #{path}"
 end
 
 test
