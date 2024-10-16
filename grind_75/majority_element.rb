@@ -27,6 +27,17 @@
 # the true majority element, by definition, occurs more than ⌊n / 2⌋ times,
 # so it will still be the candidate by the end of the array.
 
+# Majority element will occur than ⌊n / 2⌋ times, this implies that if we
+# pair majority element with non-majority element, there will be say 'x'
+# pairs, and there will be at least one more occurrence of majority element
+# If we consider count+=1 as setting, and count-=1 as cancelling, then, for
+# each pair of majority/non-majority element, there will be equal amount
+# of setting/cancellation. At the end however, there will be 1 more setting
+# than cancellation of majority element where majority element will be set
+# to candidate, and thus we will be able to find the Majority Element. Resetting
+# candidate when count=0 does not impact finding majority element due to pair
+# effect
+
 # @param [Array<Integer>] input_arr
 # @return [Array<Integer, Integer>] count, majority element
 #
