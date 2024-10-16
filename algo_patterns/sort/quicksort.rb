@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../data_structures/stack'
-# frozen_string_literal: true
 
 # Algorithm: Quicksort uses the concept of Partitioning an array
 # into TWO SubArrays with left subarray containing elements <= Pivot
@@ -51,7 +50,7 @@ end
 # @return [Array]
 #
 def quicksort_rec(arr:, low:, high:)
-  return unless low < high
+  return if low > high
 
   pivot_index = partition(arr:, low:, high:)
 
@@ -123,6 +122,7 @@ end
 # As is clear, quicksort sorts the array in place
 #
 def partition(arr:, low:, high:)
+  return if low > high
   # Generate randomized number for selection of pivot
   # to avoid worst case Time Complexity of O(n ^ 2) when
   # array is already sorted
@@ -170,9 +170,11 @@ def partition(arr:, low:, high:)
   #    index means the index at which pivot would have been placed
   #    if the array were sorted in Ascending Order
   # j < high is Necessary condition and should not be changed to 
-  # j <= high because in such a case, j=high => arr[j] = pivot and
+  # INCORRECT : j <= high because in such a case, j=high => arr[j] = pivot and
   # "i" will be incorrectly incremented to a position where it should
   # not be incremented
+  # We process all elements except the Pivot element which is processed
+  # at the end and placed in its correct position at i + 1
   while j < high # Iterate (low..high - 1)
     # If the 1st n elements are less than pivot, for each such "n"
     # elements, they will be swapped with themselves. Swapping stops
