@@ -8,7 +8,7 @@
 
 # TimeMap() Initializes the object of the data structure.
 # void set(String key, String value, int timestamp) Stores
-# the key key with the value value at the given time timestamp.
+# the key key with the value - "value" at the given timestamp.
 # String get(String key, int timestamp) Returns a value such
 # that set was called previously, with timestamp_prev <= timestamp.
 # If there are multiple such values, it returns the value associated

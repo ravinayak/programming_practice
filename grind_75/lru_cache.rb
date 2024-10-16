@@ -106,7 +106,7 @@ class LRUCache
       lru_cache = class_name.new(capacity: data_input[0][0])
       output = [nil]
       (1...method_names.length).each do |index|
-        next unless !method_names[index].nil? && !data_input[index].nil?
+        next if method_names[index].nil? || data_input[index].nil?
 
         next if method_names[index] == 'put' && data_input[index].length < 2
 
