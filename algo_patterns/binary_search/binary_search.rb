@@ -67,9 +67,11 @@ end
 # @param [Array<Integer>] input_arr
 # @param [Integer] target
 def modified_binary_search(input_arr:, target:)
+  return nil if input_arr.empty?
+
   return input_arr[0] if input_arr.length == 1 && input_arr[0] <= target
 
-  return nil if input_arr.empty?
+  return nil if input_arr.length == 1 && input_arr[0] > target
 
   low = 0
   high = input_arr.length - 1
