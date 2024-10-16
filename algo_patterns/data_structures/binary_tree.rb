@@ -162,7 +162,7 @@ class BinaryTree
       # in that order
       st2.push(data: current)
       st1.push(data: current.left) if curr.left
-      st2.push(data: current.right) if curr.right
+      st1.push(data: current.right) if curr.right
     end
 
     # Stack st2 is used for printing all the elements by popping them off the stack
@@ -265,7 +265,7 @@ end
 # bt = BinaryTree.new(data: 75)
 # arr = [50, 40, 35, 45, 110, 60, 85, 125, 115, 55, 90, 135, 130, 80, 78]
 # arr.each do |data|
-#   bt.insert(data: data)
+#   bt.insert(data:)
 # end
 
 # bt.in_order_traversal
