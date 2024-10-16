@@ -68,8 +68,8 @@ end
 # this, we reverse array before pushing each element onto stack. This
 # guarantees that the elements will be popped from stack in correct
 # order,
-#    reverse => last element will be the 1st to be pushed onto stack
-#            => 1st element will be the last to be pushed onto stack
+#  reverse => last element will be the 1st to be pushed onto stack
+#          => 1st element will be the last to be pushed onto stack
 #    => Pop => 1st element will be popped and added to results array
 #    => results array will get elements added to it in correct order
 
