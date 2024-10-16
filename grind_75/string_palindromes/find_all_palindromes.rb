@@ -13,16 +13,7 @@ def find_all_palindromes(str:)
   result = {}
 
   (0...str.length).each do |start_idx|
-    # Every single letter in string str is a valid palindrome
-    # We assign string as value to this char as key in hash
-    result[str[start_idx]] = str[start_idx]
-
     (start_idx...str.length).each do |end_idx|
-      # For this start_idx, we skip the character if it is same
-      # as the character at start_idx. This is because we have
-      # already put single letter characters into hash
-      next if start_idx == end_idx
-
       # form a substring by including characters from start_idx
       # to end_idx including end_idx
       substr = str[start_idx..end_idx]
@@ -44,8 +35,9 @@ def test
   expected_res = %w[a aba b c d f g]
   res = find_all_palindromes(str:)
 
-  puts "Input Str :: #{str}"
-  puts "Expected Result :: #{expected_res}, Result :: #{res}"
+  puts " Input Str :: #{str}"
+  puts " Expected Result :: #{expected_res}"
+  puts " Result          :: #{res}"
 end
 
 test
