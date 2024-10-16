@@ -16,16 +16,16 @@
 # The concept is:
 # 1. Binary Math can use the concept that if we divide by 2, we get the
 # binary digit as modulo
-#  2. Quotient is the carry even if we are using a "carry"
+# 2. Quotient is the carry even if we are using a "carry"
 # Explanation:
-#    a. carry: 0
-#      1 + 0 + 0 = 1 => num = 1 % 2 = 1, carry = 1/2 = 0 = (same as 1)
-#      0 + 1 + 0 = 1 => num = 1 % 2 = 1, carry = 1/2 = 0 = (same as 1)
-#      1 + 1 + 0 = 2 => num = 2 % 2 = 0, carry = 2/2 = 1 = (same as 10)
-#    b. carry: 1
-#      1 + 0 + 1 = 2 => num = 2 % 2 = 0, carry = 2/2 = 1 = (same as 10)
-#      0 + 1 + 1 = 2 => num = 2 % 2 = 0, carry = 2/2 = 1 = (same as 10)
-#      1 + 1 + 1 = 3 => num = 3 % 2 = 1, carry = 3/2 = 1 = (same as 11)
+# a. carry: 0
+#    1 + 0 + 0 = 1 => num = 1 % 2 = 1, carry = 1/2 = 0 = (same as 1)
+#    0 + 1 + 0 = 1 => num = 1 % 2 = 1, carry = 1/2 = 0 = (same as 1)
+#    1 + 1 + 0 = 2 => num = 2 % 2 = 0, carry = 2/2 = 1 = (same as 10)
+# b. carry: 1
+#    1 + 0 + 1 = 2 => num = 2 % 2 = 0, carry = 2/2 = 1 = (same as 10)
+#    0 + 1 + 1 = 2 => num = 2 % 2 = 0, carry = 2/2 = 1 = (same as 10)
+#    1 + 1 + 1 = 3 => num = 3 % 2 = 1, carry = 3/2 = 1 = (same as 11)
 # Here, num is the result of binary sum => i.e. binary digit and carry
 # has usual meaning
 
@@ -37,7 +37,7 @@
 # assuming they have 0 as digit, and use the sum identified above as
 # result to append to output string
 
-#  Adding "1110", "11011011" can be tricky because 1st string has 4 digits
+# Adding "1110", "11011011" can be tricky because 1st string has 4 digits
 # while 2nd string has 8 digits. Beyond 4 digits, if there is no carry, we
 # can simply append the remaining part of 2nd string. If there is carry, we
 # can continue to perform binary math assuming 1st string has 0 in its digit
@@ -51,8 +51,11 @@
 
 # Explanation:
 #
+# Both strings - string 1 and string 2 have been reversed, and we are now
+# performing addition of string 1, string 2 and a possible carry of 0/1
+#
 #    carry:             0/1    0/1    0/1    0/1    0/1    0/1    0/1    0/1
-#    char(string 1):     0      0      0      0      0      0      0      0
+#    char(string 1):     0      1      1      1      0      0      0      0
 #    char(string 2):     1      1      0      1      1      0      1      1
 # We have initialized 1st 4 digits as "0" for string 1, and carry can be 0/1
 # We perform a 3-way sum of these digits according to the rules defined above
@@ -69,7 +72,7 @@ def binary_sum(binary_str_one:, binary_str_two:)
   result = ''
 
   # Perform a 3-way sum of binary digits unless both strings run out and carry
-  # is not 0. Use or condition to ensure the 3-way sum is performed, using and
+  # is not 0. Use "OR" condition to ensure the 3-way sum is performed, using and
   # would only result in addition until the shorter string length
   while index_str_one >= 0 || index_str_two >= 0 || carry != 0
     bit_one = index_str_one.negative? ? 0 : binary_str_one[index_str_one].to_i
@@ -86,7 +89,7 @@ def binary_sum(binary_str_one:, binary_str_two:)
     # left to right
     # Ex: Consider 010 + 101 =>
     #  a. result = '1' + '' = '1' => chars at index 0 added, preprended to ''
-    #  b. result = '1' + '1' = '11' => chars at index 1 dded, prepended to '1'
+    #  b. result = '1' + '1' = '11' => chars at index 1 added, prepended to '1'
     #  c. result = '11' + '1' = '111' => chars at index 2 dded, prepended to '11'
     # If we appended, we would have to reverse the string. This is because we
     # are adding chars from the end of string, and result at each step is LSB
