@@ -59,6 +59,13 @@ def k_closest_points_to_origin(points:, k:)
 
   n = obj_hsh_arr.length
   pq = PriorityQueue.new
+  # This is another way to build a MaxHeap Priority Queue from "k"
+  # elements, where we provide all the "k" elements and build a max
+  # heap from those elements. The build_priority_queue method will
+  # automatically arrange these "k" elements into a max-heap
+  # structure
+  # Another way would be to insert each element into priority queue
+  # object
   pq.build_priority_queue(arr: obj_hsh_arr, n:)
 
   (k...points.length).each do |index|
@@ -72,6 +79,7 @@ def k_closest_points_to_origin(points:, k:)
     pq.insert_key(obj_hash:)
   end
 
+  # Retrieve the points for "k" closest points to origin in max-heaps
   pq.arr.reduce([]) { |acc, point_hsh| acc << point_hsh[:point] }
 end
 
