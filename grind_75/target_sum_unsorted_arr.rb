@@ -8,14 +8,14 @@
 # You can return the answer in any order.
 
 # NOTE: Array of integers is not Sorted
-#    This is an important observation because this implies we cannot use the two
-#    pointers method to solve this problem without increasing complexity
-#    To use two pointers method:
-#      a. Sort the array => O(n * log n)
-#      b. Keep track of original indices of elements => We have to return NOT
-#         the actual numbers but indices of the numbers
-#            => We need An array to store elements and their indices or a hash
-#            => O(n)
+#  This is an important observation because this implies we cannot use the two
+#  pointers method to solve this problem without increasing complexity
+#  To use two pointers method:
+#   a. Sort the array => O(n * log n)
+#   b. Keep track of original indices of elements => We have to return NOT
+#      the actual numbers but indices of the numbers
+#        => We need An array to store elements and their indices or a hash
+#        => O(n)
 
 # More Efficient solution is to use a Hash
 # For each element in array, we store its compliment (target - original element) in
@@ -29,9 +29,9 @@
 # Elements are stored in hash as => Target - element => compliment
 # Ex: input = [2,7,11], target = 9 => We shall store
 #        these keys along with values =>
-#          a. 9 - 2 = 7 => 0
-#          b. 9 - 7 = 2 => 1
-#          c. 9 - 11 = -2   => 2
+#          a. 9 - 2  = 7  => 0
+#          b. 9 - 7  = 2  => 1
+#          c. 9 - 11 = -2 => 2
 
 # Time Complexity => O(n)
 # Space Complexity => O(n)
