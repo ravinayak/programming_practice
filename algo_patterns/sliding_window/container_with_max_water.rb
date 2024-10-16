@@ -51,17 +51,19 @@ end
 # @return NIL
 #
 def adjust_pointers(sliding_window:, heights_arr:)
-  # sliding_window[:left] < sliding_window[:right]
-  #    => Here we can definitively say that if we increment sliding_window[:left]
-  #       and if we find a value < previous value, then the area which will be formed
-  #       will surely be less than current_area
-  #    => sliding_window[:left + 1] < sliding_window[:left] +
-  #       sliding_window[:left] < sliding_window[:right]
-  #    => Area formed by sliding_window[:left+1] and sliding_window[:right] will surely
-  #       be less than current area
-  #    => Because height has decreased, and width has also decreased, here we are
-  #       definitive about the pointer which points to smaller height and hence we move
-  #       that pointer
+  # The logic for adjusting the pointers is correct:
+  # 1. If the height at the left pointer is smaller than the height at the
+  # right pointer, we move the left pointer to the right.
+  # Otherwise (if the height at the right pointer is smaller or equal), we
+  # move the right pointer to the left.
+  # This approach is optimal because:
+  # 1. The area is determined by the shorter of the two heights and the distance
+  # between them.
+  # By moving the pointer that points to the shorter height, we have a chance of
+  # finding a taller height that could potentially increase the area.
+  # If we moved the pointer with the taller height, we would be guaranteed to either
+  # maintain or decrease the area (due to the width decreasing).
+
   if heights_arr[sliding_window[:left]] < heights_arr[sliding_window[:right]]
     sliding_window[:left] += 1
   else
