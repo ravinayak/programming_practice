@@ -169,11 +169,15 @@ def partition(arr:, low:, high:)
   # c. "pivot" is placed at its correct index in the array, correct
   #    index means the index at which pivot would have been placed
   #    if the array were sorted in Ascending Order
+  # j < high is Necessary condition and should not be changed to 
+  # j <= high because in such a case, j=high => arr[j] = pivot and
+  # "i" will be incorrectly incremented to a position where it should
+  # not be incremented
   while j < high # Iterate (low..high - 1)
     # If the 1st n elements are less than pivot, for each such "n"
     # elements, they will be swapped with themselves. Swapping stops
     # when we find an element > Pivot
-    if arr[j] < pivot
+    if arr[j] <= pivot
       i += 1
       swap_elements(index_one: j, index_two: i, arr:)
     end
