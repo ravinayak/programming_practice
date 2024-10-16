@@ -86,7 +86,7 @@ class BinaryMaxHeap
                 index
               end
 
-    largest = right_child if right_child <= heap_size && arr[right_child] > arr[largest]            
+    largest = right_child if right_child <= heap_size && arr[right_child] > arr[largest]
     if largest != index
       swap_nodes(arr:, index:, index_to_exchange: largest)
       max_heapify_util(arr:, index: largest, heap_size:)
@@ -148,7 +148,7 @@ def test
 
   arr3 = [2000, 1800, 1850, 1700, 1600, 1500, 1800, 500, 600, 700, 650]
   max_binary_heap.build_max_heap(input_arr: arr3)
-  print "\n\n Build Max Heap:: #{max_binary_heap.arr.inspect}" 
+  print "\n\n Build Max Heap:: #{max_binary_heap.arr.inspect}"
   max_binary_heap.insert(key: 4500)
   print "\n Inserting 4500 element in Heap :: #{max_binary_heap.arr.inspect}"
   max_binary_heap.increase_key(index: 4, new_key: 5000)
