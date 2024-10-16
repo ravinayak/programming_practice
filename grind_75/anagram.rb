@@ -8,12 +8,15 @@
 # Solution 1: Use Hash Map, iterate over 's', and for each unique alphabet/letter
 # encountered, increment existing count. If no key exists, initialize count to 1
 # for this alphabet/letter as key. Iterate over 't', and for each alphabet/letter
-# check if hash contains this letter/alphabet as key. If key exists, decrement count 
+# check if hash contains this letter/alphabet as key. If key exists, decrement count
 # by 1. If count for any key reaches "0", remove the key from Hash Map.
-# If no key exists in Hash Map, return false. 
-# At the end of iteration over "t", Hash Map should not contain any keys. This is 
-# because if "t" is an anagram of "s", same letters/alphabets should occur in "s" 
-# with same frequency. So, all keys should have their count reduced to "0", and should 
+# During iteration over 't', if we encounter a use case where hash map does not
+# contain key present in 's', return false. This is because "s" contains a character
+# which is not present in 't', and for 't' to be an anagram of 's', t must contain
+# each character of 's' with the same frequency of occurrence as in 't'
+# At the end of iteration over "t", Hash Map should not contain any keys. This is
+# because if "t" is an anagram of "s", same letters/alphabets should occur in "s"
+# with same frequency. So, all keys should have their count reduced to "0", and should
 # be removed. If Hash Map contains any key, "t" is NOT an ANAGRAM of "S"
 
 # Time Complexity: O(n) => Iterate over "s", and "t", where n is [s.length, t.length].max
@@ -53,7 +56,6 @@ def anagram(s:, t:)
     count_occurrences[t_char] -= 1
     count_occurrences.delete(t_char) if count_occurrences[t_char].zero?
   end
-
 
   count_occurrences.keys.empty? ? true : false
 end
