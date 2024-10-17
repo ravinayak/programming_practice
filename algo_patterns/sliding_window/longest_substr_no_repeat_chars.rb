@@ -12,7 +12,7 @@
 # If this character is found again while right is moving forward in the
 # iteration. Here we have 2 possibilities:
 
-# 1. Current window/substring includes this repeating character: We know that 
+# 1. Current window/substring includes this repeating character: We know that
 #   current substring cannot be extended to include this character since it is
 #   repeating itself and was found earlier in the substring.
 #     => Condition => left <= last seen position of the repeating character
@@ -31,8 +31,8 @@
 # 2. Current window/substring DOES NOT include this repeating character: In
 #    this use case, we can include this character since no repetition occurs
 #     => Condition => left > last seen position of the repeating character
-#       => No Update/Resetting of window/substring is required
-# 
+#     => No Update/Resetting of window/substring is required
+#
 
 # Hence 1 of 2 actions must be taken:
 # 1. Character found earlier must be excluded from the current substring and
