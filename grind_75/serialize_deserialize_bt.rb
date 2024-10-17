@@ -23,7 +23,7 @@ require_relative '../algo_patterns/data_structures/binary_tree'
 # Example 2:
 # Input: root = []
 # Output: []
-	
+
 # Algorithm: We serialize the Binary Tree as Full Binary Tree
 # or Complete Binary Tree. If left/right nodes of a node are nil
 # they are stored as '#', and if the node has any data (integer),
@@ -73,7 +73,11 @@ class SerializeDeSerializeBT
 
   def serialize_bt(root:)
     serialize_bt = ''
-    @serialized_bt = pre_order_serialize_bt(node: root, serialize_bt:).strip
+    pre_order_serialize_bt(node: root, serialize_bt:)
+    @serialized_bt = serialize_bt.strip
+    # If we use this line, it is necessary to return when node.nil? and return
+    # from the function call
+    # @serialized_bt = pre_order_serialize_bt(node: root, serialize_bt:).strip
 
     # Return the value of serialized string representation of BinaryTree
     @serialized_bt
@@ -137,13 +141,30 @@ class SerializeDeSerializeBT
     # In this way, the entire binary tree is processed and serialized
     # string is generated
     if node.nil?
-      serialize_bt += "#{NIL_CHAR} "
-      return serialize_bt
+      # Other option is to use += but in this case we create a new
+      # string object and must assign it back to serialize_bt, and
+      # return this new object, else it shall lose its updated value
+      # in recursion
+      # serialize_bt += "#{NIL_CHAR} "
+      # return serialize_bt
+      # concat modifies the string in place, and since strings are
+      # mutable objects in Ruby, the object passed in recursion is
+      # updated and keeps its updated value when returning from
+      # deeper levels of Recursion
+      serialize_bt.concat("#{NIL_CHAR} ")
+      # if we are using serialize_bt += , we must return the value
+      # and assign it back from this code snippet
+      # return serialize_bt
+      return 
     end
 
-    serialize_bt += "#{node.data} "
+    # serialize_bt += "#{node.data} "
+    serialize_bt.concat("#{node.data} ")
 
-    serialize_bt = pre_order_serialize_bt(node: node.left, serialize_bt:)
+    # serialize_bt += pre_order_serialize_bt(node: node.left, serialize_bt:)
+    # serialize_bt += pre_order_serialize_bt(node: node.right, serialize_bt:)
+    # serialize_bt
+    pre_order_serialize_bt(node: node.left, serialize_bt:)
     pre_order_serialize_bt(node: node.right, serialize_bt:)
   end
 end
