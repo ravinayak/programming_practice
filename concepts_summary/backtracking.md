@@ -7,13 +7,15 @@
    a. start: index + 1
 3. Permutations:
    a. start = start + 1
-4. In both Subsets, and Combinations problem, we iterate over
+4. Letter Combinations of Phone Number:
+   a. start = start + 1
+5. In both Subsets, and Combinations problem, we iterate over
    elements of array, and recursively call the routine where
    we pass "start" to begin Iteration in Next Recrusion with
    respect to "index" of current Iteration.
    This is because we want to combine element at current index
    with element at subsequent indices in the array
-5. Permutations:
+6. Permutations:
    a. start = start + 1
    We iterate over elements of array in next Recursion by starting
    from next start position in next level of Recursion
