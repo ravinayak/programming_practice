@@ -38,7 +38,7 @@ require_relative '../algo_patterns/data_structures/queue'
 # BFS:
 #  a. More predictable Memory Usage => It uses an explicit stack/queue
 #  b. Processes level by level => Better suited for large areas / areas that
-#       spread evenly
+#  spread evenly
 # DFS:
 #  a. Explores in 1 direction deeply => Suited for smaller areas with less spread
 #  b. Can cause stack overflow errors => Deep Recursion
