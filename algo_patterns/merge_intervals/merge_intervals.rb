@@ -66,7 +66,7 @@ def partition(arr:, low:, high:)
   j = low
 
   while j < high
-    if arr[j][0] < pivot
+    if arr[j][0] <= pivot
       i += 1
       swap_elements(index_one: j, index_two: i, arr:)
     end
