@@ -50,7 +50,7 @@ def letter_combs_for_phone_nums(digits:)
   letter_comb_arr = []
   start = 0
 
-  backtrack_letter_combs_phone_num(result:, result_arr:, path:, letter_comb_arr:, index: start, digits:)
+  backtrack_letter_combs_phone_num(result:, result_arr:, path:, letter_comb_arr:, start:, digits:)
   [result, result_arr]
 end
 
@@ -60,14 +60,14 @@ end
 # @param [Array<Chars>] letter_comb_arr
 # @param [Integer] start
 # @param [String] digits
-def backtrack_letter_combs_phone_num(result:, result_arr:, path:, letter_comb_arr:, index:, digits:)
-  if index == digits.length
+def backtrack_letter_combs_phone_num(result:, result_arr:, path:, letter_comb_arr:, start:, digits:)
+  if start == digits.length
     result << path
     result_arr << letter_comb_arr.join('')
     return
   end
 
-  curr_digit = digits[index]
+  curr_digit = digits[start]
   possible_letters = DIGIT_TO_CHAR[curr_digit]
 
   # Unlike permutations, there are no array elements we have to iterate over, instead we have to
@@ -80,7 +80,7 @@ def backtrack_letter_combs_phone_num(result:, result_arr:, path:, letter_comb_ar
     # in recursion, it stays the same as before, hence we do not have to pop/mutate it
     # In case of array, we push the current letter in current recursion, hence we have to pop it
     backtrack_letter_combs_phone_num(result:, result_arr:, path: path + letter,
-                                     letter_comb_arr:, index: index + 1, digits:)
+                                     letter_comb_arr:, start: start + 1, digits:)
     letter_comb_arr.pop
   end
 end
