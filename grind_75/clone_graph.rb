@@ -53,20 +53,20 @@ end
 
 # Algorithm: Use BFS to traverse given graph
 # 1. Maintain a hash which stores cloned node referenced for each
-#     node value
+#    node value
 # 2. Maintain a visited hash which maintains all the nodes that
 #    have been processed
 # 3. Put 1st node in queue
-#  4. until queue.empty?
-#      a. Process the node by looking at its adjacency matrix, for
-#         each node in the adjacency matrix
-#            i.   If it is not present in the hash of cloned nodes,
-#                 clone it and insert it into hash, else retrieve
-#                 a reference to the node from hash
-#            ii.  If it is not in visited hash, insert the nodes data
-#                 into queue
-#            iii. Insert this node in the neighbors for current node
-#      b. Mark this node as visited
+# 4. until queue.empty?
+#     a. Process the node by looking at its adjacency matrix, for
+#     each node in the adjacency matrix
+#       1. If it is not present in the hash of cloned nodes,
+#       clone it and insert it into hash, else retrieve
+#       a reference to the node from hash
+#       2. If it is not in visited hash, insert the nodes data
+#       into queue
+#       3. Insert this node in the neighbors for current node
+#     b. Mark this node as visited
 
 # Clone graph, return an array which contains copy of nodes
 # that have been cloned for each node in the original graph
