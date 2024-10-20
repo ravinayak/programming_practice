@@ -110,6 +110,13 @@ def complete_course_schedule(pre_requisites:, num_courses:)
   adj_matrix = Hash.new { |h, k| h[k] = [] }
   processed_count = 0
   queue = Queue.new
+  # visited hash is typically not required for this problem or
+  # for BFS because in_degree should maintain that and solve
+  # the problem for us, however I am keeping it in code
+  # simply for consistency with other problems I have solved
+  # with DFS, this can be safely eliminated without causing
+  # any logical, functional errors
+  visited = {}
   in_degree = Hash.new(0)
 
   pre_requisites.each do |dependent_course, pre_requisite_course|
@@ -117,15 +124,20 @@ def complete_course_schedule(pre_requisites:, num_courses:)
     in_degree[dependent_course] += 1
   end
 
-  (0..num_courses).each do |course|
+  (0...num_courses).each do |course|
     queue.enqueue(data: course) if (in_degree[course]).zero?
   end
 
   until queue.empty?
     course = queue.dequeue
+    next if visited[course]
+
     processed_count += 1
+    visited[course] = true
 
     adj_matrix[course]&.each do |dependent_course|
+      next if visited[dependent_course]
+
       in_degree[dependent_course] -= 1
       queue.enqueue(data: dependent_course) if (in_degree[dependent_course]).zero?
     end
@@ -143,7 +155,12 @@ def test
     },
     {	num_courses: 2,
       pre_requisites: [[1, 0], [0, 1]],
-      output: 'false' }
+      output: 'false' },
+    {
+      num_courses: 5,
+      pre_requisites: [[1, 0], [2, 1], [0, 2], [3, 2], [4, 3]],
+      output: 'false'
+    }
   ]
 
   courses_arr.each do |course_hsh|
