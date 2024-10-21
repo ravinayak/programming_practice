@@ -1,6 +1,6 @@
 require_relative '../data_structures/linked_list'
 
-def merge_sorted_linked_lists_two(list_one:, list_two:)
+def merge_sorted_linked_lists_cleaner(list_one:, list_two:)
   return if list_one.head.next.nil? && list_two.head.next.nil?
 
   node1 = list_one.head.next
@@ -55,7 +55,7 @@ end
 def test
   list_one = LinkedList.new(input_arr: [1, 3, 5, 11, 15, 25, 28, 30, 31])
   list_two = LinkedList.new(input_arr: [2, 4, 6, 8, 9, 10, 13, 14, 16])
-  merge_sorted_linked_lists_two(list_one:, list_two:)
+  merge_sorted_linked_lists_cleaner(list_one:, list_two:)
 end
 
 test
