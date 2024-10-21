@@ -88,9 +88,13 @@ class LinkedList
   end
 end
 
-linked_list = LinkedList.new(input_arr: [1, 3, 6, 8, 9, 13, 19, 21, 26])
-linked_list.traverse_list
-linked_list.insert(data: 95)
-linked_list.search(data: 8)
-linked_list.search(data: 99)
-print "\n\n"
+def test
+  linked_list = LinkedList.new(input_arr: [1, 3, 6, 8, 9, 13, 19, 21, 26])
+  linked_list.traverse_list
+  linked_list.insert(data: 95)
+  linked_list.search(data: 8)
+  linked_list.search(data: 99)
+  print "\n\n"
+end
+
+# test
