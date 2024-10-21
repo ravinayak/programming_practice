@@ -143,6 +143,9 @@ def insert_new_interval(intervals:, new_interval:)
 
     # These are not required but putting the values in
     # variable for conceptual clarity
+    # We can use current_interval[0] etc directly in code but
+    # using these variables for easier understanding
+
     start_time_curr_interval = current_interval[0]
     end_time_curr_interval = current_interval[1]
     start_time_new_interval = new_interval[0]
