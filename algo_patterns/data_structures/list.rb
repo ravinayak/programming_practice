@@ -34,8 +34,8 @@ class List
     # list << node_previous
     head = node_previous
     while curr_index < input_arr.length
-      node_previous, curr_index = *prepare_list_helper(input_arr: input_arr, curr_index: curr_index, list: list,
-                                                       node_previous: node_previous)
+      node_previous, curr_index = *prepare_list_helper(input_arr:, curr_index:, list:,
+                                                       node_previous:)
     end
     [head, list]
   end
@@ -60,25 +60,25 @@ class List
   # @return [List]
   #
   def insert_element(element:, index:)
-    return insert_element_at_head(element: element) if index.zero?
+    return insert_element_at_head(element:) if index.zero?
 
-    insert_element_at_non_head(element: element, index: index)
+    insert_element_at_non_head(element:, index:)
   end
 
   # Insert element when index is 0
   # @param [Node] node
   #
   def insert_element_at_head(element:)
-    node = Node.new(data: element)
+    new_node = Node.new(data: element)
     # Reference to current 1st node in list
     temp = head.next
     # Update the head to point to new node as the 1st node
-    self.head.next = node
-    # Prepend new node at the beginnning of the list
-    list.unshift(node)
+    head.next = new_node
     # Current node should point to previous 1st node as
     # next
-    node.next = temp
+    new_node.next = temp
+    # Prepend new node at the beginnning of the list
+    list.unshift(new_node)
   end
 
   # Insert element when index is > 0
@@ -86,29 +86,28 @@ class List
   # @param [Integer] index
   #
   def insert_element_at_non_head(element:, index:)
-    node = Node.new(data: element)
+    new_node = Node.new(data: element)
     # Node at index - 1 should point to new node which would be
     # inserted at index position in the list. This new node
     # should point to the node currently at index position in
     # the list
     node_prev = list[index - 1]
-    temp = node_prev.next
-    node_prev.next = node
-    node.next = temp
+    node_prev.next = new_node
+    new_node.next = list[index]
     # All elements starting from and including index position
     # should be shifted by 1 position in the list
-    shift_nodes_in_list(index: index, node: node)
+    shift_nodes_in_list(index:)
+    list[index] = new_node
   end
 
   # Prepares a new list which has element inserted at non_head index
   # @param [Integer] index
-  # @param [Node] node
   # @return [NIL]
   #
-  def shift_nodes_in_list(index:, node:)
+  def shift_nodes_in_list(index:)
     # Idea here is to start from the end of list and copy the
     # elements to one position greater than their current index
-    # This will shift all the elements from the end of list to 
+    # This will shift all the elements from the end of list to
     # the index position where we want to insert new element to
     # one position higher. Thus index position becomes free to
     # include new node
@@ -117,7 +116,6 @@ class List
       list[iteration + 1] = list[iteration]
       iteration -= 1
     end
-    list[index] = node
   end
 
   # Traverse List
@@ -133,12 +131,16 @@ class List
   end
 end
 
-# input_arr = [1, 3, 5, 6, 7, 8]
-# puts "Given Input Array :: #{input_arr}"
-# list1 = List.new(input_arr: input_arr)
-# list1.traverse_list
-# list1.insert_element(element: 12, index: 0)
-# list1.insert_element(element: 15, index: 5)
-# print "\n List with element 12 inserted at 0th index, and element 15"
-# puts "inserted at 5th index in the above list is as below :: "
-# list1.traverse_list
+def test
+  input_arr = [1, 3, 5, 6, 7, 8]
+  puts "Given Input Array :: #{input_arr}"
+  list1 = List.new(input_arr:)
+  list1.traverse_list
+  list1.insert_element(element: 12, index: 0)
+  list1.insert_element(element: 15, index: 5)
+  print "\n List with element 12 inserted at 0th index, and element 15 "
+  puts 'inserted at 5th index in the above list is as below :: '
+  list1.traverse_list
+end
+
+# test
