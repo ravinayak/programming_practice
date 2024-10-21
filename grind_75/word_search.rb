@@ -33,7 +33,7 @@ DIRECTION_ARR = [[0, -1], [0, +1], [-1, 0], [+1, 0]].freeze
 # @param [String] word
 # @return [Array<boolean, Array<Integer>>] found
 def word_search(board:, word:)
-  path_arr = []
+  curr_path = []
   rows = board.length
   cols = board[0].length
   found = false
@@ -41,8 +41,7 @@ def word_search(board:, word:)
 
   (0...rows).each do |i|
     (0...cols).each do |j|
-      curr_path = []
-      found = word_search_rec_utility(board:, path_arr:, i:, j:, curr_path:, index:, word:)
+      found = word_search_rec_utility(board:, i:, j:, curr_path:, index:, word:)
       break if found
     end
     # We must break from this loop as well, else, outer loop will continue processing and
@@ -51,24 +50,18 @@ def word_search(board:, word:)
     break if found
   end
 
-  [found, path_arr]
+  [found, curr_path]
 end
 
 # @param [Array<Array<char>>] board
-# @param [Array<Array<Integer, Integer>>] path_arr
 # @param [Integer] i
 # @param [Integer] j
 # @param [Array<Array<Integer, Integer>>] curr_path
 # @param [Integer] index
 # @param [String] word
-def word_search_rec_utility(board:, path_arr:, i:, j:, curr_path:, index:, word:) # rubocop:disable Metrics/ParameterLists
+def word_search_rec_utility(board:, i:, j:, curr_path:, index:, word:)
   # Every word char has matched with a char on board by moving in allowed directions
-  if index == word.length
-    # Clone curr_path because it is an object and would copy reference otherwise
-    # causing path_arr to reflect any changes made to curr_path array
-    path_arr << curr_path.clone
-    return true
-  end
+  return true if index == word.length
 
   # i, j out of bounds check, and if board[i][j] char does not match char in word at index
   return false if i.negative? || i > board.length - 1 || j.negative? || j > board[0].length - 1 || board[i][j] != word[index]
@@ -86,10 +79,17 @@ def word_search_rec_utility(board:, path_arr:, i:, j:, curr_path:, index:, word:
   # Move in all possible directions - horizontally / vertically
   # We use OR Operator to short circuit DFS calls, if we find any such board position which can contruct
   # word
-  dfs_result = word_search_rec_utility(board:, path_arr:, i: i + 1, j:, curr_path:, index: index + 1, word:) ||
-               word_search_rec_utility(board:, path_arr:, i: i - 1, j:, curr_path:, index: index + 1, word:) ||
-               word_search_rec_utility(board:, path_arr:, i:, j: j + 1, curr_path:, index: index + 1, word:) ||
-               word_search_rec_utility(board:, path_arr:, i:, j: j - 1, curr_path:, index: index + 1, word:)
+  dfs_result = word_search_rec_utility(board:, i: i + 1, j:, curr_path:, index: index + 1, word:) ||
+               word_search_rec_utility(board:, i: i - 1, j:, curr_path:, index: index + 1, word:) ||
+               word_search_rec_utility(board:, i:, j: j + 1, curr_path:, index: index + 1, word:) ||
+               word_search_rec_utility(board:, i:, j: j - 1, curr_path:, index: index + 1, word:)
+
+  # We must return early if we have been able to find a path on board which forms the character.
+  # This is CRITICAL because we want to keep the [i, j] index in curr_path since this index was used to
+  # form the word successfully
+  # If we are not able to form the word, we should pop the current location [i, j] from curr_path and try other
+  # possible paths
+  return dfs_result if dfs_result
 
   # Pop last pushed vertex pair from curr_path
   curr_path.pop
