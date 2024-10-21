@@ -20,11 +20,37 @@ Critical Information:
 
 1. PreOrder: Root, Left, Right
 2. PostOrder: Left, Right, Root
-3. Level Order: Every 1st element of a subtree is its root
+3. Inorder: Left, Root, Right
+4. Level Order: Every 1st element of a subtree is its root
 
-How to Construct BT from traversal combinations:
+Summary:
 
-To construct a tree from any traversal, the core idea is to \_Recursively build left subtree, right subtree, and root of
+1. All traversal combinations except level order traversal combination can use left_inorder size to calculate the left/right
+   subtrees for the other traversal type
+   a. Preorder + Inorder
+   b. Postorder + Inorder
+   c. Preorder + Postorder
+
+   => In all these combinations, we can use left_inorder.size to calculate left subtree for the other traversal type
+   How to Construct BT from traversal combinations:
+
+   root_data = preorder[0]
+   root_data_index_inorder = inorder.index(root_data)
+
+   left_inorder = inorder[0..(root_data_index_inorder - 1)]
+   right_inorder = inorder[(root_data_index_inorder + 1)..]
+
+   left_preorder = preorder[1..(left_inorder.size)]
+   right_preorder = preorder[(left_inorder.size + 1)..]
+
+2. We can also calculate left/right preorder using alternate ways such as left_subtree_max value or through selection
+   of elements which are present in left_inorder but those are expensive operations. Using size allows us to
+   prepare left_preorder array in O(1) time
+
+3. Inorder + Level Order Traversal => This cannot be solved using left_inorder.size and needs us to explicitly select
+   elements from left_inorder to prepare left_level_order
+
+To construct a tree from any traversal, the core idea is to Recursively build left subtree, right subtree, and root of
 the left, right subtrees
 
 1. Preorder Traversal + Inorder Traversal =>
@@ -85,3 +111,22 @@ the left, right subtrees
    root_node = TreeNode.new(preorder[0])
    root_node.left = Using left_subtree_preorder, left_subtree_postorder, construct Left Subtree
    root_node.right = Using right_subtree_preorder, right_subtree_postorder, construct Right Subtree
+7. Alternate ways to calculate left_preorder, right_preorder when inorder is given:
+   1. For the last element in left_inorder, find its index in preorder
+      All elements in preorder from 1..left_inorder_last_index are in left_preorder
+      => This is expensive because we have to scan through elements in
+      preorder to find the index of last element in left_inorder = O(n)
+      Code:
+      left_preorder_max_index = preorder.index(left_inorder.last)
+      left_preorder = preorder[1..left_preorder_max_index]
+      right_preorder = preorder[(left_preorder_max_index + 1)..]
+   2. Iterate over each element in preorder array and check if it is included
+      in left/right inorder arrays
+      => This is expensive =>
+      O(n): Iteration over preorder elements
+      For each element in iteration above,
+      O(n): Find if element is included in inorder array
+      => O(n) \* O(n) = O(n^2)
+      Code:
+      left_preorder = preorder.select { |element| left_inorder.include?(element) }
+      right_preorder = preorder.select { |element| right_inorder.include?(element) }

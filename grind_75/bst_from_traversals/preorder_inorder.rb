@@ -50,6 +50,27 @@ def bt_from_preorder_inorder(inorder:, preorder:)
   left_inorder = inorder[0..(root_data_index_inorder - 1)]
   right_inorder = inorder[(root_data_index_inorder + 1)..]
 
+  # Alternate ways to calculate left_preorder
+  # 1. For the last element in left_inorder, find its index in preorder
+  #    All elements in preorder from 1..index are in left_preorder
+  #    => This is expensive because we have to scan through elements in
+  #       preorder to find the index of last element in left_inorder = O(n)
+  #    Code:
+  #     left_preorder_max_index = preorder.index(left_inorder.last)
+  #     left_preorder = preorder[1..left_preorder_max_index]
+  #     right_preorder = preorder[(left_preorder_max_index + 1)..]
+  # 2. Iterate over each element in preorder array and check if it is included
+  #    in left/right inorder arrays
+  #    => This is expensive =>
+  #       O(n): Iteration over preorder elements
+  #       For each element in iteration above,
+  #         O(n): Find if element is included in inorder array
+  #    => O(n) * O(n) = O(n^2)
+  #   Code:
+  #     left_preorder = preorder.select { |element| left_inorder.include?(element) }
+  #     right_preorder = preorder.select { |element| right_inorder.include?(element) }
+
+  # This is the best method because it has TC of O(1) to calculate left/right preorder
   left_preorder = preorder[1..(left_inorder.size)]
   right_preorder = preorder[(left_inorder.size + 1)..]
 
