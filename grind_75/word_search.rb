@@ -103,17 +103,17 @@ end
 def input_arr
   [
     {
-      board: [%w[A B C E], %w[S F C S], %w[A D E E]],
+      board: [%w[A B C E], %w[S F C S], %w[A D E D]],
       word: 'ABCCED',
       output: true
     },
     {
-      board: [%w[A B C E], %w[S F C S], %w[A D E E]],
+      board: [%w[A B S E], %w[S F E S], %w[A D E E]],
       word: 'SEE',
       output: true
     },
     {
-      board: [%w[A B C E], %w[S F C S], %w[A D E E]],
+      board: [%w[A B E E], %w[S F C S], %w[A D E E]],
       word: 'ABCB',
       output: false
     }
@@ -132,6 +132,7 @@ def test
     print "\n Output :: #{output}, Result :: #{result}"
     print "\n Path Array Board :: #{path_arr.inspect} \n"
   end
+  print "\n"
 end
 
 test
