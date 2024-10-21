@@ -135,17 +135,38 @@ def insert_new_interval(intervals:, new_interval:)
   while index < len
     # 3 cases outlined here
     current_interval = intervals[index]
-    if current_interval[1] < new_interval[0]
+    # No Overlap condition:
+    # 1. Current Interval ends before New Interval starts
+    #    => Current Interval 1st in Sorted Order, then New Interval
+    # 2. New Interval ends before Current Interval starts
+    #   => New Interval 1st in Sorted Order, then Current Interval
+
+    # These are not required but putting the values in
+    # variable for conceptual clarity
+    start_time_curr_interval = current_interval[0]
+    end_time_curr_interval = current_interval[1]
+    start_time_new_interval = new_interval[0]
+    end_time_new_interval = new_interval[1]
+    # curr interval ends before new interval starts, hence
+    # it is 1st in sorted order
+    if end_time_curr_interval < start_time_new_interval
       # current interval is first in sorted order
       # hence it should be put into array
       merged_intervals << current_interval
-    elsif new_interval[1] < current_interval[0]
+
+    # new interval ends before curr interval starts, hence
+    # new interval is 1st in Sorted Order
+    elsif end_time_new_interval < start_time_curr_interval
       # same logic as before
       merged_intervals << new_interval
       # Assign new_interval to the interval which
       # is not in array and can overlap with the
       # next interval (sorting is the key)
       new_interval = current_interval
+
+    # Overlap Condition: Else Clause of Overlap Condition which means
+    # Overlap Condition = !Overlap Condition
+    # 1st two if/elsif cover overlap conditions, else is Overlap Condition
     else
       # Overlapped interval will always have a length
       # which covers start/end times of both
@@ -153,8 +174,8 @@ def insert_new_interval(intervals:, new_interval:)
       # this new interval may overlap with the next
       # interval in iteration
       new_interval = [
-        [current_interval[0], new_interval[0]].min,
-        [current_interval[1], new_interval[1]].max
+        [start_time_curr_interval, start_time_new_interval].min,
+        [end_time_curr_interval, end_time_new_interval].max
       ]
     end
 
