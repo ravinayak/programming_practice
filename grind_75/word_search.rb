@@ -12,7 +12,7 @@
 
 # Step 1: Whenever we can move horizontally or vertically ONLY,
 # we have 4 directions possible with current Cell Location
-#	(-1, 0) [Row decrease], (+1, 0) [Row Increase] => Vertical
+# (-1, 0) [Row decrease], (+1, 0) [Row Increase] => Vertical
 # (0, -1) [Column decrease], (0, +1) [Column Increase] => Horizontal
 
 # Step 2: If we cannot reuse a character on Board more than once,
