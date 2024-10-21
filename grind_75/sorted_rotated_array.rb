@@ -72,18 +72,36 @@ def search_sorted_rotated_arr(input_arr:, k:, target:)
 
     if rotated_arr[mid] == target
       return mid
+    # We use rotated_arr[mid] and not rotated_arr[mid - 1] because
+    # when low = high, mid - 1 will result in out of bounds index
+    # error
+    # We must NOT USE (mid - 1), (mid + 1) in Binary Search because
+    # it can result in INDEX OUT OF BOUNDS ERROR
+    # While checking for left/right half sorted, we should ALWAYS
+    # <= and NOT < because an array can contain duplicates in which
+    # case, we wont be able to detect ascending/descending order
+    # SINCE duplicates are EQUAL
+    # LEFT HALF is SORTED, and HENCE we search in left half 1st to
+    # find if LEFT HALF contains the VALID RANGE for target, if it
+    # contains the valid range for target, we search in the left half
+    # else we SEARCH IN THE RIGHT HALF
     elsif rotated_arr[low] <= rotated_arr[mid] # Left half is sorted
       # Is target present in this range of values
+      # rotated_arr[mid] == target has been tested in the 1st if condition
+      # and hence target < rotated_arr[mid], it CANNOT BE =, same for
+      # the right half sorting condition
       if rotated_arr[low] <= target && target < rotated_arr[mid]
         high = mid - 1 # Search in Left half
       else
         low = mid + 1 # Search in Right half
       end
-    elsif rotated_arr[mid] < target && target <= rotated_arr[high] # Right half is sorted
-      # Is target present in this range of values
-      low = mid + 1
-    else
-      high = mid - 1
+    else # Right Half is Sorted
+      if rotated_arr[mid] < target && target <= rotated_arr[high]
+        # Is target present in this range of values
+        low = mid + 1
+      else
+        high = mid - 1
+      end
     end
   end
 
