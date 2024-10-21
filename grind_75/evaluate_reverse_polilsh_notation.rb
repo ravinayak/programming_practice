@@ -61,7 +61,10 @@ require_relative '../algo_patterns/data_structures/stack'
 # 2nd Pop, Operator, 1st Pop
 # 1st Pop goes right
 # 2nd Pop goes left
-# L2 Operator R1 => Left (2nd Pop) Operator Right (1st Pop)
+# 1st Pop => Top Element => Right Operand
+# Acronym to remember this:
+# TL;DR => Too Long; Did not Read => TL;DR => TR => Top Goes Right
+#
 
 # For division, problem statement has some rules:
 # 1. division by 0 is not allowed, if a or b = 0, result = 0
