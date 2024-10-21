@@ -84,6 +84,9 @@ def word_search_rec_utility(board:, i:, j:, curr_path:, index:, word:)
                word_search_rec_utility(board:, i:, j: j + 1, curr_path:, index: index + 1, word:) ||
                word_search_rec_utility(board:, i:, j: j - 1, curr_path:, index: index + 1, word:)
 
+  # Restore board - Regardless of whether we were able to find path, we should restore board
+  board[i][j] = temp
+
   # We must return early if we have been able to find a path on board which forms the character.
   # This is CRITICAL because we want to keep the [i, j] index in curr_path since this index was used to
   # form the word successfully
@@ -93,8 +96,6 @@ def word_search_rec_utility(board:, i:, j:, curr_path:, index:, word:)
 
   # Pop last pushed vertex pair from curr_path
   curr_path.pop
-  # Restore board
-  board[i][j] = temp
 
   dfs_result
 end
