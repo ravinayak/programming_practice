@@ -59,40 +59,40 @@ end
 # (we combine all characters starting from the initial recursion call
 # in the method find_all_words_util to form word at each cell)
 # Some important things to note here:
-#    1. Every recursion must have a base step where we return from
-#       recursion:
-#          a. In this use case, because we may traverse a cell
-#             more than once, we do not want to perform a DFS traversal
-#             on the cell more than once. We temporarily change the character
-#             of cell during current recursion (i.e. in the call from
-#             find_all_words_util) to '#'. This ensures that in current recursion
-#             a cell is visited ONLY ONCE for DFS traversal. In subsequent calls
-#             from find_all_words_util method, a cell can be traversed for DFS
-#             again to form new combinations starting from the character in that
-#             cell
-#          b. Goal of performing DFS traversal is to find words in trie for allowed
-#             combinations of characters in board. If we reach a board cell where the
-#             character in that cell is not present in trie, it would imply that there
-#             is no word in trie for the given combination of characters until that
-#             cell. Since the current character is not present in trie, we should return
-#             from DFS. No word exists in trie for the combination of characters found
-#             so far and any subequent DFS will not result in any valid word
-#    2. At the end of every DFS current recursion, we restore character back in board
-#       cell.
-#    3. At every depth of recursion, we check if current node in trie (which contains
-#       character in board cell as a key), has a word entry. If there is a word entry
-#       it implies that the DFS traversal has produced a combination of characters on
-#       board cell which results in a valid word in trie.
-#    4. To avoid duplicate entries in result array, we mark this word as visited. We
-#       push the word in result array. Next time if we come across this word again at
-#       any depth of recursion, we will not push the word again in result array since
-#       it is marked as visited
-#    5. Problem statement allows only horizontal and vertical adjacent cells to be
-#       considered for combinations. Hence, only 4 directions are possible for a cell
-#           Horizontal => Left of current column, right of current column [[0, -1], [0, +1]]
-#          Vertical => Above current row, Below current row [[+1, 0], [-1, 0]]
-#      New rows, cols can be obtained by adding these values, however they must be within
-#      bounds of board
+#  1. Every recursion must have a base step where we return from
+#    recursion:
+#      a. In this use case, because we may traverse a cell
+#      more than once, we do not want to perform a DFS traversal
+#      on the cell more than once. We temporarily change the character
+#      of cell during current recursion (i.e. in the call from
+#      find_all_words_util) to '#'. This ensures that in current recursion
+#      a cell is visited ONLY ONCE for DFS traversal. In subsequent calls
+#      from find_all_words_util method, a cell can be traversed for DFS
+#      again to form new combinations starting from the character in that cell
+#      b. Goal of performing DFS traversal is to find words in trie for allowed
+#      combinations of characters in board. If we reach a board cell where the
+#      character in that cell is not present in trie, it would imply that there
+#      is no word in trie for the given combination of characters until that
+#      cell. Since the current character is not present in trie, we should return
+#      from DFS. No word exists in trie for the combination of characters found
+#      so far and any subequent DFS will not result in any valid word
+#  2. At the end of every DFS current recursion, we restore character back in board
+#  cell.
+#  3. At every depth of recursion, we check if current node in trie (which contains
+#  character in board cell as a key), has a word entry. If there is a word entry
+#  it implies that the DFS traversal has produced a combination of characters on
+#  board cell which results in a valid word in trie.
+#  4. To avoid duplicate entries in result array, we mark this word as visited. We
+#  push the word in result array. Next time if we come across this word again at
+#  any depth of recursion, we will not push the word again in result array since
+#  it is marked as visited
+#  5. Problem statement allows only horizontal and vertical adjacent cells to be
+#  considered for combinations. Hence, only 4 directions are possible for a cell
+#     Horizontal => Left of current column, right of current column [[0, -1], [0, +1]]
+#     Vertical => Above current row, Below current row [[+1, 0], [-1, 0]]
+#
+#    New rows, cols can be obtained by adding these values, however they must be within
+#    bounds of board
 
 # @param [Array<Array>] board
 # @param [Integer] row
@@ -180,10 +180,18 @@ def dfs_cell_board(board:, row:, col:, node:, visited:, result:)
 end
 
 def test
-  board = [%w[o a a n], %w[e t a e], %w[i h k r], %w[i f l v]]
-  words_arr = %w[oath pea eat rain]
+  board = [%w[o a a n], %w[s t a e], %w[i h k r], %w[i f l v]]
+  words_arr = %w[oath pea eat rain eats]
   res = find_all_words(board:, words_arr:)
-  puts "Result Output :: #{res.inspect}"
+  print "\n  Board Displayed below :: \n"
+  board.each do |row|
+    str = row.join(' ')
+    print "\n \t \t #{str} \n"
+  end
+  print "\n"
+  puts " Words to find in Board, and have been inserted in Trie :: #{words_arr.inspect}"
+  puts " Result Output :: #{res.inspect}"
+  print "\n"
 end
 
 test
