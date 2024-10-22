@@ -102,7 +102,18 @@ end
 # @param [Array] result
 #
 def dfs_cell_board(board:, row:, col:, node:, visited:, result:)
-  # Base case of recursion
+  # Base case of recursion:
+  # We are not searching for a word char for a given index, we search if the char
+  # encountered on the board during DFS traversal is present in trie as children
+  # key in any node. Since trie contains all the words inserted in it, if we have
+  # any word for a given prefix of characters formed during DFS traversal of board,
+  # it should be present in Trie on the end node which contains word for a given
+  # prefix. Every character in the word should also be present in the correct node
+  # for prefix during DFS traversal
+  # If cell has been visited before, and this is possible because in DFS traversal,
+  # we may come back to an earlier node, we should return as the character on that
+  # board cell has already been processed, and we cannot reuse a character on board
+  # to form a word
   char = board[row][col]
   return if char == '#' || node.children[char].nil?
 
