@@ -133,6 +133,25 @@ def insert_new_interval(intervals:, new_interval:)
   merged_intervals = []
 
   while index < len
+    # new_interval must be defined in every case such that it
+    # can be used in processing of further intervals in the
+    # intervals array
+    # 1st case
+    #   => No Overlap
+    #   => start interval is 1st in sorted order
+    #   => new_interval remains same as b4
+
+    # 2nd case
+    #   => No Overlap
+    #   => new interval is 1st in sorted order
+    #   => new interval = current interval
+
+    # 3rd case
+    #   => Overlap
+    #   => new interval is defined as the overlap of intervals
+    #   => start time is min of overlapped intervals
+    #   => end time is max of overlapped intervals
+
     # 3 cases outlined here
     current_interval = intervals[index]
     # No Overlap condition:
