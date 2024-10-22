@@ -102,6 +102,9 @@ end
 # @param [Array] result
 #
 def dfs_cell_board(board:, row:, col:, node:, visited:, result:)
+  # Redundant but keeping this check here to make the method independent of implementation
+  return if row.negative? || row > (board.length - 1) || col.negative? || col > (board[0].length - 1)
+
   # Base case of recursion:
   # We are not searching for a word char for a given index, we search if the char
   # encountered on the board during DFS traversal is present in trie as children

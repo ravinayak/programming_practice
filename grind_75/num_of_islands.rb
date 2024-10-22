@@ -34,13 +34,16 @@
 # which are surrounded by water on all sides, and are not connected to
 # any other land which is an island
 # To solve this problem,
+
 # Step 1: Iterate over (m * n) Grid
-#    => we start iterating over all the cells in Grid and for ever 1 we
-#       find, we start a DFS in a 4-direction-connection from that cell,
-#       converting 1 to 0 (since we already have 0, we would have to check
-#       for 1 more character if we converted to any value other than 0).
+#  => we start iterating over all the cells in Grid and for every 1 we
+#  find, we start a DFS in a 4-direction-connection from that cell,
+#  converting 1 to 0 (since we already have 0, we would have to check
+#  for 1 more character if we converted to any value other than 0).
+
 # Step 2: Keep iterating over the Grid until we can no longer find any
 # more 1s
+
 # Step 3: In the main loop, we update num_of_islands whenever we start
 # a DFS and find 1 again. In any iteration over Grid, we convert all
 # connected pieces of land which form an island to 0, so any more 1s in
@@ -74,6 +77,9 @@ end
 # @param [Integer] rows_num
 # @param [Integer] cols_num
 def dfs_grid(grid:, row:, col:, rows_num:, cols_num:)
+  # Redundant check but keeping it here to make the method independent of implementation
+  return if row.negative? || row > (rows_num - 1) || col.negative? || col > (cols_num - 1)
+
   # Base Case of Recursion: Return if grid has 0 in its cell
   return if grid[row][col] == '0'
 
