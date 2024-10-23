@@ -59,19 +59,46 @@ def max_profits_job_scheduling(start_time:, end_time:, profits:)
   dp = Array.new(jobs.length, 0)
   # Initialize dp array with profit of jobs at index "0" and iterate from "1" to
   # jobs.length - 1
-  dp[0] = jobs[0][2]
+  dp[0] = [jobs[0][2], 0, -1]
 
   (1...jobs.length).each do |index|
     current_job_with_profits = jobs[index][2]
     last_non_overlapping_job_index = last_non_overlapping_using_binary_search(jobs:, i: index)
-    current_job_with_profits += dp[last_non_overlapping_job_index] unless
+    current_job_with_profits += dp[last_non_overlapping_job_index][0] unless
       last_non_overlapping_job_index == -1
-    dp[index] = [current_job_with_profits, dp[index - 1]].max
+    # dp[index] = [current_job_with_profits, dp[index - 1]].max
+    if current_job_with_profits > dp[index - 1][0]
+      dp[index] = [current_job_with_profits, index, last_non_overlapping_job_index]
+    else
+      dp[index] = [dp[index - 1][0], index - 1, dp[index - 1][2]]
+    end
   end
-
   # Return the value in last element of DP array which computes max profit for
   # all jobs from "0" through "jobs.length - 1"
-  dp[jobs.length - 1]
+  [dp[jobs.length - 1][0], select_max_profit_jobs(dp:, jobs:), jobs]
+end
+
+def select_max_profit_jobs(dp:, jobs:)
+  index = dp.length - 1
+  max_profts_jobs = []
+
+  # The last job which can be selected can be at index 0 or it can be only the current
+  # job in this iteration if we could not find any last non-overlapping job for the
+  # current job, we store all the jobs which have been selected for the maximum profit
+  # starting from dp.length - 1 until we reach 0 or the last non-overlapping job is -1
+  while index >= 0
+    job_indices = dp[index]
+    max_profts_jobs << { job_index: job_indices[1], profit: jobs[job_indices[1]][2] }
+    # If the last non-overlapping job index is -1, it means that only current job is
+    # selected for max profits. In this case, we break from the loop since we have
+    # found all the jobs with max profits
+    break if job_indices[2] == -1
+
+    # Current job selected for max_profit of all jobs may have a non overlapping index
+    # which is not -1
+    index = job_indices[2]
+  end
+  max_profts_jobs
 end
 
 def last_non_overlapping_using_binary_search(jobs:, i:)
@@ -94,11 +121,13 @@ def last_non_overlapping_using_binary_search(jobs:, i:)
       if mid + 1 <= high && jobs[mid + 1][1] <= jobs[i][0]
         low = mid + 1
       else
-        # mid + 1 > high OR jobs[mid + 1] has an end time which overlaps with current job
-        # since job[mid] has the highest end time in "0" to "mid", hence
-        # it must be the last non-overlapping job
         return mid
       end
+
+    # mid + 1 > high OR jobs[mid + 1] has an end time which overlaps with current job
+    # since job[mid] has the highest end time in "0" to "mid", hence
+    # it must be the last non-overlapping job
+
     else
       # jobs[mid] has an end time which overlaps with current job, hence last
       # non-overlapping job must be between "0" to "mid - 1"
@@ -151,9 +180,10 @@ def test
     result = input_hsh[:result]
 
     res = max_profits_job_scheduling(start_time:, end_time:, profits:)
-    print "\n\n Input :: #{start_time.inspect} -- #{end_time.inspect} -- #{profits.inspect}"
+    print "\n\n Input Jobs sorted by their end time and profits:: #{res[2].inspect}"
     print "\n Expected Output :: #{result}"
-    print "\n Result          :: #{res}\n"
+    print "\n Total Profits   :: #{res[0]}"
+    print "\n Jobs selected for Max Profits with their individual profts :: #{res[1].inspect}"
   end
   print "\n"
 end
