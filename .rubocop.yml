@@ -25,3 +25,5 @@ Style/NegatedIfElseCondition:
   Enabled: false
 Style/UnlessElse:
   Enabled: false
+Style/GuardClause:
+  Enabled: false
