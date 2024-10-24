@@ -73,7 +73,7 @@ def rotten_oranges(grid:)
 
   initial_scan_rotten(grid_dup:, queue:)
 
-  level = 0
+  min_time = 0
   until queue.empty?
     # Determine the length of queue at this level, as we dequeue
     # we shall insert freshly converted rotten oranges into the
@@ -104,9 +104,16 @@ def rotten_oranges(grid:)
     #  c. !queue.empty? check is critical, without it, we would add a min
     #     more to the minimum time required, though there are no oranges
     #     which will take that 1 min to rot
+    #  d. level += 1 should not be used at the beginning of calculation of
+    #     level_size and before dequeuing elements from the queue. This is
+    #     because of the reasons mentioned above, if the grid does not
+    #     contain any fresh tomatoes/oranges adjacent to a rotten tomato
+    #     there will be no tomato/orange to rot, and hence no time will be
+    #     elapsed. At the end of processing all rotten tomatoes, there should
+    #     be some tomatoes to rot in the queue, only then time will be elapsed
 
     # Each level takes 1 minute to rot, queue has certain organges to rot
-    level += 1 unless queue.empty?
+    min_time += 1 unless queue.empty?
   end
 
   (0...rows_num).each do |row|
@@ -116,7 +123,7 @@ def rotten_oranges(grid:)
   end
 
   # Number of minutes elapsed is same as levels processed in queue
-  level
+  min_time
 end
 
 # @param [Array<Array<Integer>>] grid_dup
