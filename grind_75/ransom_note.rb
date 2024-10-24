@@ -26,12 +26,10 @@
 # if index1 == str1.length => We have found all chars of str1 in str2, and hence
 # we can construct str2 from str1
 
-
 # Time Complexity: O(n) => n = [str1.length, str2.length].max => We have to iterate
 # over both strings - str1, str2
 # Space Complexity: O(n) => Hash to store all chars of str2 and their frequency of
 # occurrence
-
 
 # @param [String] ransom_note
 # @param [String] magazine
