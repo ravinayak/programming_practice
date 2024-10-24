@@ -26,7 +26,7 @@ def dynamic_sw_max_contiguous_sequence(input_arr, max_different)
 
   print 'Maxium contiguous size for elements in array where maximum different elements is '
   puts "#{max_different} :: #{max_sw_size_arr[:max_size]}"
-  puts "Elements in the contiguous sequence is :: ##{max_sw_size_arr[:max_sw_arr]}"
+  puts "Elements in the contiguous sequence is :: #{max_sw_size_arr[:max_sw_arr]}"
 
   [max_sw_size_arr]
 end

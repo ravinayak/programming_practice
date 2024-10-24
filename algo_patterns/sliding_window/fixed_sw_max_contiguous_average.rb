@@ -50,7 +50,7 @@ def max_contiguous_avg_sw(input_arr, max_contiguous)
   end
   input_arr.each_with_index do |_element, index|
     avg = sum / max_contiguous.to_f
-    max_avg = avg if max_avg > avg
+    max_avg = avg if max_avg < avg
     break if (index + max_contiguous) == input_arr.length
 
     sum = (sum - input_arr[index] + input_arr[index + max_contiguous])
@@ -60,5 +60,5 @@ end
 
 arr = [[1, 12, -5, -6, 50, 3], [1, 2, 3], [3, 4, 5, -5], [1, 100, 9, -81, 82, 67, 120]]
 arr.each do |input_arr|
-  puts "Maximum Average is :: #{max_contiguous_avg(input_arr, 4)}"
+  puts "Maximum Average is :: #{max_contiguous_avg(input_arr, 4)} -- #{max_contiguous_avg(input_arr, 4)}"
 end
