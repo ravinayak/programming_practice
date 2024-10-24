@@ -160,8 +160,13 @@ def task_scheduler_using_pq(tasks:, n:)
   # Continue processing until pq becomes empty
   until pq.empty?
     # Initialize cycles = n+1, because for every task completed, we need "n" time
-    # intervals for cooling off period. We decrement it and hence it should be
-    # inside the loop
+    # intervals for cooling off period.
+    # In 1 cycle, we can process "n" tasks in "n" gaps, and before the start of
+    # cool off period, we can process "1" task, so in 1 cycle, we can process
+    # "n + 1" tasks, hence we initialize cycles = n + 1 so that we can process
+    # "n + 1" tasks from the priority queue in one cycle
+    # We decrement it in the while loop and hence it should be initialized so
+    # that we can process "n + 1" tasks everytime
     cycles = n + 1
     # Declare temp array which will hold all the objects (tasks, count) when they
     # are extracted from pq after decrementing their count and validating that the
@@ -175,6 +180,8 @@ def task_scheduler_using_pq(tasks:, n:)
     # idle slots will exist. It may be equal or less than the tasks in pq and in
     # such a case, no idle slots will exist, since tasks are remaining to be
     # processed in pq
+    # We process by cycles as explained above because every task sequence requires
+    # "n" cool off period in which we can process other tasks
     while cycles.positive? && !pq.empty?
       obj_hsh = pq.extract_min
       obj_hsh[:key] -= 1
