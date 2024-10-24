@@ -6,7 +6,7 @@ require_relative '../graph'
 # is connected to every other vertex in that subset
 # If vertex "u" and vertex "v" belong to a SCC, then
 #   a. u -> v => Path from u to v => we can reach v from u
-#    b. v -> u => Path from v to u => we can reach u from v
+#   b. v -> u => Path from v to u => we can reach u from v
 #
 # Consider the graph below:
 #
@@ -101,7 +101,7 @@ class TarjanAlgo
   def find_sccs
     # Perform DFS on each unvisited node
     dfs
-    # Perform array which holds list of strongly connected
+    # Determine array which holds list of strongly connected
     # components
     sccs
   end
