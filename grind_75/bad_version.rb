@@ -27,7 +27,7 @@
 #
 def find_first_bad_version(num:, bad:)
   # This are edge cases for which no bad version exists
-  return puts "All versions are good" if num < 1 || num < bad || bad < 1
+  return puts 'All versions are good' if num < 1 || num < bad || bad < 1
 
   # We implement binary search to minimize the number of calls to
   # api for detecting bad version
@@ -40,11 +40,26 @@ def find_first_bad_version(num:, bad:)
   # There is a use case possible where low = high, and the element
   # at this position happens to satifsy the condition. In that use
   # case if low < high is used, we will not get the result.
-  # However, for this problem statement we can use low < high 
+  # However, for this problem statement we can use low <= high
   # if we update high in the condition
   #    call_to_api(curr_version: mid, bad:)
   #      high = mid
-  # Keeping low <= high to keep it uniform with binary search
+  # Whenever we use low <= high in Binary Search implementation, and
+  # we are not returning mid element, we must check if low, and high
+  # are being assigned to mid. This is crucial because we could end up
+  # in Infinite Recursion when low = high = mid, and in NEXT ITERATION
+  # mid = low + (high - low) / 2 = mid + (mid - mid) / 2 =  mid
+  # When, low = high = mid,
+  #   => Next Iteration Should NOT BE POSSIBLE
+  # In this case, we shall not END UP IN INFINITE RECURSION, because
+  # Next Iteration IS NOT POSSIBLE when low = high = mid
+  # when low = high = mid, we consider the following cases:
+  # case 1: call_to_api returns true => high = mid - 1
+  #   In Next Iteration, low = mid, high = mid - 1, low > high
+  # case 2: call_to_api returns false => low = mid + 1
+  #   In Next Iteration, low = mid + 1, high = mid, low > high
+  # while condition returns false and hence, Next Iteration where
+  # mid = low = high could cause INfinite Recursion does not Occur
   while low <= high
     mid = low + (high - low) / 2
     # If current version at mid is bad, either this is the 1st bad
