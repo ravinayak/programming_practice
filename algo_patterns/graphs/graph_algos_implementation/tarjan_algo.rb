@@ -40,7 +40,7 @@ require_relative '../graph'
 #  a. indices[2] = 2, low_links[1] = 2, Node 2 visited
 #  b. index = 3
 #  c. stack = [0, 1, 2], in_stack = { 0: true, 1: true, 2: true }
-#  d. Iterate over adj_matrix[1] (= [2]), only 1 node
+#  d. Iterate over adj_matrix[2] (= [0]), only 1 node
 #  e. node 0 has been visited, so DO NOT DFS ON IT
 #    => This is where MAGIC HAPPENS
 #    => low_links[0] = [low_links[0], indices[2]].min = [0, 2].min = 0
