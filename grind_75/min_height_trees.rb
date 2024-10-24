@@ -23,7 +23,7 @@ require_relative '../algo_patterns/data_structures/queue'
 # Algorithm: In this use case, root selection such that the height of
 # tree is minimum requires us to select Central Node in the tree
 # Even Num of nodes (in tree) => 2 roots
-# Odd Num of nodes (in tree) => 1 root
+# Odd  Num of nodes (in tree)  => 1 root
 # We process this by using a Topological Style algorithm where we trim
 # Leaves in the tree, and for every leaf node trimmed, we decrement the
 # indegree of neighbors. If any neighbor becomes leaf node, we repeat the
