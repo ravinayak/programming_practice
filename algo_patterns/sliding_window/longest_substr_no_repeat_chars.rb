@@ -83,13 +83,23 @@ def find_longest_subst_no_repeated_chars(input_str)
   while substr_pointers[:right] < input_str.length
     key = input_str[substr_pointers[:right]]
 
+    # We should assign max_substring_index hash before resetting the window
+    # it is possible that we may miss capturing a sliding window which has
+    # a size greater than maximum length of substring without repeated
+    # characters if we reset window before assigning max_substr_hsh
+    assign_max_substr_index(substr_pointers, max_substr_index_len)
+
+    # If element_index_hsh contains key, it implies that this character was seen previously
+    # This is because we store the position of every character seen in iteration over characters
+    # in the string in element_index_hsh. If this character is seen again, we have to reset
+    # window, else the character will cause a repeated character in window
     if element_index_hsh.key?(key) && element_index_hsh[key] >= substr_pointers[:left]
       substr_pointers[:left] = element_index_hsh[key] + 1
     end
 
+    # Store the position of currently seen character in element_index_hsh
     element_index_hsh[key] = substr_pointers[:right]
 
-    assign_max_substr_index(substr_pointers, max_substr_index_len)
     substr_pointers[:right] = substr_pointers[:right] + 1
   end
 
