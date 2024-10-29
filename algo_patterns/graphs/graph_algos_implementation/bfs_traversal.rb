@@ -6,7 +6,7 @@ require_relative '../graph'
 # and to find if a graph is connected
 
 # BFS can be used to find shortest path from Source Node to Destination
-# Node in Undirected Graph with +ve edge weights:
+# Node in Undirected Graph with Equal edge weights:
 # 1. All edge weights are same in the Undirected Graph:
 #    BFS guarantees that when we encounter the target node for the 1st
 #    time, the path found is the Shortest Path. This is because BFS

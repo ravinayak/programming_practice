@@ -79,6 +79,9 @@ def compute_distance(distance:, n:)
   (0...n).each do |k|
     (0...n).each do |i|
       (0...n).each do |j|
+        # Skip if either path segment is unreachable
+        next if distance[i][k] == Float::INFINITY || distance[k][j] == Float::INFINITY
+
         # Path from vertex "i" to vertex "j" through the intermediary
         # vertex "k" is shorter than current path distance
         distance[i][j] = distance[i][k] + distance[k][j] if distance[i][j] > distance[i][k] + distance[k][j]

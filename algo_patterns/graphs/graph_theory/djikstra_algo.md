@@ -6,6 +6,14 @@ in a graph with non-negative edge weights. It ensures that the
 shortest path is found for all nodes from the source by exploring
 paths in increasing order of distance from the source.
 
+Types of Graphs for which Dijkstra's Algorithm can work:
+
+1. Directed Graphs
+2. Undirected Graphs
+
+=> Dijkstra's Alogrithm works for +ve Edge Weights
+=> If edge weights are -ve, this algorithm will not work
+
 Key Concepts
 
 • Graph: A set of vertices (nodes) connected by edges, where
@@ -185,3 +193,64 @@ Limitations
 In summary, Dijkstra’s algorithm is an efficient and widely-used algorithm for finding
 the shortest paths in graphs with non-negative edge weights, particularly useful in
 network routing and optimization problems.
+
+Time Complexity Analysis:
+
+Dijkstra’s algorithm is commonly stated as O((V + E) \* log V) , where:
+
+    •	 V  is the number of vertices (nodes) in the graph.
+    •	 E  is the number of edges in the graph.
+    •	 \log V  comes from the priority queue (min-heap) operations.
+
+Here’s a detailed breakdown of why Dijkstra’s algorithm has this complexity when using a min-heap (or priority queue):
+
+Steps of Dijkstra’s Algorithm:
+
+    1. Initialization:
+    •	A priority queue (min-heap) is used to always extract the vertex with the smallest tentative distance.
+    •	The algorithm starts by initializing the distances to all vertices as infinity, except for the source vertex, which is set to zero.
+    2. Main Loop:
+    •	The algorithm iterates through the vertices, always selecting the vertex with the smallest distance (via the priority queue) and then relaxing (updating the distances) its neighbors.
+    3. Relaxation:
+    •	For each neighbor of the current vertex, the algorithm checks if a shorter path is found via the current vertex, and if so, it updates the distance for that neighbor.
+
+Time Complexity Breakdown:
+
+    1. Priority Queue Operations:
+    •	The priority queue stores vertices and allows for two main operations:
+    •	Extract-min: Extract the vertex with the minimum tentative distance.
+    •	Decrease-key: Update the distance for a vertex when a shorter path is found.
+    •	Extracting the minimum element from a priority queue (min-heap) takes  O(\log V)  time, where  V  is the number of vertices.
+    •	Similarly, updating the priority queue (for the decrease-key operation) also takes  O(\log V) , because the heap needs to be restructured to maintain its properties.
+    2. Extract-Min Operation:
+    •	Dijkstra’s algorithm extracts a vertex from the priority queue for every vertex in the graph, so there are  V  extract-min operations.
+    •	Each extract-min operation takes  O(\log V) , leading to a total time complexity of  O(V \log V)  for all the extract-min operations.
+    3. Relaxation (Decrease-Key Operation):
+    •	For each vertex extracted, the algorithm examines all its adjacent edges (neighbors). For each edge, the algorithm potentially performs a decrease-key operation on the priority queue.
+    •	There are  E  edges in the graph, and each edge might require a decrease-key operation, which takes  O(\log V) .
+    •	Therefore, the total time for all decrease-key operations is  O(E \log V) .
+
+Combining These Components:
+
+    •	The extract-min operations contribute  O(V \log V) .
+    •	The decrease-key operations contribute  O(E \log V) .
+
+Thus, the overall time complexity is:
+
+O(V \log V + E \log V) = O((V + E) \log V)
+
+Why O((V + E) \log V) ?
+
+    •	For sparse graphs:  E  (number of edges) is approximately equal to  V  (number of vertices), so the complexity simplifies to  O(V \log V) .
+    •	For dense graphs:  E  can be as large as  V^2 , making the complexity closer to  O(E \log V) .
+
+Special Case: Unweighted Graphs or Uniform Edge Weights
+
+    •	If the graph is unweighted or all edges have the same weight (e.g., 1), Dijkstra’s algorithm can be implemented with a simple queue (BFS) in  O(V + E) , as there are no priority updates required.
+
+Conclusion:
+
+    •	The  \log V  factor comes from the use of the priority queue (min-heap) for efficiently selecting the next vertex with the smallest distance and for updating distances.
+    •	The  V + E  terms correspond to the number of vertices and edges that need to be processed during the algorithm.
+
+This is why Dijkstra’s algorithm with a min-heap has a time complexity of O((V + E) \log V) .
