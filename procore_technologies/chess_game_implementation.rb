@@ -116,7 +116,7 @@ class ChessPiece
     @color = color
   end
 
-  def valid_move?(start_pos:, end_pos:, board:)
+  def valid_move?(start_pos:, end_pos:, board:) # rubocop:disable Lint/UnusedMethodArgument
     raise MethodNotImplementedError, 'Method has not been implemented in subclass'
   end
 
@@ -169,7 +169,7 @@ class ChessPiece
     false
   end
 
-  def valid_knight_move?(start_pos:, end_pos:, board:)
+  def valid_knight_move?(start_pos:, end_pos:, board:) # rubocop:disable Lint/UnusedMethodArgument
     start_row, start_col, end_row, end_col = start_end_row_col(start_pos:, end_pos:)
 
     row_diff = (end_row - start_row).abs
@@ -178,7 +178,7 @@ class ChessPiece
     (col_diff == 2 && row_diff == 1) || (col_diff == 1 && row_diff == 2)
   end
 
-  def valid_king_move?(start_pos:, end_pos:, board:)
+  def valid_king_move?(start_pos:, end_pos:, board:) # rubocop:disable Lint/UnusedMethodArgument
     start_row, start_col, end_row, end_col = start_end_row_col(start_pos:, end_pos:)
 
     row_diff = (end_row - start_row).abs
