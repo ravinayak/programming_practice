@@ -327,7 +327,7 @@ class Board
   def setup_spaces
     @spaces = [
       # Start with GO space
-      Space.new('GO'),
+      BoardSpace.new('GO'),
 
       # Brown properties (Mediterranean & Baltic)
       Property.new('Mediterranean Avenue', 60, 'Brown', [2, 10, 30, 90, 160, 250]),
@@ -345,7 +345,7 @@ class Board
       Property.new('Connecticut Avenue', 120, 'Light Blue', [8, 40, 100, 300, 450, 600]),
 
       # Jail space
-      Space.new('Jail'),
+      BoardSpace.new('Jail'),
 
       # Pink properties with Electric Company
       Property.new('St. Charles Place', 140, 'Pink', [10, 50, 150, 450, 625, 750]),
@@ -361,7 +361,7 @@ class Board
       Property.new('New York Avenue', 200, 'Orange', [16, 80, 220, 600, 800, 1000]),
 
       # Free Parking and Red properties
-      Space.new('Free Parking'),
+      BoardSpace.new('Free Parking'),
       Property.new('Kentucky Avenue', 220, 'Red', [18, 90, 250, 700, 875, 1050]),
       Chance.new('Chance'),
       Property.new('Indiana Avenue', 220, 'Red', [18, 90, 250, 700, 875, 1050]),
@@ -375,7 +375,7 @@ class Board
       Property.new('Marvin Gardens', 280, 'Yellow', [24, 120, 360, 850, 1025, 1200]),
 
       # Go To Jail and Green properties
-      Space.new('Go To Jail'),
+      BoardSpace.new('Go To Jail'),
       Property.new('Pacific Avenue', 300, 'Green', [26, 130, 390, 900, 1100, 1275]),
       Property.new('North Carolina Avenue', 300, 'Green', [26, 130, 390, 900, 1100, 1275]),
       CommunityChest.new('Community Chest'),
@@ -540,6 +540,42 @@ class Property < BoardSpace
     else
       auction_property
     end
+  end
+
+  # Handles auctioning an unowned property to all players
+  # Starts bidding at $1 and increases by $10 increments
+  # Players can bid if they have enough money and the current bid is less than 75% of property value
+  # Auction ends when no more bids are received
+  # Property is sold to highest bidder if there is one
+  # @return [void]
+  def auction_property
+    current_bid = 1
+    current_winner = nil
+
+    loop do
+      bid_received = false
+
+      @players.each do |player|
+        next if player.money < current_bid
+
+        puts "Current bid is $#{current_bid}. #{player.name}, would you like to bid higher? (y/n)"
+        # In a real implementation, you'd handle user input here
+        # For now, let's assume AI bids if they can afford 75% of property value
+        # Skip this player's bid if:
+        # 1. Current bid is >= 75% of property value (to avoid overpaying)
+        # 2. Player doesn't have enough money for next minimum bid (+$10)
+        next unless current_bid < (@price * 0.75) && player.money >= current_bid + 10
+
+        current_bid += 10
+        current_winner = player
+        bid_received = true
+        puts "#{player.name} bids $#{current_bid}"
+      end
+
+      break unless bid_received
+    end
+
+    buy_property(current_winner) if current_winner
   end
 
   # Processes property purchase
