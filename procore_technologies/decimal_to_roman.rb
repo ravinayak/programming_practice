@@ -12,7 +12,7 @@ ROMAN_LETTER_MAPPING_TUPLES = [
   ['V', 5],
   ['IV', 4],
   ['I', 1]
-]
+].freeze
 
 def decimal_to_roman(num:)
   return nil if num.nil?
