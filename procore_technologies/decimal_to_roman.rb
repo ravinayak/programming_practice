@@ -31,12 +31,16 @@ def decimal_to_roman(num:)
   # Arrays are INDEX BASED, and hence guarantee an ORDERING of
   # [roman_str, value] TUPLES
   result = ''
+  # We should not modify num, so created a new variable
+  base_num = num
   ROMAN_LETTER_MAPPING_TUPLES.each do |roman_str_tuple|
     roman_str, value = roman_str_tuple
-    while num >= value
+    while base_num >= value
       result += roman_str
-      num -= value
+      base_num -= value
+      break if base_num.zero?
     end
+    break if base_num.zero?
   end
   # return result
   result
@@ -94,9 +98,11 @@ end
 def test
   decimal_roman_str_arr.each do |decimal_roman_str_hsh|
     num, output = decimal_roman_str_hsh.values_at(:num, :output)
+    result = decimal_to_roman(num:)
     print "\n Decimal Num     :: #{num}"
     print "\n Expected Output :: #{output}"
-    print "\n Result          :: #{decimal_to_roman(num:)}"
+    print "\n Result          :: #{result}"
+    print "\n Result matches Expected Output :: #{result == output}"
     print "\n"
   end
   print "\n"
