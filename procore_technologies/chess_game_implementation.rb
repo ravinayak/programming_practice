@@ -2,6 +2,7 @@
 class MoveNotValidError < StandardError; end
 class PlayerInvalidColorChoiceError < StandardError; end
 class MethodNotImplementedError < StandardError; end
+class NoMoreValidMoveError < StandardError; end
 
 ALLOWED_COLORS = %i[white black].freeze
 
@@ -39,12 +40,90 @@ end
 
 # Chess Game Implementation
 class ChessGameImplementation
+
+  MAX_MOVES = 30
+
   attr_accessor :board, :current_turn
 
   def initialize
     @board = Array.new(8) { Array.new(8) }
     @current_turn = :white
     setup_board
+  end
+
+  def play_game
+    player_one, player_two = setup_players
+
+    moves_count = 0
+
+    while moves_count < MAX_MOVES
+      current_player = current_turn == :white ? player_one : player_two
+      puts "#{current_player.name} is about to make a move"
+      move = generate_random_move(player: current_player)
+
+      if move.empty?
+        piece, start_pos, end_pos = move.values_at(:piece, :start_pos, :end_pos)
+        puts "#{current_player.name} has moved #{piece.class} from #{start_pos} to #{end_pos}"
+        move_piece(start_pos:, end_pos:, player: current_player)
+      else
+        begin
+          raise NoMoreValidMoveError, "#{current_player.name} has no more valid moves left"
+        rescue NoMoreValidMoveError => e
+          puts e.message
+          announce_winner(player: current_player, player_one:, player_two:)
+          return
+        end
+      end
+      moves_count += 1
+    end
+
+    puts 'Game has ended, Could not find any winner because Moves has crossed Maximum Moves'
+  end
+
+  private
+
+  def generate_random_move(player:)
+    possible_moves = []
+
+    8.times do |start_row|
+      8.times do |start_col|
+        piece = board[start_row][start_col]
+        next unless piece && piece.color == player.color
+
+        8.times do |end_row|
+          8.times do |end_col|
+            start_pos = [start_row, start_col]
+            end_pos = [end_row, end_col]
+
+            next if start_pos == end_pos
+            next unless valid_move?(start_pos:, end_pos:, piece:)
+
+            possible_moves << {
+              start_pos:,
+              end_pos:,
+              piece:
+            }
+          end
+        end
+      end
+    end
+
+    possible_moves.sample
+  end
+
+  def announce_winner(player:, player_one:, player_two:)
+    player_who_won = winner(player:, player_one:, player_two:)
+    puts "Game has ended, Player :: #{player_who_won.name} has won the game"
+  end
+
+  def winner(player:, player_one:, player_two:)
+    player.color == :white ? player_two : player_one
+  end
+
+  def setup_players
+    player_one = Player.new(name: 'Automatic Player 1', user_id: 1, color: :white)
+    player_two = Player.new(name: 'Automatic Player 2', user_id: 2, color: :black)
+    [player_one, player_two]
   end
 
   def setup_board
@@ -88,8 +167,6 @@ class ChessGameImplementation
     end
   end
 
-  private
-
   def out_of_range_bounds(start_row:, start_col:, end_row:, end_col:)
     start_row.negative? || start_row > 7 || start_col.negative? || start_col > 7 || end_row.negative? ||
       end_row > 7 || end_col.negative? || end_col > 7
@@ -112,7 +189,7 @@ end
 class ChessPiece
   attr_accessor :color
 
-  def initialize(color:)
+  def initialize(color)
     @color = color
   end
 
@@ -239,3 +316,10 @@ class Pawn < ChessPiece
     valid_pawn_move?(start_pos:, end_pos:, board:)
   end
 end
+
+def test
+  game = ChessGameImplementation.new
+  game.play_game
+end
+
+test
