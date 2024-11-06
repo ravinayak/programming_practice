@@ -41,7 +41,7 @@ end
 # Chess Game Implementation
 class ChessGameImplementation
 
-  MAX_MOVES = 30
+  MAX_MOVES = 1000
 
   attr_accessor :board, :current_turn
 
@@ -61,7 +61,7 @@ class ChessGameImplementation
       puts "#{current_player.name} is about to make a move"
       move = generate_random_move(player: current_player)
 
-      if move.empty?
+      if move
         piece, start_pos, end_pos = move.values_at(:piece, :start_pos, :end_pos)
         puts "#{current_player.name} has moved #{piece.class} from #{start_pos} to #{end_pos}"
         move_piece(start_pos:, end_pos:, player: current_player)
@@ -107,7 +107,8 @@ class ChessGameImplementation
         end
       end
     end
-
+    # Returns a random move from the array of possible moves
+    # If array is empty, returns nil
     possible_moves.sample
   end
 
