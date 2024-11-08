@@ -1,0 +1,17 @@
+[
+  {
+    "title": "read",
+    "content": "hi",
+    "created_at": "2024-11-08 09:59:06 -0500"
+  },
+  {
+    "title": "Hi tther",
+    "content": "this is a new lbog",
+    "created_at": "2024-11-08 10:45:57 -0500"
+  },
+  {
+    "title": "New Post",
+    "content": "hey, i am creating a new post",
+    "created_at": "2024-11-08 14:26:45 -0500"
+  }
+]
