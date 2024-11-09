@@ -102,42 +102,50 @@ def valid_palindrome(input_str:)
 end
 
 def valid_palindrome_using_reverse(input_str:)
-  return puts "#{" Input Str :: '#{input_str}'".ljust(60)}Palindrome Test Result :: true" if
-    input_str.length < 2
+  result = valid_pal_using_rev(input_str:)
+  puts "Input Str :: #{input_str}".ljust(60) + "Palindrome Test Result :: #{result}"
+end
 
-  palindrome_test_str = []
-  index = input_str.length - 1
+def valid_pal_using_rev(input_str:)
+  return true if input_str.length < 2
+
+  index_input_str = 0
   result = true
 
-  while index >= 0
-    palindrome_test_str[(input_str.length - 1) - index] = input_str[index]
-    index -= 1
+  reversed_str = []
+  input_index = input_str.length - 1
+  index_reversed_str = 0
+
+  # reverse method is not provided in many programming languages, so manually copying characters
+  while input_index >= 0
+    reversed_str[index_reversed_str] = input_str[input_index]
+    input_index -= 1
+    index_reversed_str += 1
   end
 
-  input_str_index = 0
-  test_str_index = 0
-  while input_str_index < input_str.length
-    input_str_index += 1 while input_str_index < input_str.length &&
-                               !input_str[input_str_index].match?(/[a-zA-Z0-9]/)
-    test_str_index += 1 while test_str_index < input_str.length &&
-                              !palindrome_test_str[test_str_index].match?(/[a-zA-Z0-9]/)
+  input_str_len = input_str.length
+  reversed_str_len = reversed_str.length
+  index_reversed_str = 0
+  while index_reversed_str < reversed_str_len && index_input_str < input_str_len
+    index_input_str += 1 while index_input_str < input_str_len && !input_str[index_input_str].match?(/[a-zA-Z0-9]/)
+    index_reversed_str += 1 while index_reversed_str < reversed_str_len && !reversed_str[index_reversed_str].match?(/[a-zA-Z0-9]/)
 
-    if palindrome_test_str[test_str_index].downcase != input_str[input_str_index].downcase
+    # It is possible that we have reached the length of one string but not the other, this implies that
+    # the other string is not a valid palindrome
+    if index_input_str == input_str_len || index_reversed_str == reversed_str_len
+      result = false if index_input_str != index_reversed_str
+      break
+    end
+
+    if input_str[index_input_str].downcase != reversed_str[index_reversed_str].downcase
       result = false
       break
     end
 
-    input_str_index += 1
-    test_str_index += 1
+    index_input_str += 1
+    index_reversed_str += 1
   end
 
-  # The `ljust` method is used to left-justify the string within a field of a given width.
-  # It pads the string with spaces on the right if it's shorter than the specified width.
-  # In this case, it ensures that the "Input String" part always takes up 60 characters,
-  # which aligns the "Palindrome Test Result" part regardless of the input string's length.
-  puts " Input String :: '#{input_str}'".ljust(60) + "Palindrome Test Result :: #{result}"
-
-  # Return result of comparision
   result
 end
 
