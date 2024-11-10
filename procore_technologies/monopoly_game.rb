@@ -66,6 +66,12 @@ class MonopolyGame
   def handle_jail_turn(player)
     player.jail_turns += 1
 
+    if player.get_out_of_jail_cards.positive?
+      player.use_get_out_of_jail_card
+      release_from_jail(player)
+      return
+    end
+
     if player.jail_turns >= 3
       if player.money >= JAIL_RELEASE_MONEY
         player.update_money(-JAIL_RELEASE_MONEY)
@@ -136,6 +142,7 @@ class MonopolyGame
     while player.money.negative? && attempt_count < max_attempts
       property_max = nil
       max_property_value = -1
+      attempt_count += 1
       player.properties.each do |property|
         next unless property.is_a?(Property) && max_property_value < property.mortgage_value
 
@@ -166,8 +173,8 @@ class MonopolyGame
   def force_bankruptcy(player)
     player.properties.each do |property|
       property.owner = nil
-      property.unmortgage
-      property.reset_improvements
+      property.unmortgage if property.is_a?(Property)
+      property.reset_improvements if property.is_a?(Property)
     end
     @players.delete(player)
 
@@ -223,9 +230,9 @@ class Player
 
     owned_in_group = 0
     properties.each do |property|
-      return unless property.respond_to?(color_group)
+      return unless property.is_a?(Property) && property.respond_to?(color_group) && property.color_group == color_group
 
-      owned_in_group += property.color_group == color_group ? 1 : 0
+      owned_in_group += 1
     end
     total_in_group = Board::PROPERTY_GROUPS[color_group]
     owned_in_group == total_in_group
@@ -282,15 +289,19 @@ class BoardSpace
     end
 
     if current_winner
-      buy_property(current_player)
+      buy_property(current_winner)
       puts "Winner :: #{current_winner.name} has won the auction for property #{name}"
     end
   end
 
-  def charge_rent(player, rent)
-    player.update_money(-rent)
-    @owner.update_money(rent)
-    puts "Owner :: #{@owner.name} has charged rent :: #{rent} from #{player.name}"
+  def charge_rent(player, game, rent)
+    if player.money < rent
+      game.handle_player_raising_money(player)
+    else
+      player.update_money(-rent)
+      @owner.update_money(rent)
+      puts "Owner :: #{@owner.name} has charged rent :: #{rent} from #{player.name}"
+    end
   end
 end
 
@@ -319,12 +330,12 @@ class Property < BoardSpace
     @color_group = color_group
   end
 
-  def action(player, _game, _dice_roll)
-    if owner.nil?
-      buy_property(player)
-    elsif owner != player && !mortgaged
+  def action(player, game, _dice_total)
+    if @owner.nil?
+      handle_unowned_property(player, game)
+    elsif @owner != player && !mortgaged
       rent = current_rent
-      charge_rent(player, rent)
+      charge_rent(player, game, rent)
     end
   end
 
@@ -356,43 +367,44 @@ class Property < BoardSpace
     return unless mortgaged
 
     cost = (mortgage_value * 1.1).to_i
-    player.update_money(-cost)
+    return unless @owner.money >=cost
+
+    @owner.update_money(-cost)
     @mortgaged = false
     puts "Owner #{owner.name} has unmortgaged the property #{name}"
   end
 
   def add_hotel
-    return if hotel || houses < MonopolyGame::MAX_HOUSES
+    return if @mortgaged || hotel || houses < MonopolyGame::MAX_HOUSES
 
-    cost = Board::PROPERTY_GROUPS[color_group]
-    if owner.money >= cost
-      owner.update_money(-cost)
-      @hotels += 1
-      @houses = 0
-    end
+    house_cost = HOUSE_COST[color_group]
+    return unless @owner.money >= house_cost
+  
+    owner.update_money(-house_cost)
+    @hotel = true
+    @houses = 0
   end
 
   def sell_improvements
-    money_improvements = property.houses * Board::PROPERTY_GROUPS[color_group] + (property.hotel ? Board::PROPERTY_GROUPS[color_group] : 0)
+    money_back = property.houses * HOUSE_COST[color_group] + (property.hotel ? HOUSE_COST[color_group] : 0)
     property.houses = 0
     property.hotel = false
-    money_improvements
+    @owner.update_money(money_back)
   end
 
   def add_house
-    return if hotel || houses >= MonopolyGame::MAX_HOUSES
+    return if @mortgaged || hotel || houses >= MonopolyGame::MAX_HOUSES
 
-    cost = Board::PROPERTY_GROUPS[color_group]
-    if owner.money >= cost
-      owner.update_money(-cost)
-      @houses += 1
-      @hotel = 0
-    end
+    house_cost = HOUSE_COST[color_group]
+    return unless @owner.money >= house_cost
+
+    owner.update_money(-house_cost)
+    @houses += 1
+    @hotel = false
   end
 
   def total_value
-    puts color_group
-    price + houses * Board::PROPERTY_GROUPS[color_group] + (hotel ? Board::PROPERTY_GROUPS[color_group] : 0)
+    price + houses * HOUSE_COST[color_group] + (hotel ? HOUSE_COST[color_group] : 0)
   end
 end
 
@@ -405,12 +417,12 @@ class Railroad < BoardSpace
     @owner = nil
   end
 
-  def action(player, _game, _dice_roll)
-    if owner.nil?
-      buy_property(player)
-    elsif owner != player
+  def action(player, game, _dice_total)
+    if @owner.nil?
+      handle_unowned_property(player, game)
+    elsif @owner != player
       rent = current_rent
-      charge_rent(player, rent)
+      charge_rent(player, game, rent)
     end
   end
 
@@ -434,12 +446,12 @@ class Utility < BoardSpace
     @owner = nil
   end
 
-  def action(player, _game, dice_roll)
-    if owner.nil?
-      buy_property(player)
-    elsif owner != player
-      rent = current_rent(dice_roll)
-      charge_rent(player, rent)
+  def action(player, game, dice_total)
+    if @owner.nil?
+      handle_unowned_property(player, game)
+    elsif @owner != player
+      rent = current_rent(dice_total)
+      charge_rent(player, game, rent)
     end
   end
 
@@ -618,7 +630,7 @@ class Tax
   end
 
   def action(player, game, dice_roll)
-    # To be implemented in subclasses
+    player.update_money(-price)
   end
 end
 
@@ -672,8 +684,8 @@ class Board
       BoardSpace.new('Free Parking'),
       Property.new('Kentucky Avenue', 220, 'Red', [18, 90, 250, 700, 875, 1050]),
       ChanceCardSpace.new('ChanceCardSpace'),
-      Property.new('Illinois Avenue', 220, 'Red', [18, 90, 250, 700, 875, 1050]),
-      Property.new('Indiana Avenue', 240, 'Red', [20, 100, 300, 750, 925, 1100]),
+      Property.new('Indiana Avenue', 220, 'Red', [18, 90, 250, 700, 875, 1050]),
+      Property.new('Illinois Avenue', 240, 'Red', [20, 100, 300, 750, 925, 1100]),
 
       Railroad.new('B&O Railroad', 200),
       Property.new('Atlantic Avenue', 260, 'Yellow', [22, 110, 330, 800, 975, 1150]),
@@ -683,8 +695,8 @@ class Board
 
       BoardSpace.new('Go to Jail'),
       Property.new('Pacific Avenue', 350, 'Green', [26, 130, 390, 900, 1100, 1275]),
-      CustomJestCardSpace.new('CustomJestCardSpace'),
       Property.new('North Carolina Avenue', 350, 'Green', [26, 130, 390, 900, 1100, 1275]),
+      CustomJestCardSpace.new('CustomJestCardSpace'),
       Property.new('Pennsylvania Avenue', 350, 'Green', [28, 150, 450, 1000, 1200, 1400]),
 
       Railroad.new('Short Lines', 100),
