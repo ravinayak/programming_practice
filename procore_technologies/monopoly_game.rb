@@ -14,7 +14,7 @@ class MonopolyGame
   attr_accessor :players, :board, :dice_doubles_count, :current_player_index, :chance_cards, :custom_jest_cards, :game_over
 
   def initialize(player_names)
-    @players = player_names.map { |name| Player.new(name:) }
+    @players = player_names.map { |name| Player.new(name) }
     @board = Board.new
     @chance_cards = ChanceCard.create_deck.shuffle
     @custom_jest_cards = CustomJestCard.create_deck.shuffle
@@ -94,13 +94,13 @@ class MonopolyGame
     player.position = JAIL_POSITION
     player.jail_turns = 0
     player.in_jail = true
-    puts "Player :: #{player.name} has gone to Jail"
+    print "\n JailTime => Player :: #{player.name} has gone to Jail\n"
   end
 
   def release_from_jail(player)
     player.jail_turns = 0
     player.in_jail = false
-    puts "Player :: #{player.name} has been released from Jail"
+    print "\n Release From Jail => Player :: #{player.name} has been released from Jail\n"
   end
 
   def move_player(player, dice_roll)
@@ -109,7 +109,7 @@ class MonopolyGame
 
     if new_position < old_position && old_position != JAIL_POSITION
       player.update_money(SALARY)
-      puts "Player :: #{player.name} has passed through GO Position and earned 200$"
+      print "\n GO Position => Player :: #{player.name} has passed through GO Position and earned 200$\n"
     end
 
     player.position = new_position
@@ -187,7 +187,7 @@ class MonopolyGame
 
   def announce_winner
     winner = @players.max_by(&:total_worth)
-    puts "Winner :: #{winner.name} has won the game and is worth :: #{winner.total_worth}"
+    print "\n\nWinner :: #{winner.name} has won the game and is worth :: #{winner.total_worth}\n\n"
   end
 end
 
@@ -259,7 +259,7 @@ class BoardSpace
   end
 
   def buy_property(player)
-    puts "Player :: #{player.name} has purchased the property #{name}"
+    print "\nPlayer :: #{player.name} has purchased the property #{name}\n"
     player.update_money(-price)
     player.properties << self
     @owner = player
@@ -290,7 +290,7 @@ class BoardSpace
 
     if current_winner
       buy_property(current_winner)
-      puts "Winner :: #{current_winner.name} has won the auction for property #{name}"
+      print "\n Auction Winner => Winner :: #{current_winner.name} has won the auction for property #{name}\n"
     end
   end
 
@@ -300,7 +300,7 @@ class BoardSpace
     else
       player.update_money(-rent)
       @owner.update_money(rent)
-      puts "Owner :: #{@owner.name} has charged rent :: #{rent} from #{player.name}"
+      print "\n Charge Rent => Owner :: #{@owner.name} has charged rent :: #{rent} from #{player.name}\n"
     end
   end
 end
