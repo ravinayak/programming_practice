@@ -50,7 +50,7 @@ require_relative '../algo_patterns/sort/quicksort'
 # For any element in the array, we try to combine it with the next element
 # and last element to find a triplet whose sum can be the specified sum.
 # We do not try to combine current element in iteration in array with
-# previous elements, because those elements have already tried combining
+# previous elements, because those elements have already been tried combining
 # with the current element to form triplets in previous iterations
 #  3. Sum Use Cases:
 #   a. If sum = given sum, we are good, put it in Hash after checking
@@ -108,10 +108,8 @@ def find_3_sum(input_arr:, target_sum:)
   # Iterate over array
   (0..max_range).each do |index|
     # skip if current element is a duplicate of previous element
-    # This condition is Necessary to prevent duplicate TRIPLETS in the
-    # solution 
-    # a. It helps to avoid processing duplicate triplets at the outermost
-    # loop level. 
+    # This condition is Necessary to prevent duplicate TRIPLETS in the solution
+    # a. It helps to avoid processing duplicate triplets at the outermost loop level
     # b. It ensures we don't start the two-pointer search from the same value
     # multiple times.
     # c. This check is Different from inner loop skipping: The duplicate
