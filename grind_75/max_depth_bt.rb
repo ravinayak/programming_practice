@@ -7,11 +7,10 @@ require_relative '../algo_patterns/data_structures/binary_tree'
 # This problem is same as finding height of a tree
 
 def max_height(node:)
-
   height_path_hsh = { max_height: 0, path: [] }
   node_hsh = {}
   max_height_util(node:, height_path_hsh:, node_hsh:)
-  
+
   [height_path_hsh[:max_height], height_path_hsh[:path]]
 end
 
@@ -26,9 +25,9 @@ def max_height_util(node:, height_path_hsh:, node_hsh:)
   node_hsh[node_key(node:)] = [left_height, right_height]
 
   return height unless height_path_hsh[:max_height] < height
-  
+
   path = []
-  is_left = left_height > right_height ? true : false
+  is_left = left_height > right_height
   collect_path(node:, node_hsh:, path:, is_left:)
 
   height_path_hsh[:max_height] = height

@@ -262,7 +262,6 @@ test
 #   [node.data, node.left&.data, node.right&.data]
 # end
 
-
 # Simplified Height Calcluation code
 
 # def height
