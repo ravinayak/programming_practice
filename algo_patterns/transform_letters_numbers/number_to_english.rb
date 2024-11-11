@@ -176,6 +176,51 @@ end
 
 test
 
+# Simplified code is below
+
+# Same for " #{convert_below_hundred(num: num % 100)}"
+# If we do not interpolate result with space, the english words will pack one after another
+# When adding to a string, the other operand must also be a string,
+# TENS_BETWEE_20_AND_100[num / 10].to_s + (num % 10) != 0 ? " #{BELOW_20[num % 10]}" : ''
+# The above code gives error because
+#   (num % 10) != 0 ? " #{BELOW_20[num % 10]}" : '' does not evaluate to a string as an operand in totality
+# When we wrap the entire expression inside parentheses, the entire operand evaluates to a string and hence
+# we can add the 2 strings using + operator
+
+# BELOW_20 = %w[Zero One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen
+#               Seventeen Eighteen Nineteen].freeze
+# TENS_BETWEE_20_AND_100 = %w[Zero Ten Twenty Thirty Fourty Fifty Sixty Seventy Eighty Ninty].freeze
+# THOUSANDS = %w[Zero Thousand Million Billion].freeze
+
+# def convert_below_hundred(num:)
+#   result = ''
+#   if num < 20
+#     result = BELOW_20[num]
+#   elsif num < 100
+#     result = TENS_BETWEE_20_AND_100[num / 10] + ((num % 10) != 0 ? " #{BELOW_20[num % 10]}" : '')
+#   elsif num < 1000
+#     result = "#{BELOW_20[num / 100]} Hundred" + ((num % 100) != 0 ? " #{convert_below_hundred(num: num % 100)}" : '')
+#   end
+#   result
+# end
+
+# def convert_num_to_english(num:)
+#   return 'Zero' if num.zero?
+
+#   result = ''
+#   index = 0
+
+#   while num.positive?
+#     if (num % 1000) != 0
+#       result = convert_below_hundred(num: num % 1000) + (index.positive? ? " #{THOUSANDS[index]}" : '') + (result.empty? ? '' : " #{result}")
+#     end
+#     num /= 1000
+#     index += 1
+#   end
+
+#   result
+# end
+
 # Example 1:
 # Input: num = 123
 # Output: "One Hundred Twenty Three"
