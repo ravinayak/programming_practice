@@ -30,6 +30,9 @@
 # Display board according to specified format of X and O
 class BoardDisplay
   def new
+    # In Ruby, allocate is a class method that creates a new instance
+    # of a class without calling the class's initialize method. It's a
+    # low-level method that's part of Ruby's object creation process.
     BoardDisplay.allocate
   end
 
