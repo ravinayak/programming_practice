@@ -93,7 +93,7 @@ class UnionFind
     parent[x]
   end
 
-  def union(x:, y:).
+  def union(x:, y:)
     rootX = find(x:)
     rootY = find(x: y)
 
@@ -174,15 +174,16 @@ def test
   uf.union(x: 3, y: 4)
 
   # Check the connected components using find
-  puts uf.find(x: 0)  # Outputs 0 (root of the set containing 0)
-  puts uf.find(x: 3)  # Outputs 0 (after unions, 3 is connected to 0)
-  puts uf.find(x: 4)  # Outputs 0 (since 4 is connected to 0 through 3)
-  puts uf.parent.inspect
-  puts uf.rank.inspect
+  print " \n Output :: #{uf.find(x: 0)}, Expected :: 0"  # Outputs 0 (root of the set containing 0)
+  print " \n Output :: #{uf.find(x: 3)}, Expected :: 0"  # Outputs 0 (after unions, 3 is connected to 0)
+  print " \n Output :: #{uf.find(x: 4)}, Expected :: 0" # Outputs 0 (since 4 is connected to 0 through 3)
+  print " \n Parent :: #{uf.parent.inspect}, Expected :: [0, 0, 0, 0, 0]"
+  print " \n Parent :: #{uf.rank.inspect}, Expected :: [2, 0, 1, 0, 0]"
 
   graph = cycle_check_undirected_graph
   cycle_check = UnionFind.cycle_detection_undirected_graph(graph:)
-  puts "Cycle Should Exist :: #{cycle_check}"
+  print " \n Cycle Should Exist :: #{cycle_check}"
+  print "\n\n"
 end
 
-# test
+test
