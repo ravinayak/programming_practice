@@ -8,48 +8,55 @@ require_relative '../algo_patterns/data_structures/binary_tree'
 
 def max_height(node:)
 
-  node_height_hsh = { max_height: 0, node_hsh: {}, path: [] }
-  max_height_util(node:, node_height_hsh:)
+  height_path_hsh = { max_height: 0, path: [] }
+  node_hsh = {}
+  max_height_util(node:, height_path_hsh:, node_hsh:)
   
-  [node_height_hsh[:max_height], node_height_hsh[:path]]
+  [height_path_hsh[:max_height], height_path_hsh[:path]]
 end
 
-def max_height_util(node:, node_height_hsh:)
+def max_height_util(node:, height_path_hsh:, node_hsh:)
   return 0 if node.nil?
 
-  left_height = max_height_util(node: node.left, node_height_hsh:)
-  right_height = max_height_util(node: node.right, node_height_hsh:)
+  left_height = max_height_util(node: node.left, height_path_hsh:, node_hsh:)
+  right_height = max_height_util(node: node.right, height_path_hsh:, node_hsh:)
 
   height = [left_height, right_height].max + 1
-  key = [node.left&.data, node.data, node.right&.data]
-  node_height_hsh[:node_hsh].merge!(key => [left_height, right_height])
 
-  return height unless node_height_hsh[:max_height] < height
+  node_hsh[node_key(node:)] = [left_height, right_height]
 
-  node_height_hsh[:max_height] = height
-  is_left = left_height > right_height ? true : false
+  return height unless height_path_hsh[:max_height] < height
   
-  path = collect_path(node:, node_height_hsh:, path: [], is_left:)
-  node_height_hsh[:path] = path
+  path = []
+  is_left = left_height > right_height ? true : false
+  collect_path(node:, node_hsh:, path:, is_left:)
+
+  height_path_hsh[:max_height] = height
+  height_path_hsh[:path] = path
 
   height
 end
 
-def collect_path(node:, node_height_hsh:, path:, is_left:)
+def collect_path(node:, node_hsh:, path:, is_left:)
   return path if node.nil?
 
   path << node.data unless is_left
-  key = [node.left&.data, node.data, node.right&.data]
-  left_height, right_height = node_height_hsh[:node_hsh][key]
+
+  left_height, right_height = node_hsh[node_key(node:)]
 
   if left_height > right_height
-    collect_path(node: node.left, node_height_hsh:, path:, is_left:)
+    collect_path(node: node.left, node_hsh:, path:, is_left:)
   else
-    collect_path(node: node.right, node_height_hsh:, path:, is_left:)
+    collect_path(node: node.right, node_hsh:, path:, is_left:)
   end
 
   path << node.data if is_left
+
   path
+end
+
+def node_key(node:)
+  [node.left&.data, node.data, node.right&.data]
 end
 
 def test

@@ -45,7 +45,7 @@ def find_lca(node1:, node2:, node:)
   # subtree split occurs. Hence it is the lowest node in Tree T. Ancestors of this node will
   # also be ancestors of node1, node2 but they will be higher up in the tree and hence not LCA
   return node if (node1.data < node.data && node2.data > node.data) ||
-                 (node2.data < node.data && node1.data > node.data)
+                 (node1.data > node.data && node2.data < node.data)
 
   # if both nodes have data less than or greater than node that we have descended upon in
   # recursion, ancestor of both nodes will lie in left/right subtree

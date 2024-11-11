@@ -222,8 +222,7 @@ test
 #   height = [left_height, right_height].max + 1
 #   diameter = left_height + right_height
 
-#   node_key = [node.data, node.left&.data, node.right&.data]
-#   node_hsh[node_key] = [left_height, right_height]
+#   node_hsh[node_key(node:)] = [left_height, right_height]
 
 #   return height unless diameter > diameter_hsh[:max_diameter]
 
@@ -246,8 +245,9 @@ test
 #   return if node.nil?
 
 #   path_arr << node.data unless is_left
-#   node_key = [node.data, node.left&.data, node.right&.data]
-#   left_height, right_height = node_hsh[node_key]
+
+#   left_height, right_height = node_hsh[node_key(node:)]
+
 #   if left_height > right_height
 #     calculate_path(path_arr:, node: node.left, node_hsh:, is_left:)
 #   else
@@ -257,6 +257,11 @@ test
 
 #   nil
 # end
+
+# def node_key(node:)
+#   [node.data, node.left&.data, node.right&.data]
+# end
+
 
 # Simplified Height Calcluation code
 
