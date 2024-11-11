@@ -201,3 +201,75 @@ def test
 end
 
 test
+
+# Simplified Diameter Calcluation code
+
+# def diameter_bt
+#   diameter_hsh = { max_diameter: -1, node: nil, path_arr: [] }
+#   node_hsh = {}
+#   diameter_bt_rec(node: root, diameter_hsh:, node_hsh:)
+#   diameter_hsh
+# end
+
+# private
+
+# def diameter_bt_rec(node:, diameter_hsh:, node_hsh:)
+#   return 0 if node.nil?
+
+#   left_height = diameter_bt_rec(node: node.left, diameter_hsh:, node_hsh:)
+#   right_height = diameter_bt_rec(node: node.right, diameter_hsh:, node_hsh:)
+
+#   height = [left_height, right_height].max + 1
+#   diameter = left_height + right_height
+
+#   node_key = [node.data, node.left&.data, node.right&.data]
+#   node_hsh[node_key] = [left_height, right_height]
+
+#   return height unless diameter > diameter_hsh[:max_diameter]
+
+#   diameter_hsh[:max_diameter] = diameter
+#   diameter_hsh[:node] = node
+#   diameter_hsh[:path_arr] = prep_path_arr(node_hsh:, node:)
+
+#   height
+# end
+
+# def prep_path_arr(node_hsh:, node:)
+#   path_arr = []
+#   calculate_path(path_arr:, node: node.left, node_hsh:, is_left: true)
+#   path_arr << node.data
+#   calculate_path(path_arr:, node: node.right, node_hsh:, is_left: false)
+#   path_arr
+# end
+
+# def calculate_path(path_arr:, node:, node_hsh:, is_left:)
+#   return if node.nil?
+
+#   path_arr << node.data unless is_left
+#   node_key = [node.data, node.left&.data, node.right&.data]
+#   left_height, right_height = node_hsh[node_key]
+#   if left_height > right_height
+#     calculate_path(path_arr:, node: node.left, node_hsh:, is_left:)
+#   else
+#     calculate_path(path_arr:, node: node.right, node_hsh:, is_left:)
+#   end
+#   path_arr << node.data if is_left
+
+#   nil
+# end
+
+# Simplified Height Calcluation code
+
+# def height
+#   height_rec(node: root)
+# end
+
+# private
+
+# def height_rec(node:)
+#   return 0 if node.nil?
+
+#   left_height = height_rec(node: node.left)
+#   right_height = height_rec(node: node.right)
+#   [left_height, right_height].max + 1
+# end
