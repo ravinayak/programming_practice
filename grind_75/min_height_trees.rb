@@ -45,14 +45,19 @@ def min_height_roots(n:, edges:)
   vertices = []
   in_degree = Hash.new(0)
   adj_mat = Hash.new { |h, k| h[k] = [] }
-  n.times { |index| vertices[index] = index }
+  n.times do |index|
+    vertices[index] = index
+    in_degree[index] = 0
+  end
   roots = []
 
   edges.each do |edge|
-    adj_mat[edge[0]] << edge[1]
-    adj_mat[edge[1]] << edge[0]
-    in_degree[edge[0]] += 1
-    in_degree[edge[1]] += 1
+    u, v = edge
+    # Unidrected Edge implies that the edge will exist both ways for u, v
+    adj_mat[u] << v
+    adj_mat[v] << u
+    in_degree[u] += 1
+    in_degree[v] += 1
   end
 
   queue = Queue.new
@@ -69,7 +74,7 @@ def min_height_roots(n:, edges:)
     level_size.times do
       vertex = queue.dequeue
 
-      adj_mat[vertex].each do |neighbor|
+      adj_mat[vertex]&.each do |neighbor|
         # Current vertex is being trimmed, hence all its neighbors that have an
         # edge coming from this vertex shall have their in_degree reduced by 1
         in_degree[neighbor] -= 1
