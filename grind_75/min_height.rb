@@ -1,4 +1,3 @@
-
 require_relative '../algo_patterns/data_structures/binary_tree'
 # why is min_height calculation incorrect if we use height method?
 # If we used the height approach for min_height (just changing max to min):
@@ -36,117 +35,115 @@ require_relative '../algo_patterns/data_structures/binary_tree'
 # We're using max, so the nil (0) will naturally be ignored if there's any real
 # path
 
-
 def min_height_rec(node:)
-	return 0 if node.nil?
+  return 0 if node.nil?
 
-	# Handle Single Child Cases explicitly,
-	# We add 1 because 1 represents the node whose left/right child is nil
-	# We find the min_height of left/right child and add 1 to get the min
-	# height of the node
-	return min_height_rec(node: node.left) + 1 if node.right.nil?
-	return min_height_rec(node: node.right) + 1 if node.left.nil?
+  # Handle Single Child Cases explicitly,
+  # We add 1 because 1 represents the node whose left/right child is nil
+  # We find the min_height of left/right child and add 1 to get the min
+  # height of the node
+  return min_height_rec(node: node.left) + 1 if node.right.nil?
+  return min_height_rec(node: node.right) + 1 if node.left.nil?
 
-	left_height = min_height_rec(node: node.left)
-	right_height = min_height_rec(node: node.right)
-	[left_height, right_height].min + 1
+  left_height = min_height_rec(node: node.left)
+  right_height = min_height_rec(node: node.right)
+  [left_height, right_height].min + 1
 end
 
 def min_height_with_path(node:)
-	height_path_hsh = { min_height: Float::INFINITY, node: nil, path: []}
-	node_hsh = {}
-	min_height_rec_with_path(node:, height_path_hsh:, node_hsh:)
-	[height_path_hsh[:height], height_path_hsh[:path]]
+  height_path_hsh = { min_height: Float::INFINITY, node: nil, path: [] }
+  node_hsh = {}
+  min_height_rec_with_path(node:, height_path_hsh:, node_hsh:)
+  [height_path_hsh[:height], height_path_hsh[:path]]
 end
 
 def min_height_rec_with_path(node:, height_path_hsh:, node_hsh:)
-	return 0 if node.nil?
+  return 0 if node.nil?
 
-	# This code can be abstracted and simplified using handle_single_child method
-	# but I am keeping it around for readability and understanding
-	if node.left.nil?
-		height = min_height_rec_with_path(node: node.left, height_path_hsh:, node_hsh:) + 1
-		node_hsh[node_key(node:)] = [height, nil]
-		return height if height_path_hsh[:min_height] <= height
-	
-		assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
-		return height
-	end
+  # This code can be abstracted and simplified using handle_single_child method
+  # but I am keeping it around for readability and understanding
+  if node.left.nil?
+    height = min_height_rec_with_path(node: node.left, height_path_hsh:, node_hsh:) + 1
+    node_hsh[node_key(node:)] = [height, nil]
+    return height if height_path_hsh[:min_height] <= height
 
-	if node.right.nil?
-		height = min_height_rec_with_path(node: node.right, height_path_hsh:, node_hsh:) + 1
-		node_hsh[node_key(node:)] = [nil, height]
-		return height if height_path_hsh[:min_height] <= height
-	
-		assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
-		return height
-	end
+    assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
+    return height
+  end
 
-	left_height = min_height_rec_with_path(node: node.left, height_path_hsh:, node_hsh:)
-	right_height = min_height_rec_with_path(node: node.right, height_path_hsh:, node_hsh:)
-	height = [left_height, right_height].min + 1
+  if node.right.nil?
+    height = min_height_rec_with_path(node: node.right, height_path_hsh:, node_hsh:) + 1
+    node_hsh[node_key(node:)] = [nil, height]
+    return height if height_path_hsh[:min_height] <= height
 
-	node_hsh[node_key(node:)] = [left_height, right_height]
+    assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
+    return height
+  end
 
-	return height if height_path_hsh[:min_height] <= height
+  left_height = min_height_rec_with_path(node: node.left, height_path_hsh:, node_hsh:)
+  right_height = min_height_rec_with_path(node: node.right, height_path_hsh:, node_hsh:)
+  height = [left_height, right_height].min + 1
 
-	assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
+  node_hsh[node_key(node:)] = [left_height, right_height]
 
-	height
+  return height if height_path_hsh[:min_height] <= height
+
+  assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
+
+  height
 end
 
 def assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
-	path = []
-	left_height, right_height = node_hsh[node_key(node:)]
-	
-	is_left = true if (left_height && !right_height) || (left_height && right_height && left_height <= right_height)
-	collect_path(path:, node:, node_hsh:, is_left:)
+  path = []
+  left_height, right_height = node_hsh[node_key(node:)]
 
-	height_path_hsh[:height] = height
-	height_path_hsh[:path] = path
+  is_left = true if (left_height && !right_height) || (left_height && right_height && left_height <= right_height)
+  collect_path(path:, node:, node_hsh:, is_left:)
+
+  height_path_hsh[:height] = height
+  height_path_hsh[:path] = path
 end
 
 def collect_path(path:, node:, node_hsh:, is_left:)
-	return path if node.nil?
+  return path if node.nil?
 
-	path << node.data unless is_left
+  path << node.data unless is_left
 
-	left_height, right_height = node_hsh[node_key(node:)]
+  left_height, right_height = node_hsh[node_key(node:)]
 
-	if left_height && right_height
-		if left_height < right_height
-			collect_path(node: node.left, node_hsh:, path:, is_left:)
-		else
-			collect_path(node: node.right, node_hsh:, path:, is_left:)
-		end
-	elsif left_height && !right_height
-		collect_path(node: node.left, node_hsh:, path:, is_left:)
-	elsif right_height && !left_height
-		collect_path(node: node.right, node_hsh:, path:, is_left:)
-	end
+  if left_height && right_height
+    if left_height < right_height
+      collect_path(node: node.left, node_hsh:, path:, is_left:)
+    else
+      collect_path(node: node.right, node_hsh:, path:, is_left:)
+    end
+  elsif left_height && !right_height
+    collect_path(node: node.left, node_hsh:, path:, is_left:)
+  elsif right_height && !left_height
+    collect_path(node: node.right, node_hsh:, path:, is_left:)
+  end
 
-	path << node.data if is_left
+  path << node.data if is_left
 
-	path
+  path
 end
 
 def node_key(node:)
-	[node.left&.data, node.data, node.right&.data]
+  [node.left&.data, node.data, node.right&.data]
 end
 
 def handle_single_child(node:, height_path_hsh:, node_hsh:, is_left:)
-	height = min_height_rec_with_path(node:, height_path_hsh:, node_hsh:) + 1
-	if is_left
-		node_hsh[node_key(node:)] = [height, nil]
-	else
-		node_hsh[node_key(node:)] = [nil, height]
-	end
-	return height unless height_path_hsh[:min_height] > height
+  height = min_height_rec_with_path(node:, height_path_hsh:, node_hsh:) + 1
+  if is_left
+    node_hsh[node_key(node:)] = [height, nil]
+  else
+    node_hsh[node_key(node:)] = [nil, height]
+  end
+  return height unless height_path_hsh[:min_height] > height
 
-	assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
-	return height
+  assign_collect_path(height:, node:, height_path_hsh:, node_hsh:)
+  height
 end
-
 
 def test
   bt1 = BinaryTree.new(data: 100)
