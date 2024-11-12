@@ -132,7 +132,7 @@ def clone_graph_simple(adj_matrix:)
     node = node_hsh[index + 1]
     temp_arr = []
     neighbors.each do |neigbor_index|
-      neighbor_node = node_hsh[neigbor_index + 1]
+      neighbor_node = node_hsh[neigbor_index]
       node.neighbors << neighbor_node
       temp_arr << neighbor_index
     end
