@@ -83,6 +83,29 @@ def cycle_check?(vertex:, adj_matrix:, visited:, recursion_hsh:)
 
   # Iterate over the adjacency matrix
   adj_matrix[vertex]&.each do |neighbor|
+    # next if visited[neighbor]
+    # The above line is wrong and should not be used, it is possible that
+    # a node has been visited and is causing Cycles. If we skip the
+    # iteration, we miss checking if that node is present in recursion_hsh
+    # and causing Cycles
+    #
+    # 1. Visited Hash (visited): This tracks nodes that have been fully processed
+    #    in any DFS traversal. Once a node is marked as visited, it means all paths
+    #    starting from this node have been explored.
+    # 2. Recursion Hash (recursion_hsh): This tracks nodes that are currently in
+    #   the recursion stack of the DFS. If a node is encountered again while it is
+    #   still in the recursion stack, it indicates a cycle.
+
+    #   The key point is that a node being in the visited hash does not necessarily
+    #   mean it is part of a cycle. It simply means that the node has been processed
+    #   in some DFS path. The recursion_hsh is what helps detect cycles by identifying
+    #   back edges.
+
+    #   If you skip processing a node just because it is in the visited hash, you might
+    #   miss detecting cycles that involve that node. This is why the check for cycles
+    #   should be based on the recursion_hsh, not just the visited hash.
+    #   Do not skip nodes that are in the visited hash when checking for cycles.
+    #   Instead, always check if they are in the recursion_hsh.
     if !(visited[neighbor])
       return true if cycle_check?(vertex: neighbor, adj_matrix:, visited:, recursion_hsh:)
     elsif recursion_hsh[neighbor]
