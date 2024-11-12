@@ -69,7 +69,7 @@ end
 class SerializeDeSerializeBT
   attr_accessor :serialized_bt
 
-  NIL_CHAR = '#'
+  NIL_CHAR = '#'.freeze
 
   def serialize_bt(root:)
     serialize_bt = ''
@@ -103,6 +103,22 @@ class SerializeDeSerializeBT
 
   private
 
+  # In the entire method of de-serialization we do not have
+  # to worry about index_hsh[:index] crossing index of data_arr
+  # and giving Arry - Index Out of Bounds Error. This is because
+  # of 3 reasons:
+  # 1. Since we serialize Binary Tree as a Complete Binary Tree
+  #    Every node has a left/right child
+  # 2. For every node, we deserialize left/right child of that
+  #    node, and return the node. Because every node has a left/right
+  #    child, any access to element in data array for that node's
+  #    string representation through index_hsh[:index] will succeed
+  #    and NOT GIVE ANY ERROR
+  # 3. De-serialization will process left/right children of
+  #    every node and automatically stop when it has processed
+  #    every character serialized for a node. The use case where
+  #    we try to access an element in data_arr which is out of
+  #    bounds will NEVER OCCUR
   def deserialize_pre_order_bt(data_arr:, index_hsh:)
     # If node is nil we increase the index to process '#'
     # and return nil
@@ -155,7 +171,7 @@ class SerializeDeSerializeBT
       # if we are using serialize_bt += , we must return the value
       # and assign it back from this code snippet
       # return serialize_bt
-      return 
+      return
     end
 
     # serialize_bt += "#{node.data} "
@@ -200,3 +216,64 @@ def test
 end
 
 test
+
+# Simplified code to serialize/deserialize
+
+# def self.serialize_bt(node:)
+#   return '' if node.nil?
+
+#   serialized_bt_hsh = { serialized_str: '' }
+
+#   serialized_str = ''
+#   pre_order_serialize_bt(node:, serialized_str:)
+
+#   serialized_str.strip
+# end
+
+# def self.deserialize_str(serialized_str:)
+#   return nil if serialized_str.nil? || serialized_str.empty?
+
+#   data_arr = []
+#   index_hsh = { index: 0 }
+
+#   serialized_str.split(' ').each do |char|
+#     if char == NIL_CHAR
+#       data_arr << nil
+#       next
+#     end
+#     data_arr << char.to_i
+#   end
+
+#   node = deserialize_bt_util(data_arr:, index_hsh:)
+
+#   bt = BinaryTree.new
+#   bt.root = node
+
+#   bt
+# end
+
+# def self.deserialize_bt_util(data_arr:, index_hsh:)
+#   if data_arr[index_hsh[:index]].nil?
+#     index_hsh[:index] += 1
+#     return nil
+#   end
+
+#   node = BinaryTreeNode.new(data: data_arr[index_hsh[:index]])
+#   index_hsh[:index] += 1
+
+#   node.left = deserialize_bt_util(data_arr:, index_hsh:)
+#   node.right = deserialize_bt_util(data_arr:, index_hsh:)
+
+#   node
+# end
+
+# def self.pre_order_serialize_bt(node:, serialized_str:)
+#   if node.nil?
+#     serialized_str.concat("#{NIL_CHAR} ")
+#     return
+#   end
+
+#   serialized_str.concat("#{node.data} ")
+#   pre_order_serialize_bt(node: node.left, serialized_str:)
+#   pre_order_serialize_bt(node: node.right, serialized_str:)
+# end
