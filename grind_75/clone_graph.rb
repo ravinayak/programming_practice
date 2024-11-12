@@ -117,6 +117,30 @@ def clone_graph(adj_matrix:)
   results
 end
 
+# This is a much simplified method and can be used to solve the problem
+def clone_graph_simple(adj_matrix:)
+  return [[]] if adj_matrix.nil? || adj_matrix.empty?
+
+  node_hsh = {}
+  (0...adj_matrix.length).each do |index|
+    node = Node.new(data: index + 1)
+    node_hsh[index + 1] = node
+  end
+
+  results = []
+  adj_matrix.each_with_index do |neighbors, index|
+    node = node_hsh[index + 1]
+    temp_arr = []
+    neighbors.each do |neigbor_index|
+      neighbor_node = node_hsh[neigbor_index + 1]
+      node.neighbors << neighbor_node
+      temp_arr << neighbor_index
+    end
+    results << temp_arr
+  end
+  results
+end
+
 # Returns reference of existing node for node_val in hash
 # Creates a new node if it does not exist, insert it into
 # hash and return a reference to it
