@@ -85,6 +85,26 @@ def cycle_check?(vertex:, adj_matrix:, visited:, parent:)
       # neighbor != parent check should only be called when neighbor has been visited, the
       # condition should be in else logic, if you check for neighbor != parent for non-visited
       # nodes, it will always return true
+
+      #       1
+      #      / \
+      #     2---3
+      #
+      # In case of Undirected Graph, there is a pair of edges for every (u, v) due to symmetry
+      # u => v, and v => u
+      # When we reach v from u ( u => v), parent = u
+      # In this case v will CERTAINLY have "u" as a neighbor, (u => v) due to symmetry
+      # "u" is visited, and we are visiting again but NOT BECAUSE of a CYCLE, but Because of
+      # SYMMETRY, this is just BACktracking and NOT CYCLE DETECTION
+
+      # parent == neighbor => Backtracking (due to symmetry), we are going back to same node
+      # from where we came
+
+      # parent != neighbor => cycle
+
+      # parent != vertex => SHOULD NOT BE USED, it would not mean anything since we can ONLY
+      # come back to neighbor from parent, vertex is simply the node whose adjacency matrix
+      # is being accessed to iterate over neighbors
     elsif neighbor != parent
       # We are not backtracking on the edge in opposite direction, and yet we
       # have found a node that has been visited before => Cycle
