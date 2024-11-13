@@ -1,60 +1,55 @@
-# frozen_string_literal: true
-
-# Implement stack
-#
+# Class Stack - Implements stack using array and index
 class Stack
-  attr_accessor :stack
+  attr_accessor :arr, :index
 
   def initialize
-    @stack = []
+    @arr = []
+    @index = -1
   end
 
-  # Push element on to stack
-  # @param [Integer] data
-  # @return [NIL]
-  #
-  def push(data:)
-    stack.push(data)
-  end
-
-  # Pop element from stack
-  # @return [Integer|nil]
-  #
-  def pop
-    begin
-      raise StandardError, 'Stack is Empty' if empty?
-    rescue StandardError => e
-      puts e.inspect
-      return nil
-    end
-    stack.pop
-  end
-
-  # Returns element at top of stack without removing it
-  # @return [Integer|nil]
-  #
-  def peek
-    stack.last
-  end
-
-  # Size of stack
-  # @return [Integer]
-  #
-  def size
-    stack.size
-  end
-
-  # Returns true if stack is empty
-  # @return [Boolean]
-  #
   def empty?
-    stack.empty?
+    index == -1
   end
 
-  # Display all elements in stack
-  #
+  def push(data:)
+    @index += 1
+    @arr[index] = data
+  end
+
+  def pop
+    return nil if empty?
+
+    top_element = element_at_top
+    @index -= 1
+    top_element
+  end
+
+  def element_at_top
+    @arr[index]
+  end
+
+  def peek
+    element_at_top
+  end
+
+  def size
+    # Precautionary measure although when empty, index = -1
+    # and will add upto 0 to give correct answer
+    return 0 if empty?
+
+    # Since arrays are zero index based, if there is 1 element
+    # index = 0
+    index + 1
+  end
+
   def display
-    puts "Stack :: #{stack.inspect}"
+    return if empty?
+
+    stack_index = index
+    while stack_index >= 0
+      print "#{arr[stack_index]} "
+      stack_index -= 1
+    end
   end
 end
 
@@ -63,8 +58,13 @@ def test
   st.push(data: 1)
   st.push(data: 2)
   st.push(data: 3)
+  st.push(data: 100)
+  print "\nDisplaying Stack elements :: "
   st.display
+  puts
+  puts "Size :: #{st.size}"
   puts "Peek :: #{st.peek}"
+  puts "Pop :: #{st.pop}"
   puts "Pop :: #{st.pop}"
   puts "Pop :: #{st.pop}"
   puts "Pop :: #{st.pop}"
@@ -96,7 +96,8 @@ def test
   #        puts statement.
   puts 'All elements have been removed from Stack, and so it should be empty as displayed below ::'
   st.display
-  st.pop
+  puts
+  puts "Stack Pop :: #{st.pop}"
 end
 
-# test
+test
