@@ -50,7 +50,7 @@ def partition_into_k_subsets(input_arr:, k:)
 
     # If we could not find a set which contains elements from input array
     # that could addup to given target, we cannot find k sets to partition
-    # given input array, hence we return immediately from the method 
+    # given input array, hence we return immediately from the method
     return [false, nil] if set.empty?
 
     sets << set
@@ -115,6 +115,12 @@ def set_adds_upto_target(input_arr:, target:, visited: nil)
     #  => dp[10] will be evaluated 1st, then dp[5]
     #  => j = 10 => dp[10] = dp[j - element] = dp[10 - 5] = dp[5] = false
     #  => This is because dp[5] is set to false and has not been evaluated yet
+
+    # target.downto(element) => [target, target - 1, target - 2, ... element]
+    # We calculate dp array because for other elements, we want to ensure
+    # that if we try to find whether that element can add upto target, we
+    # have to check dp[target-element], hence we must have the
+    # dp array filled from 0 to target
     target.downto(element).each do |j|
       # We go only till 'element' to avoid accessing negative indices in dp array
       # This eliminates the need for the previous 'next if j < element' check
