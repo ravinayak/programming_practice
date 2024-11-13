@@ -25,3 +25,31 @@ Queue
 8. Peek => Element at front of Queue
    - Here, front maps to Index, Because front maintains the front of queue - First in First Out
    - First => Front, Last => Rear
+
+Linked List
+
+1. Middle =>
+
+   prev = nil
+   curr = head.next
+
+   while curr
+   curr_next = curr.next
+   curr.next = prev
+   prev = curr
+   curr = curr_next
+   end
+
+2. Both cycle detection and middle of linked list follow the same strategy =>
+
+   fast = head
+   slow = head
+
+   while fast && fast.next
+   fast = fast.next.next
+   slow = slow.next
+   [ if cycle detection code => return true if slow == fast]
+   end
+
+   slow (if middle of linked list)
+   false (if cycle detection)
