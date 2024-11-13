@@ -38,14 +38,14 @@
 # and water trapped is calculated based on this value
 # 	At index left = right - 2
 # 	left = right - 1
-# 	water trapped = Water trapped between index right - 1 and right
-# 11. We must stop at left = right - 1, if we process when left = right - 1,
+# 	water trapped = Water trapped between index right - 2 and right - 1
+# 11. We must stop at left = right - 2, if we process when left = right - 1,
 # 	left will be incremented by 1 and left = right
 # 	At index left = right - 1
 # 	left = right
-# 	water trapped = Water trapped between index right and right + 1
-# 	But this water trapped has already been calculated when right decremented from
-# 	right + 1 to right.
+# 	water trapped = Water trapped between index right - 1 and right
+#   "right - 1" through "right" contains a bar, and there is no bar to the right of this bar
+#    meaning this is the last bar, and therefore no water can be trapped at this index
 # 	Hence while loop must have condition left < right - 1 and not left <= right
 
 def trapping_rain_water(input_arr:, width:)
@@ -55,14 +55,14 @@ def trapping_rain_water(input_arr:, width:)
 
   left = 0
   right = input_arr.length - 1
-  left_max = input_arr[0]
+  left_max = input_arr[left]
   right_max = input_arr[right]
   water_trapped = 0
 
   # In this iteration, we calculate the water which will be trapped
   # at every index starting from 0
-  # a. At index 0, it calculates water trapped between index 0 and 1
-  # b. At index 1, it calculates water trapped between index 1 and 2
+  # a. At index 0, it calculates water trapped between index 0 and 1 (bars at index 0 and bar at index 1)
+  # b. At index 1, it calculates water trapped between index 1 and 2 (bars at index 1 and bar at index 2)
   # c. At index right - 2, it calculates water trapped between index right - 2 and right - 1
   # d. At index right - 1, it would calculate water trapped between index index right - 1 and right
   # e. "right - 1" through "right" contains a bar, and there is no bar to the right of this bar
@@ -71,6 +71,11 @@ def trapping_rain_water(input_arr:, width:)
   # g. left < right => left can grow till right - 1, and we have seen at Step e, this would
   #    calculate water trapped for last bar which is incorrect
   while left < right - 1
+    # if left_max < right_max => This is critical because it means that there is a bar towards the
+    # right which can hold water in dips between Bars on left and Right in the dips, without a
+    # higher bar on right, no water can be tapped between left to right.
+    # if left_max > right_max => Water can ONLY be Tapped between bars on right and left_max in the
+    # dips
     if left_max < right_max
       # Increment left to get the height of bar at current left, so we can find if there is a dip
       # between previous bar and current bar by finding left_max which is shown below in calculations

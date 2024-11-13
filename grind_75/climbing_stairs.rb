@@ -46,6 +46,59 @@ end
 # @param [Array<Array<Integer>>] result
 #
 def staircase_combs_utility(total_steps:, allowed_step_sizes:, curr_step_combs:, result:)
+  # We never have to worry about the current_step_combs.sum > total_steps because if
+  # a step size + current_step_combs.sum > total_steps, we simply skip that step_size
+  # in the Iteration, we never push this step_size into current_step_combs array. We
+  # only include such step sizes which when added to current_step_combs array results
+  # in <= total_steps
+  # Any step size which was added previously such that the other step sizes if added to
+  # it result in > total_steps will be popped off when we return back in recursion to
+  # that call.
+  # Consider step_sizes = [5, 3], total_steps = 7
+  # 1st Recursion call =>
+  #   a. Step Size = 5, current_step_combs << 5
+  #   b. step_combs_sum = [5]
+  # 2nd Recursion call =>
+  #   a. Skip 5, 5 + 5 = 10 > 7
+  #   b. Skip 3, 5 + 3 = 8 > 7
+  #   c. In 2nd Recursion call we have iterated through all allowed_step_sizes, and
+  #      nothing has been added to results array
+  #   d. We return back to 1st Recursion call
+  #   e. results = []
+  # 1st Recursion call => next line is executed
+  #   a. current_step_combs.pop => 5 is removed
+  #   b. step_combs_sum = []
+  #   c. Step Size = 3, current_step_combs << 3
+  #   d. step_combs_sum = [3]
+  # 2nd Recursion call =>
+  #   a. Skip 5, 5 + 4 = 8 > 7
+  #   b. Include 3, 3 + 3 = 6 < 7
+  #   c. step_combs_sum = [3, 3]
+  #   d. results = []
+  # 3rd Recursion Call =>
+  #   a. Skip 5, 5 + 6 = 11 > 7
+  #   b. Skip 3, 3 + 6 = 9 > 7
+  #   c. In 3rd Recursion call we have iterated through all allowed_step_sizes, and
+  #      nothing has been added to results array
+  #   d. We return back to 2nd Recursion call
+  #   e. results = []
+  # 2nd Recursion Call =>
+  #   a. We have processed 3 and nothing has been added to results array
+  #   b. next line is executed, which removes 3 from step_combs_sum
+  #   c. step_combs_sum.pop
+  #   d. step_combs_sum = [3]
+  #   e. results = []
+  # 1st Recursion Call =>
+  #   a. We have processed all allowed_step_sizes
+  #   b. We come back in 1st Recursion call, and execute the next line which removes
+  #      element from current_step_combs
+  #   c. step_combs_sum.pop
+  #   d. step_combs_sum = []
+  #   e. Nothing has been added to results array
+  #   f. results = []
+  # Return back to main calling function
+  #   a. results = []
+
   # Base case of recursion: If we have a current combination of steps which sums upto
   # total number of steps in staircase, it is a possible solution. We push onto
   # result array and return

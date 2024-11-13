@@ -90,6 +90,43 @@ def word_break(word:, word_dict:)
   dp[word.length]
 end
 
+# What dp[i] represents?
+#   dp[i] holds all valid combinations that can be formed using first i characters of string
+# Each element in dp array is itself an array of strings (combinations)
+#   dp[0] is initialized with [''] as base case (empty string is valid)
+# Substring Formation (word[j...i])
+#   Forms substring by including characters from index j through i-1
+#   word[j] is included
+#   word[i] is excluded
+#   Example: if j=0 and i=4, takes characters at indices 0,1,2,3
+# Validation Conditions
+#   dp[j].empty? checks if we found any valid combinations up to position j
+#   word_dict.include?(word[j...i]) verifies if current substring exists in dictionary
+#   Both must be true to form new combinations at dp[i]
+# Why is dp[j].empty? Critical?
+#   if dp[j] is empty, it means no valid combinations were found up to position j
+#   This indicates that the substring from start to position j couldn't be segmented using dictionary words
+#   Therefore, we can't build valid combinations using this path, so we skip it
+#   This is a critical optimization that prevents building invalid combinations
+# Combination Building
+#   If segment is empty, start new combination with current word
+#   If segment exists, append current word to existing combinations
+#   Each valid combination is stored as space-separated string of words
+# Why (0...i) and NOT (0..i) ? Problems if We Used ..
+#   Would cause issues when j = i
+#   word[i...i] would create an empty string
+#   Would lead to:
+#     Duplicate checks (already covered by earlier iterations)
+#     Potential out-of-bounds errors
+#     Unnecessary checking of empty strings against dictionary
+#     Substring Formation
+#   We want to check all substrings that end at position i-1
+#   word[j...i] gives us exactly this by excluding character at position i
+#   This matches how we build our dynamic programming solution from smaller subproblems
+# Final Result
+#   dp[word.length] contains all valid combinations for entire string
+#   Returns empty array if no valid combinations possible
+
 def word_break_with_combs(word:, word_dict:)
   return [] if word.strip.empty? || word_dict.empty?
 
