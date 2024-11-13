@@ -3,22 +3,49 @@ require_relative '../data_structures/linked_list'
 def merge_sorted_linked_lists_cleaner(list_one:, list_two:)
   return if list_one.head.next.nil? && list_two.head.next.nil?
 
-  node1 = list_one.head.next
-  node2 = list_two.head.next
+  list_one_node = list_one.head.next
+  list_two_node = list_two.head.next
 
-  curr_node = Node.new(data: nil)
-  assign_curr_node(list_one_head: list_one.head, list_two_head: list_two.head, curr_node:)
-  head = curr_node.next
-  # Make this node eligible for garbage collection
-  curr_node.next = nil
+  head = assign_head_smaller_data(list_one:, list_two:, list_one_node:, list_two_node:)
+  curr = head
 
-  curr_node, node1, node2 = compare_node_data(node1:, node2:, curr_node:) while node1 && node2
+  while list_one_node && list_two_node
+    curr_node, list_one_node, list_two_node = assign_nodes(list_one_node:, list_two_node:)
+    curr.next = curr_node
+    curr = curr_node
+  end
 
-  curr_node.next = node1 unless node1.nil?
-  curr_node.next = node2 unless node2.nil?
+  # curr will always point on the node which has moved to the next node, only that node can
+  # become nil, because the other node must not have been NIL for the comparison to occur
+  # in the 1st place. This implies if curr is pointing to list_two node, list_two node has
+  # moved and could become NIL. list_one_node is not pointed by curr, and hence we iterate
+  # until list_one_node becomes empty and in each iteration before moving list_one_node, we
+  # assign curr.next = list_one_node
+  #
+  while list_one_node
+    curr.next = list_one_node
+    list_one_node = list_one_node.next
+  end
+
+  while list_two_node
+    curr.next = list_two_node
+    list_two_node = list_two_node.next
+  end
 
   traverse_list(head:)
   head
+end
+
+def assign_head_smaller_data(list_one:, list_two:, list_one_node:, list_two_node:)
+  return list_one.head if list_one_node.data <= list_two_node.data
+
+  list_two.head
+end
+
+def assign_nodes(list_one_node:, list_two_node:)
+  return [list_one_node, list_one_node.next, list_two_node] if list_one_node.data <= list_two_node.data
+
+  [list_two_node, list_one_node, list_two_node.next]
 end
 
 def traverse_list(head:)
@@ -30,26 +57,6 @@ def traverse_list(head:)
     node = node.next
   end
   print "\n\n"
-end
-
-def compare_node_data(node1:, node2:, curr_node:)
-  if node1.data <= node2.data
-    curr_node.next = node1
-    return [node1, node1.next, node2]
-  end
-
-  curr_node.next = node2
-  [node2, node1, node2.next]
-end
-
-def assign_curr_node(list_one_head:, list_two_head:, curr_node:)
-  return curr_node.next = list_one_head if list_two_head.next.nil?
-
-  return curr_node.next = list_two_head if list_one_head.next.nil?
-
-  return curr_node.next = list_one_head if list_one_head.next.data <= list_two_head.next.data
-
-  curr_node.next = list_two_head
 end
 
 def test
