@@ -13,6 +13,15 @@ class List
     @head = Node.new
   end
 
+  def self.prepare_list(input_arr:)
+    list = List.new
+    input_arr.each do |data|
+      list.insert(data:)
+    end
+
+    list
+  end
+
   def insert(data:)
     prev = head
     curr = head.next
