@@ -1,3 +1,4 @@
+# BinaryMaxHeap class
 class BinaryMaxHeap
   attr_accessor :heap_size, :arr
 

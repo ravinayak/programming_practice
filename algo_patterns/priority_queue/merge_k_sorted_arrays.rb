@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'priority_queue'
+require_relative 'priority_queue_max_heap'
 # frozen_string_literal: true
 
 # Merge k sorted arrays - sorted in descending order
@@ -13,42 +14,36 @@ require_relative 'priority_queue'
 #      insert the next largest element from this array into priority queue
 #   c. Repeat
 
-# NOTE: this code should be simplified and heap_size, arr, other details should be extracted
-# into PriorityQueue class
+# If elements are sorted in Descending Order, we have to find the max element at each step when traversing from
+# index 0 to length of array, hence, we use Max Heap
+# If elements are sorted in Ascending Order, we have to find the min element at each step when traversing from
+# index 0 to length of array, hence we use Min Heap
 
-# @param [Array<Array>] k_sorted_arrs
-# @return [Array]
-#
-def merge_k_sorted_arrays(k_sorted_arrs:)
-  pq_arr = []
+def merge_k_sorted_arrays_simple(k_sorted_arrs:)
+  pq = PriorityQueueMaxHeap.new
   merged_arr = []
 
-  k_sorted_arrs.each_with_index do |sorted_arr, sorted_arr_index|
-    obj_hash = { arr_index: sorted_arr_index, element_index: sorted_arr.length - 1, key: sorted_arr.last }
-    pq_arr = PriorityQueue.insert_key(obj_hash:, arr: pq_arr, heap_size: pq_arr.size)
+  k_sorted_arrs.each_with_index do |sorted_arr, arr_index|
+    object_hsh = { key: sorted_arr[0], element_index: 0, arr_index: }
+    pq.insert(object_hsh:)
   end
 
-  until pq_arr.empty?
-
-    max_element_hsh, pq_arr, heap_size = *PriorityQueue.extract_max(arr: pq_arr, heap_size: pq_arr.size)
-    arr_index, element_index, element = max_element_hsh.values_at(:arr_index, :element_index, :key)
+  until pq.empty?
+    element_hsh = pq.extract_max
+    element, element_index, arr_index = element_hsh.values_at(:key, :element_index, :arr_index)
     merged_arr << element
 
-    # This is a very crucial step, if we extracted an element from an array which has an index of 0
-    # there are no more elements to insert from this array, hence we must skip the current iteration,
-    # and extract next largest element from max_heap priority queue
-    next unless element_index.positive?
+    arr = k_sorted_arrs[arr_index]
+    new_index = element_index + 1
+    next if new_index >= arr.length
 
-    # element_index - 1 => This is because element_index of current element is already decremented to
-    # reflect the correct index of element in sorted array when inserting into Priority Queue - Max Heap
-    obj_hash = { arr_index:, element_index: element_index - 1, key: k_sorted_arrs[arr_index][element_index - 1] }
-    pq_arr = PriorityQueue.insert_key(obj_hash:, arr: pq_arr, heap_size:)
-    heap_size + 1 # since we inserted a key, heap_size should increase by 1
+    object_hsh = { key: arr[new_index], element_index: new_index, arr_index: }
+    pq.insert(object_hsh:)
   end
 
-  merged_arr
+  merged_arr.reverse # In Ascending Order
 end
 
-k_sorted_arrs = [[10, 15, 20, 25], [1, 11, 13, 14, 25, 100], [-5, 6, 7, 9, 12, 90]]
+k_sorted_arrs = [[25, 20, 15, 10], [100, 25, 14, 13, 11, 1], [90, 12, 9, 7, 6, -5]]
 puts k_sorted_arrs.inspect
-puts merge_k_sorted_arrays(k_sorted_arrs:).inspect
+puts merge_k_sorted_arrays_simple(k_sorted_arrs:).inspect
