@@ -40,37 +40,38 @@ end
 
 # Chess Game Implementation
 class ChessGameImplementation
-
   MAX_MOVES = 1000
 
-  attr_accessor :board, :current_turn
+  attr_accessor :board, :current_turn, :players
 
   def initialize
     @board = Array.new(8) { Array.new(8) }
+    @players = setup_players
     @current_turn = :white
     setup_board
   end
 
   def play_game
-    player_one, player_two = setup_players
-
     moves_count = 0
 
     while moves_count < MAX_MOVES
-      current_player = current_turn == :white ? player_one : player_two
+      current_player = players[current_turn]
       puts "#{current_player.name} is about to make a move"
       move = generate_random_move(player: current_player)
 
       if move
         piece, start_pos, end_pos = move.values_at(:piece, :start_pos, :end_pos)
-        puts "#{current_player.name} has moved #{piece.class} from #{start_pos} to #{end_pos}"
+        start_row, start_col, end_row, end_col = start_end_row_col(start_pos:, end_pos:)
+        puts "#{current_player.name} has moved #{piece.class} from #{[start_row, start_col]} to #{[end_row, end_col]}"
         move_piece(start_pos:, end_pos:, player: current_player)
       else
         begin
           raise NoMoreValidMoveError, "#{current_player.name} has no more valid moves left"
         rescue NoMoreValidMoveError => e
           puts e.message
-          announce_winner(player: current_player, player_one:, player_two:)
+          winner_color = current_turn == :white ? :black : :white
+          winner = players[winner_color]
+          announce_winner(winner:)
           return
         end
       end
@@ -112,19 +113,17 @@ class ChessGameImplementation
     possible_moves.sample
   end
 
-  def announce_winner(player:, player_one:, player_two:)
-    player_who_won = winner(player:, player_one:, player_two:)
-    puts "Game has ended, Player :: #{player_who_won.name} has won the game"
-  end
-
-  def winner(player:, player_one:, player_two:)
-    player.color == :white ? player_two : player_one
+  def announce_winner(winner:)
+    puts "Game has ended, Player :: #{winner.name} has won the game"
   end
 
   def setup_players
     player_one = Player.new(name: 'Automatic Player 1', user_id: 1, color: :white)
     player_two = Player.new(name: 'Automatic Player 2', user_id: 2, color: :black)
-    [player_one, player_two]
+    {
+      white: player_one,
+      black: player_two
+    }
   end
 
   def setup_board
@@ -151,8 +150,7 @@ class ChessGameImplementation
   def move_piece(start_pos:, end_pos:, player:)
     raise MoveNotValidError, 'Player is not allowed to make move' if player.color != current_turn
 
-    start_row, start_col = start_pos
-    end_row, end_col = end_pos
+    start_row, start_col, end_row, end_col = start_end_row_col(start_pos:, end_pos:)
 
     raise MoveNotValidError, 'Start or End position is out of Bounds' if out_of_range_bounds(start_row:, start_col:,
                                                                                              end_row:, end_col:)
@@ -160,8 +158,15 @@ class ChessGameImplementation
     piece = board[start_row][start_col]
 
     if valid_move?(start_pos:, end_pos:, piece:)
+      captured_piece = @board[end_row][end_col]
       @board[start_row][start_col] = nil
       @board[end_row][end_col] = piece
+
+      if captured_piece.is_a?(King)
+        winner = players[current_turn]
+        announce_winner(winner:)
+        return
+      end
       switch_turns
     else
       raise MoveNotValidError, 'Player is not allowed to make move'
@@ -182,7 +187,20 @@ class ChessGameImplementation
 
     return unless piece.color == current_turn
 
+    # Get the piece at the destination (if any)
+    end_row, end_col = end_pos
+    destination_piece = board[end_row][end_col]
+
+    # Can't capture your own piece
+    return false if destination_piece && destination_piece.color == piece.color
+
     piece.valid_move?(start_pos:, end_pos:, board:)
+  end
+
+  def start_end_row_col(start_pos:, end_pos:)
+    start_row, start_col = start_pos
+    end_row, end_col = end_pos
+    [start_row, start_col, end_row, end_col]
   end
 end
 
@@ -238,7 +256,9 @@ class ChessPiece
     direction = color == :white ? -1 : +1
     if board[end_row][end_col].nil? && start_col == end_col
       return true if end_row == start_row + direction
-      return true if (start_row == 1 && end_row == 3) || (start_row == 6 && end_row == 4)
+      if (start_row == 1 && end_row == 3 && board[2][start_col].nil?) || (start_row == 6 && end_row == 4 && board[5][start_col].nil?)
+        return true
+      end
     end
 
     return true if !board[end_row][end_col].nil? && board[end_row][end_col].color != color &&
