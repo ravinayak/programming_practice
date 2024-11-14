@@ -40,25 +40,30 @@
 # left pointer of subarray keeps track of the start position of subarray
 #
 def find_max_sum_subarr(input_arr)
-  subarr = { left: 0, right: 0, max_curr_sum: input_arr[0] }
+  # We must initialize left/right, max_subarr[left, right] to 0 because if input_arr contains only 1 element
+  # we will have correct values returned since we iterate over 1...input_arr.length, skipping 1st index.
+  # If we initialize them to be nil, we shall NOT BE ABLE To get the max subarray
+  curr_sum = input_arr[0]
+  left = 0
+  right = 0
   max_subarr = { left: 0, right: 0, max_global_sum: input_arr[0] }
 
   input_arr.each_with_index do |element, index|
     # Element at index "0" has already been processed in both subarr and max_subarr
     next if index.zero?
 
-    if element > subarr[:max_curr_sum] + element
-      subarr[:max_curr_sum] = element
+    if element > curr_sum + element
+      curr_sum = element
       # New Max subarray starts at index of element, we don't know where it ends,
       # so we do not update right of subarr
-      subarr[:left] = index
+      left = index
     else
-      subarr[:max_curr_sum] += element
+      curr_sum += element
     end
 
-    next unless subarr[:max_curr_sum] > max_subarr[:max_global_sum]
+    next if max_subarr[:max_global_sum] > curr_sum
 
-    max_subarr[:max_global_sum] = subarr[:max_curr_sum]
+    max_subarr[:max_global_sum] = curr_sum
 
     # Maximum subarray will always temporarily end at current index, so we record the
     # current index as right pointer and keep updating it to maintain its correctness
@@ -67,7 +72,7 @@ def find_max_sum_subarr(input_arr)
     # subarr[:left] always maintains the starting position of contiguous elements in
     # subarr which has the maximum sum recorded so far, we update it to reflect this
     # in maximum subarray
-    max_subarr[:left] = subarr[:left]
+    max_subarr[:left] = left
   end
 
   puts "Maximum sum of contiguous elements in subarray :: #{max_subarr[:max_global_sum]}"
