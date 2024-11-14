@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # There is a robot on an m x n grid. The robot is initially located
-# at thetop-left corner (i.e., grid[0][0]). The robot tries to move
+# at the top-left corner (i.e., grid[0][0]). The robot tries to move
 # to the bottom-rightcorner (i.e., grid[m - 1][n - 1]). The robot can
 # only move either down or right at any point in time.
 
@@ -126,9 +126,19 @@ def total_paths_dp(m:, n:)
   # [path1, path2, path3]
   # path1 = [vertex_pairs_arr]
   # vertex_pairs = [v1, v2]
-  # Each path = [ [v1, v2], [v2, v3], [v4, v5] ],
-  # Path is an array of array of array of vertex pairs
-  dp[0][0] = [[0, 0]]
+  # Each path = [ [ [v1, v2], [v2, v3], [v4, v5] ], [ [v1, v3], [v3, v4], [v4, v5] ] ]
+  # path 1 = [ [v1, v2], [v2, v3], [v4, v5] ]
+  # path 2 = [ [v1, v3], [v3, v4], [v4, v5] ]
+  # path 1 represents the vertices which must be traversed to reach the destination
+  # Vertex Pair = An array of vertices = [v1, v2]
+  # Paths = Array of vertex pairs = [ [v1, v2], [v3, v4] ]
+  # All Paths = [ Paths ] = [ [ [v1, v2], [v3, v4] ], [ [ v2, v3], [v4, v5] ] ]
+  # 3D array structure
+  # [v1, v2], then [v2, v3], then [v4, v5] => this is wrapped in an array since it is a single Path
+  # There can be many such paths, hence all those paths are wrapped in an outer array
+  # 
+  # Path is an ARRAY of ARRAY of ARRAY of vertex pairs
+  dp[0][0] = [[[0, 0]]]
 
   # Initialization of 0th row and 0th column is essential because without
   # properly populating these, we shall end up with incorrect calculations
@@ -143,17 +153,17 @@ def total_paths_dp(m:, n:)
   # dp[0][k] = dp[0][k - 1].map { |path| path << [0, k] }
 
   (1...n).each do |k|
-    dp[0][k] = dp[0][k - 1].map { |path| path + [0, k] }
+    dp[0][k] = dp[0][k - 1].map { |path| path + [[0, k]] }
   end
 
   (1...m).each do |i|
-    dp[i][0] = dp[i - 1][0].map { |path| path + [i, 0] }
+    dp[i][0] = dp[i - 1][0].map { |path| path + [[i, 0]] }
 
     (1...n).each do |j|
       # if i.positive? is redundant since i >=1 and same for j
-      dp[i][j] += dp[i - 1][j].map { |path| path + [i, j] } # if i.positive?
+      dp[i][j] += dp[i - 1][j].map { |path| path + [[i, j]] } # if i.positive?
 
-      dp[i][j] += dp[i][j - 1].map { |path| path + [i, j] } # if j.positive?
+      dp[i][j] += dp[i][j - 1].map { |path| path + [[i, j]] } # if j.positive?
     end
   end
 
@@ -188,8 +198,10 @@ def test
     print " Total Paths Combinatorics :: #{res_comb}, Total Paths DP :: #{paths.size}\n"
     print "\n Paths Below :: \n"
     paths.each do |path|
-      path.each do |vertices_arr|
-        print " #{vertices_arr.inspect}, "
+      path_len = path.length - 1
+      path.each_with_index do |vertices_arr, index|
+        print " #{vertices_arr.inspect}"
+        print ", " unless index == path_len
       end
       print "\n"
     end
