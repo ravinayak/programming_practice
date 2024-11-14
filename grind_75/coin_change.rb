@@ -179,3 +179,37 @@ test
 # This is true. So, coin = 5 is also a valid coin that could be part of the solution.
 # Without breaking the loop, even after finding that coin = 1 is a valid choice,
 # you continue checking the other coins.
+
+# Another way to solve the problem
+
+# def coin_change(coins:, amount:)
+#   return { min_num_coins: -1, coins: [] } if amount.nil? || coins.nil? || coins.empty? || amount.zero?
+
+#   dp = Array.new(amount + 1, amount + 1)
+#   dp[0] = 0
+
+#   (1..amount).each do |target_amount|
+#     coins.each do |coin|
+#       next if coin > target_amount
+#       next if dp[target_amount - coin] == amount + 1
+
+#       dp[target_amount] = [dp[target_amount], dp[target_amount - coin] + 1].min
+#     end
+#   end
+#   res_coins = { min_num_coins: nil, coins: [] }
+#   res_coins[:min_num_coins] = dp[amount] == amount + 1 ? -1 : dp[amount]
+
+#   return res_coins if res_coins[:min_num_coins] == -1
+
+#   target_amount = amount
+#   while target_amount.positive?
+#     coins.sort.reverse.each do |coin|
+#       next if coin > target_amount || dp[target_amount] != dp[target_amount - coin] + 1
+
+#       res_coins[:coins] << coin
+#       target_amount -= coin
+#       break
+#     end
+#   end
+#   res_coins
+# end
