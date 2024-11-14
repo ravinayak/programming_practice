@@ -169,7 +169,6 @@ class MonopolyGameImplementation # rubocop:disable Metrics/ClassLength
 
   def announce_winner
     winner = @players.max_by(&:total_worth)
-    puts winner.inspect
     puts "#{winner.name} has won the game with #{winner.total_worth}"
   end
 
@@ -242,7 +241,7 @@ class BoardSpace
       break unless bid_received
     end
 
-    buy_property(current_winner:) if current_winner
+    buy_property(player: current_winner) if current_winner
   end
 
   def buy_property(player:)
@@ -258,8 +257,16 @@ class BoardSpace
   end
 end
 
+class CardSpace < BoardSpace
+  attr_accessor :name
+
+  def initialize(name:)
+    super(name:)
+  end
+end
+
 # New classes for board spaces that trigger card draws
-class ChanceCardSpace < BoardSpace
+class ChanceCardSpace < CardSpace
   def action(player:, game:, dice_roll:)
     card = game.chance_cards.pop
     card.action.call(player, game)
@@ -267,7 +274,7 @@ class ChanceCardSpace < BoardSpace
   end
 end
 
-class CustomJestCardSpace < BoardSpace
+class CustomJestCardSpace < CardSpace
   def action(player:, game:, dice_roll:)
     card = game.custom_jest_cards.pop
     card.action.call(player, game)
@@ -482,11 +489,11 @@ class Player
 end
 
 # Tax Class
-class Tax
+class Tax < BoardSpace
   attr_accessor :name, :price
 
   def initialize(name:, price:)
-    @name = name
+    super(name:)
     @price = price
   end
 
