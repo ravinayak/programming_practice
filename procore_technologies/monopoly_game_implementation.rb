@@ -201,11 +201,10 @@ end
 
 # BoardSpace Class
 class BoardSpace
-  attr_accessor :name, :action
+  attr_accessor :name
 
-  def initialize(name:, &action)
+  def initialize(name:)
     @name = name
-    @action = action
   end
 
   def action(player:, game:, dice_roll:)

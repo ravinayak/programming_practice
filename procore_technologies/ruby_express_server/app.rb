@@ -33,7 +33,7 @@ end
 put '/items/:id' do
   content_type :json
   data = JSON.parse(request.body.read)
-  item = items.find { |i| i.id == data['id'].to_i }
+  item = items.find { |i| i.id == params['id'].to_i }
   if item
     item.name = data['name'] if data['name']
     item.description = data['description'] if data['description']
@@ -47,6 +47,7 @@ delete '/items/:id' do
   content_type :json
   item = items.find { |i| i.id == params['id'].to_i }
   if item
+    items.delete(item)
     { status: 200, description: 'Item Deleted', items: [item] }.to_json
   else
     { status: 404, description: 'Item Not Found' }.to_json

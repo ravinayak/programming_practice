@@ -477,11 +477,11 @@ class Card
   end
 end
 
-class CardSpace
+class CardSpace < BoardSpace
   attr_accessor :name
 
   def initialize(name)
-    @name = name
+    super(name)
   end
 end
 
@@ -621,11 +621,11 @@ class CustomJestCard < Card
   end
 end
 
-class Tax
+class Tax < BoardSpace
   attr_accessor :name, :price
 
   def initialize(name, price)
-    @name = name
+    super(name)
     @price = price
   end
 

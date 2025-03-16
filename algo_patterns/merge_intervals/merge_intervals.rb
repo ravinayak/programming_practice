@@ -5,7 +5,8 @@
 # @return [Array]
 #
 def merge_intervals(intervals_arr:)
-  sorted_intervals_arr = sort_intervals(intervals_arr:)
+  # sorted_intervals_arr = sort_intervals(intervals_arr:)
+  sorted_intervals_arr = intervals_arr.sort_by { |interval| interval[0] }
   merged = []
 
   sorted_intervals_arr.each_with_index do |sorted_arr, _index|
