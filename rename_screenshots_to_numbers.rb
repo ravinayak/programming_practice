@@ -19,7 +19,7 @@ sorted_screenshots.each_with_index do |file, index|
   extension = File.extname(file)
 
   # Define the new filename, starting with number 1, without padding (e.g., 1.png, 2.png)
-  new_filename = "#{directory_path}/#{index + 2}#{extension}"
+  new_filename = "#{directory_path}/#{index + 1}#{extension}"
 
   # Rename the file
   FileUtils.mv(file, new_filename)
