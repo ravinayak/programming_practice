@@ -6,51 +6,51 @@ Image - 001
 
 Image - 002
 
-![consistent-hashing-1](../images/consistent_hashing/2.png)
+![consistent-hashing-2](../images/consistent_hashing/2.png)
 
 Image - 003
 
-![consistent-hashing-1](../images/consistent_hashing/3.png)
+![consistent-hashing-3](../images/consistent_hashing/3.png)
 
 Image - 004
 
-![consistent-hashing-1](../images/consistent_hashing/4.png)
+![consistent-hashing-4](../images/consistent_hashing/4.png)
 
 Image - 005
 
-![consistent-hashing-1](../images/consistent_hashing/5.png)
+![consistent-hashing-5](../images/consistent_hashing/5.png)
 
 Image - 006
 
-![consistent-hashing-1](../images/consistent_hashing/6.png)
+![consistent-hashing-6](../images/consistent_hashing/6.png)
 
 Image - 007
 
-![consistent-hashing-1](../images/consistent_hashing/7.png)
+![consistent-hashing-7](../images/consistent_hashing/7.png)
 
 Image - 008
 
-![consistent-hashing-1](../images/consistent_hashing/8.png)
+![consistent-hashing-8](../images/consistent_hashing/8.png)
 
 Image - 009
 
-![consistent-hashing-1](../images/consistent_hashing/9.png)
+![consistent-hashing-9](../images/consistent_hashing/9.png)
 
 Image - 010
 
-![consistent-hashing-1](../images/consistent_hashing/10.png)
+![consistent-hashing-10](../images/consistent_hashing/10.png)
 
 Image - 011
 
-![consistent-hashing-1](../images/consistent_hashing/11.png)
+![consistent-hashing-11](../images/consistent_hashing/11.png)
 
 Image - 012
 
-![consistent-hashing-1](../images/consistent_hashing/12.png)
+![consistent-hashing-12](../images/consistent_hashing/12.png)
 
 Image - 013
 
-![consistent-hashing-1](../images/consistent_hashing/13.png)
+![consistent-hashing-13](../images/consistent_hashing/13.png)
 
 
 ### Consistent hashing - Mathematical Guarantee
