@@ -1,4 +1,5 @@
 from collections import defaultdict, deque, Counter
+import heapq
 
 # List Operations
 def list_operations():
@@ -198,6 +199,30 @@ def deque_operations():
     d.extendleft([19, 39])
     print(d)
     
+# Heap Operations
+def heap_operations():
+    l = [1, 19, 29, -3, 0, 50, 15]
+    heapq.heapify(l)
+    print(l)
+    
+    heapq.heappush(l, -75)
+    print(l)
+    
+    heapq.heappop(l)
+    print(l)
+    
+    heapq.heappushpop(l, 55)
+    print(l)
+    
+    heapq.heapreplace(l, -85)
+    print(l)
+    
+    y = heapq.nlargest(3, l)
+    print(y)
+    
+    z = heapq.nsmallest(3, l)
+    print(z)
+
 def main():
     # list_operations()
     # set_operations()
@@ -205,6 +230,7 @@ def main():
     # str_operations()
     # tuple_operations()
     # counter_operations()
-    deque_operations()
+    # deque_operations()
+    heap_operations()
     
 main()
