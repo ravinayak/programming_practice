@@ -278,6 +278,88 @@ graph TB
     ZSET2 --> KEY2
 ```
 
+### Analytics & Dashboard Architecture
+
+```mermaid
+graph TB
+    subgraph "Data Producers"
+        WEB_APP[Web & Mobile SDKs]
+        PARTNER_API[Partner Integrations]
+        BATCH[Batched CSV Uploads]
+    end
+
+    subgraph "Ingestion Layer"
+        PRODUCER[Python EventProducer]
+        WEB_APP --> PRODUCER
+        PARTNER_API --> PRODUCER
+        BATCH --> PRODUCER
+        PRODUCER --> STREAM[event_stream]
+    end
+
+    subgraph "Processing Fabric"
+        RTG[Realtime Consumer Group]
+        ATG[Analytics Consumer Group]
+        ETL1[ETL Ingestion]
+        ETL2[ETL Transform]
+        ETL3[ETL Aggregate]
+        STREAM --> RTG
+        STREAM --> ATG
+        STREAM --> ETL1
+        STREAM --> ETL2
+        STREAM --> ETL3
+    end
+
+    subgraph "Storage & Modeling"
+        CACHE[Redis Sorted Sets<br/>Activity Feeds]
+        TSDB[MongoDB events_timeseries<br/>Time-Series Collection]
+        FEATURE_STORE[MongoDB user_analytics<br/>Daily Aggregates]
+        SECURITY_DB[MongoDB security_analytics]
+        RTG --> CACHE
+        RTG --> TSDB
+        ATG --> TSDB
+        ETL3 --> FEATURE_STORE
+        ETL3 --> SECURITY_DB
+    end
+
+    subgraph "Analytics & Experience"
+        DASH[Business Intelligence Dashboards]
+        API[Analytics Gateway API]
+        ALERTS[Real-time Alerting Engine]
+        CACHE --> API
+        TSDB --> DASH
+        FEATURE_STORE --> DASH
+        SECURITY_DB --> ALERTS
+        API --> DASH
+    end
+```
+
+**Highlights**
+
+- Producers normalize events before Redis to keep firehose clean.
+- Multiple consumer groups allow isolated SLAs for dashboards, BI, and alerting.
+- MongoDB plays dual role: time-series storage for high granularity, document store for rollups powering executive dashboards.
+- Analytics Gateway API fan-outs data to Grafana/Looker while Alerting Engine subscribes to anomaly topics.
+
+#### Architecture Walkthrough (Interview Narrative)
+
+1. **Signal Capture** – Web/mobile SDKs attach contextual metadata (tenant, experiment, geo) before events ever leave the client. Partner APIs and batch uploads reuse the same Python producer so every upstream channel hits the identical validation and PII scrubbing logic.
+2. **Stream Ingestion** – The producer enforces schema contracts and publishes into `event_stream` with back-pressure friendly `maxlen`. Any spikes are buffered in Redis, not in application servers.
+3. **Processing Fabric** – Each consumer group owns a business objective:
+   - `realtime_processing` keeps feeds warm and pushes raw events into the time-series store within ~150 ms.
+   - `analytics` governs dashboard-quality facts (deduplication, late event handling).
+   - `etl_*` stages transform the same stream into curated aggregates without blocking real-time workloads.
+4. **Storage & Modeling** –
+   - Redis Sorted Sets keep “hot” user feeds under 1 ms reads.
+   - MongoDB `events_timeseries` stores immutable facts for deep analytics while `user_analytics` materializes day-level KPIs.
+   - Security workloads isolate into `security_analytics` so auditing/retention policies don’t collide with product analytics.
+5. **Analytics Delivery** – Grafana/Looker dashboards pull pre-aggregated tiles through the Analytics Gateway API, while the alerting engine subscribes to anomaly signals emitted by the ETL aggregate stage (e.g., login failure spikes).
+
+#### Dashboard & KPI Use Cases
+
+- **Customer Success Command Center** – Streaming conversion rate, latency percentiles, and failure anomaly indicators power an always-on operations dashboard. Widgets call `/analytics/kpis?window=15m` which stitches Redis cache (latest feed context) with Mongo rollups.
+- **Executive Business Review** – Weekly cohort retention, revenue funnels, and geo heatmaps refresh every 15 minutes from `user_analytics`. Because the rollups live in Mongo alongside the raw time-series, data scientists can drill from executive KPI down to raw session footprints.
+- **Security & Compliance** – Auth anomalies published by `AuthenticationEventPipeline` fan into alerting (PagerDuty) while also persisting enriched events for forensic searches and historical trend charts.
+
 ---
 
 ## Technology Feature Code Snippets
@@ -1022,6 +1104,148 @@ class TimeSeriesStorage:
             "event_breakdown": results                # Aggregated event statistics
         }
 ```
+
+### Advanced Time-Series Queries
+
+These queries are used in interviews to highlight your ownership of analytics pipelines and dashboard workloads.
+
+```python
+# 1. Rolling 15-minute login success rate for live KPIs
+pipeline = [
+    {"$match": {
+        "metadata.event_type": "user_login",
+        "timestamp": {"$gte": datetime.utcnow() - timedelta(minutes=60)}
+    }},
+    {"$group": {
+        "_id": {
+            "window": {"$dateTrunc": {"date": "$timestamp", "unit": "minute", "binSize": 15}},
+            "result": "$data.success"
+        },
+        "count": {"$sum": 1}
+    }},
+    {"$group": {
+        "_id": "$_id.window",
+        "success": {"$sum": {"$cond": ["$_id.result", "$count", 0]}},
+        "total": {"$sum": "$count"}
+    }},
+    {"$project": {
+        "window": "$_id",
+        "_id": 0,
+        "success_rate": {"$round": [{"$divide": ["$success", "$total"]}, 4]}
+    }},
+    {"$sort": {"window": 1}}
+]
+rolling_success = list(db.events_timeseries.aggregate(pipeline))
+
+# 2. Retention-style cohort query (daily active users by cohort week)
+cohort_query = [
+    {"$match": {
+        "metadata.event_type": "user_login",
+        "timestamp": {"$gte": cohort_start, "$lte": cohort_end}
+    }},
+    {"$addFields": {
+        "cohort_week": {
+            "$dateTrunc": {"date": "$data.signup_ts", "unit": "week"}
+        },
+        "activity_week": {
+            "$dateTrunc": {"date": "$timestamp", "unit": "week"}
+        }
+    }},
+    {"$group": {
+        "_id": {
+            "cohort": "$cohort_week",
+            "week": "$activity_week"
+        },
+        "users": {"$addToSet": "$metadata.user_id"}
+    }},
+    {"$project": {
+        "_id": 0,
+        "cohort_week": "$_id.cohort",
+        "activity_week": "$_id.week",
+        "active_users": {"$size": "$users"}
+    }},
+    {"$sort": {"cohort_week": 1, "activity_week": 1}}
+]
+cohort_retention = list(db.events_timeseries.aggregate(cohort_query))
+
+# 3. Percentile latency for dashboard SLA widget
+latency_pipeline = [
+    {"$match": {"metadata.event_type": "page_view"}},
+    {"$group": {
+        "_id": None,
+        "p50": {"$percentile": {"input": "$data.latency_ms", "p": [0.5]}},
+        "p95": {"$percentile": {"input": "$data.latency_ms", "p": [0.95]}},
+        "p99": {"$percentile": {"input": "$data.latency_ms", "p": [0.99]}}
+    }},
+    {"$project": {
+        "_id": 0,
+        "p50_ms": {"$arrayElemAt": ["$p50", 0]},
+        "p95_ms": {"$arrayElemAt": ["$p95", 0]},
+        "p99_ms": {"$arrayElemAt": ["$p99", 0]}
+    }}
+]
+latency_percentiles = list(db.events_timeseries.aggregate(latency_pipeline))[0]
+```
+
+Interview callouts:
+
+- `$dateTrunc` demonstrates familiarity with MongoDB 5.0+ time bucketing.
+- `$percentile` operator highlights experience building latency SLAs for dashboards.
+- Cohort pipeline showcases ability to model historical trend analysis for BI stakeholders.
+
+#### How to Tell the Story
+
+| Query                | Dashboard Tile                      | Operational Impact                                                     | Index / Infra Notes                                                                          |
+| -------------------- | ----------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Rolling Success Rate | Real-time authentication KPI widget | Surfaces regressions within 15 minutes, backing on-call playbooks      | Uses `{timestamp:1, metadata.event_type:1}` index; `$dateTrunc` keeps pipeline Reshard-aware |
+| Cohort Retention     | Executive retention heatmap         | Explains churn vs. product launches, fuels QBR narratives              | Requires historical `signup_ts`; leverages `$addFields` to avoid extra ETL                   |
+| Latency Percentiles  | SLO/SLA gauge in customer dashboard | Quantifies customer experience; ties directly to contractual penalties | `$percentile` (Mongo 6.0+) removes need for Spark jobs; results cached in Redis for 60 s     |
+
+##### Additional Queries Frequently Discussed
+
+```python
+# 4. Geo performance hot-spot detection (BI map tiles)
+geo_hotspots = db.events_timeseries.aggregate([
+    {"$match": {
+        "metadata.event_type": "page_view",
+        "timestamp": {"$gte": datetime.utcnow() - timedelta(hours=6)}
+    }},
+    {"$group": {
+        "_id": "$data.geo.country",
+        "avg_latency": {"$avg": "$data.latency_ms"},
+        "p95_latency": {"$percentile": {"input": "$data.latency_ms", "p": [0.95]}}
+    }},
+    {"$match": {"p95_latency.0": {"$gte": 400}}},
+    {"$sort": {"p95_latency.0": -1}}
+])
+
+# 5. Revenue funnel drop-off per release train (product analytics)
+release_funnel = db.events_timeseries.aggregate([
+    {"$match": {
+        "metadata.event_type": {"$in": ["view_pricing", "start_trial", "subscribe"]},
+        "data.release_tag": current_release
+    }},
+    {"$group": {
+        "_id": {
+            "stage": "$metadata.event_type",
+            "segment": "$data.customer_tier"
+        },
+        "unique_users": {"$addToSet": "$metadata.user_id"}
+    }},
+    {"$project": {
+        "_id": 0,
+        "stage": "$_id.stage",
+        "segment": "$_id.segment",
+        "count": {"$size": "$unique_users"}
+    }},
+    {"$sort": {"segment": 1, "stage": 1}}
+])
+```
+
+- **Geo hotspots** feed an ops heatmap that pinpoints where CDNs or ISPs degrade UX; Mongo handles it with a single aggregation instead of exporting to Spark.
+- **Release funnel** gives PMs a “same-day” look at conversion impact per release train, proving you can blend time-series facts (`events_timeseries`) with feature flags/metadata stored in each document.
+
+Bring printed screenshots or mention how these queries back Grafana panels (e.g., “Retention Heatmap”, “Auth SLA Gauge”) to ground the conversation in real dashboards.
 
 ---
 
