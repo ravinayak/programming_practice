@@ -3,15 +3,15 @@
 # Breakdown of Dijkstra’s Complexity in Johnson’s Algorithm:
 
 #   • Dijkstra’s algorithm for finding the shortest paths from a single
-#   source has a time complexity of O(E log V), where:
+#   source has a time complexity of O((V + E)log V), where:
 #   • E is the number of edges.
 #   • V is the number of vertices.
 #   • In Johnson’s Algorithm, you run Dijkstra’s algorithm from each
-#   vertex in the graph, so the complexity becomes V * O(E log V).
+#   vertex in the graph, so the complexity becomes V * O((V + E log V)).
 
 # Thus, for all vertices, the complexity of the Dijkstra part is:
 
-# O(V * (E * log V))
+# V * O((V + E log V))
 
 # Overall Time Complexity of Johnson’s Algorithm:
 
@@ -27,14 +27,14 @@
 #   • This part computes the reweighting function h(v) for each vertex
 #   and detects if there are any negative-weight cycles.
 
-# 2. Dijkstra’s Algorithm for Each Vertex: O(V * (E log V))
+# 2. Dijkstra’s Algorithm for Each Vertex: O(V * ((V + E) log V))
 
 #   • After reweighting the graph, Dijkstra’s algorithm is run V times
 #   (once for each vertex) to compute the shortest paths for all pairs.
-#   • Each run of Dijkstra’s algorithm has time complexity O(E log V),
+#   • Each run of Dijkstra’s algorithm has time complexity O((V + E) log V),
 #   so the total time complexity for running Dijkstra V times is:
 
-# O(V * (E * log V))
+# O(V * ((V + E) * log V))
 
 # Combining the Two Steps:
 
@@ -42,42 +42,63 @@
 # the two main steps:
 
 #   1. Bellman-Ford step: O(V * E)
-#   2. Dijkstra’s step: O(V * (E log V))
+#   2. Dijkstra’s step: O(V * ((V + E) log V))
 
 # Thus, the overall time complexity is:
 
-# O(V * E) + O(V * (E * log V)) = O(V * E + V * E * log V)
+# O(V * E) + O(V * ((V + E) * log V)) = O(V * E + V^2 log V + V * E * log V)
 
 # Now, depending on the structure of the graph, we get two cases:
 
 #   1. For Sparse Graphs:
 #   • If the graph is sparse, E ≈ V, so the total time complexity becomes:
 
-# O(V^2 + V^2 * log V) = O(V^2 * log V)
+# O(V^2 + V^2 * log V + V^2 * log V) = O(V^2 * log V)
 
 #   2.  For Dense Graphs:
 #   • If the graph is dense, E ≈ V^2, so the total time complexity becomes:
 
-# O(V * V^2 + V * V^2 * log V) = O(V^3 + V^3 * log V) = O(V^3 * log V)
+# O(V * V^2 + V * V^2 * log V + V * V^2 * log V) = O(V^3 + V^3 * log V) = O(V^3 * log V)
 
-# Why is the Overall Complexity Often Written as O(V² log V + V * E)?
+# Why is the Overall Complexity Often Written as O(V² log V + V * E * log V)?
 
-#   • Sparse Graphs: When the graph is sparse (E ≈ V), the dominant term is O(V² log V).
-#   • Dense Graphs: When the graph is dense (E ≈ V²), the dominant term is O(V³ log V).
+# The actual complexity is: O(V * E + V² log V + V * E * log V)
 
-# Thus, in general, the time complexity is expressed as O(V² log V + V * E) because:
+# We can factor this expression:
+#   O(V * E + V² log V + V * E * log V)
+#   = O(V * E + (V² + V * E) * log V)
+#   = O(V * E + V * (V + E) * log V)
 
-#   • O(V² log V) captures the behavior for sparse graphs.
-#   • O(V * E) captures the behavior for dense graphs or scenarios where E is
-#   large compared to V.
+# Now, depending on the structure of the graph:
+
+#   • Sparse Graphs (E ≈ V): 
+#     O(V² + V² log V + V² log V) = O(V² log V)
+#     Here, V * E ≈ V², and V * E * log V ≈ V² log V, so V² log V dominates.
+
+#   • Dense Graphs (E ≈ V²):
+#     O(V³ + V² log V + V³ log V) = O(V³ log V)
+#     Here, V * E ≈ V³, and V * E * log V ≈ V³ log V, so V³ log V dominates.
+
+# Why the Common Expression O(V² log V + V * E * log V)?
+
+# The expression O(V² log V + V * E * log V) is more accurate because:
+#   • It correctly captures O(V² log V) for sparse graphs.
+#   • It correctly captures O(V³ log V) for dense graphs (since V * E * log V = V³ log V when E ≈ V²).
+
+# Alternative Expression: O(V * (V + E) * log V)
+#   This is equivalent and sometimes preferred because it clearly shows:
+#   • V iterations (one per vertex)
+#   • Each iteration: O((V + E) * log V) for Dijkstra's algorithm
 
 # Final Conclusion:
 
-#   • O(V² log V + V * E) is a general expression for the time complexity of
-#   Johnson’s Algorithm, where the first term dominates for sparse graphs,
-#   and the second term dominates for dense graphs.
-#   • For sparse graphs, O(V² log V) is the more significant term.
-#   • For dense graphs, O(V * E) dominates and contributes to the complexity.
+#   • The accurate time complexity is: O(V * E + V² log V + V * E * log V)
+#   • This can be expressed as: O(V² log V + V * E * log V)
+#   • Or equivalently: O(V * (V + E) * log V)
+#   • For sparse graphs: O(V² log V)
+#   • For dense graphs: O(V³ log V)
+#   • Note: The expression O(V² log V + V * E) is INCORRECT because it misses
+#     the log V factor in the V * E * log V term, which is significant for dense graphs.
 
 require_relative 'djikstra_algo'
 require_relative 'bellman_ford'

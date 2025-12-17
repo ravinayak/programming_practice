@@ -13,8 +13,12 @@ require_relative '../graph'
 #    encounters nodes in increasing order of distance from Source. Hence
 #    it is safe to break from Loop, when we have updated distance of
 #    node (= destination node) with respect to dequeued node
-# 2. We must mark a node as visited when the node is DEQUEUED and not
-#    when it is ENQUEUED. If we mark a node as visited, when we ENQUEUE
+# 2. Mark a node as visited on DEQUEUE and not ENQUEUE for parity with
+#    Dijikstra's algorithm and All Pairs Shortest Path (Floyd Warshall).
+#    It is standard practice to mark on ENQUEUE for BFS
+# 3. In Dijkistra and Ford Warshall Algorithm, we must mark a node as 
+#    visited when the node is DEQUEUED and not when it is ENQUEUED. 
+#    If we mark a node as visited, when we ENQUEUE
 #    any future attempts to visit that node through different paths will
 #    be ignored, even if the alternate path might provide useful
 #    information. This is important in certain algorithms where different
@@ -29,13 +33,23 @@ require_relative '../graph'
 #       |      |  \
 #       4 ---- 3 -- 2
 #       => In this graph, we
-#           Step 1: Dequeue node 0, visited[0] = true
-#           Step 2: Enqueue nodes 1 and 4
-#           Step 3: Dequeue node 1, visited[1] = true
-#           Step 4: Enqueue nodes 3 and 2
-#           Step 5: Dequeue node 4, visited[4] = true
-#           Step 6: Enqueue nodes 3 (node 0 is visited)
+#           Step 1: Enqueue node 0
+#           Step 2: Dequeue node 0, visited[0] = true
+#           Step 3: Enqueue nodes 1 and 4
+#           Step 4: Dequeue node 1, visited[1] = true
+#           Step 5: Enqueue nodes 3 and 2
+#           Step 6: Dequeue node 4, visited[4] = true
+#           Step 7: Enqueue nodes 3 (node 0 is visited)
 #           Thus, node 3 gets enqueued more than once
+#       Marking a node as visited when the node gets dequeued allows us to
+#       process paths from that node more than once if we do not skip the
+#       node as soon as we see it is visited. This is crucial for algorithms
+#       that may want to consider paths from a node to include all possible
+#       paths. This will be possible only when we mark th enode as visited
+#       when the node is DEQUEUED.
+#       Longer paths from a node that has been dequeued with less weights
+#       will not be considered if mark a node as visited when ENQUEUED
+
 # 3. BFS should not be used for Undirected Graphs with UnEQUAL WEIGHTS.
 #    Djikstra's algo should be used, we can hack BFS to make it work
 #    but BFS is not meant for such graphs. BFS assumes level order
@@ -61,6 +75,10 @@ require_relative '../graph'
 #    path with fewer edges but higher total weight.
 # BFS has exactly same algorithm as djikstras except that it uses queue
 # data structure while djikstras algo uses PriorityMinHeap
+#
+# NOTE: This is an important modification I have made to keep both the BFS
+# and the Dijkistra's algorithm in parity. Technically, both the algorithms
+# have different implementations, and BFS can be made simpler with changes.
 
 # explores paths in order of increasing distance from the source node.
 
@@ -95,25 +113,6 @@ def shortest_distance(source_node:, destination_node:, graph:)
     visited[node] = true
 
     graph.adj_matrix[node]&.each do |neighbor, weight|
-      # Undirected Graph with Equal Edge Weights:
-      #  • In an unweighted or equally weighted graph, BFS will naturally
-      #    explore nodes in increasing order of distance from the source.
-      #    In this case, once you mark a node as visited and process it, you
-      #    should skip it when encountered again, because BFS guarantees that
-      #    the first time you visit a node, you’ve found the shortest path to it.
-      # Weighted Graph (Unequal Edge Weights):
-      #  • In a graph with unequal edge weights, simply skipping a node because
-      #    it’s been visited before can be problematic. The reason is that there
-      #    might be a shorter path to that node through a different route, even
-      #    after the node has been visited once. A longer path with more edges
-      #    may have fewer weights assigned to it and hence may have less distance
-      #    from source. BFS guarantee of level order traversal does not hold in
-      #    such a use case
-      #  • In this case, you can’t mark nodes as visited immediately when dequeued,
-      #    and you need to relax edges (like in Dijkstra’s algorithm), ensuring that
-      #    every possible shorter path is considered.
-      next if visited[neighbor]
-
       next unless distance[neighbor] > distance[node] + weight
 
       distance[neighbor] = distance[node] + weight

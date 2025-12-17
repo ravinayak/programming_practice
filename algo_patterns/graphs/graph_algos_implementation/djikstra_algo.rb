@@ -19,6 +19,11 @@ require_relative '../graph'
 #    at the point of extraction from the heap is because, once extracted, we know
 #    for sure that the shortest path to that node has been found. However, its
 #    neighbors still need to be checked for potential updates.
+# 4. Revisiting a node in Dijkistra's algorithm means that a node can be Enqueued
+#    multiple times with different distances but it is only Processed once (dequeued
+#    and explored).
+#    A node maybe Enqueued many times and possibly with different distances, but it
+#    will always be extracted with the shortest distance since we use Min Heap
 
 # Djikstra's algorithm implementation
 def djikstras(graph:, source_node:, destination_node: nil)
@@ -89,9 +94,6 @@ def djikstras(graph:, source_node:, destination_node: nil)
     visited[node] = true
 
     graph.adj_matrix[node]&.each do |neighbor, weight|
-      # If this node has been processed, we can safely skip it
-      next if visited[neighbor]
-
       # If current distance of neighbor is less than the
       # distance of current node from source + weight of
       # the edge from current node to neighbor, then the

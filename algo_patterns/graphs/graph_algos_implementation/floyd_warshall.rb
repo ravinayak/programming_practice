@@ -66,9 +66,7 @@ end
 
 def negative_cycle?(distance:, n:)
   (0...n).each do |i|
-    (0...n).each do |j|
-      return true if (distance[i][j]).negative?
-    end
+    return true if (distance[i][i]).negative?
   end
 
   false
