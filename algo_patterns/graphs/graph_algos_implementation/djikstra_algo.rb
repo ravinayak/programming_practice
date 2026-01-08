@@ -102,6 +102,18 @@ def djikstras(graph:, source_node:, destination_node: nil)
       # to result in Redundant Work. We skip updating
       # the distance of neighbor and inserting into
       # min-heap
+      # 
+      # NOTE: We do NOT check visited[neighbor] here because:
+      # 1. If neighbor is visited, its distance is already optimal,
+      #    so distance[neighbor] <= distance[node] + weight, and
+      #    this check will naturally skip it
+      # 2. The distance check is sufficient and more general
+      # 3. Checking visited here would be redundant and could
+      #    be confusing given Dijkstra's relaxation principle
+      # 
+      # Without this line, the algorithm would still be correct
+      # but significantly less efficient due to redundant heap
+      # operations and unnecessary distance updates
       next unless distance[neighbor] > distance[node] + weight
 
       distance[neighbor] = distance[node] + weight
