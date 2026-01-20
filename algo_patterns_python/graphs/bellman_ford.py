@@ -1,4 +1,4 @@
-from sre_parse import NEGATE
+from run_algos import RunAlgos
 from graph import Graph
 from typing import Dict
 
@@ -58,20 +58,5 @@ def bellman_ford(graph: Graph, source_node: int, destination_node: int):
 	return { 'distance': distance[destination_node], 'path': path, 'cycle': False }
 
 
-graph = Graph(positive_flag = False, negative_flag = True)
-for source_node, destination_node in [[1, 4], [2, 8], [3, 7], [1, 5], [1, 8]]:
-	response_dict = bellman_ford(graph, source_node, destination_node)
-	distance, path, cycle = response_dict.values()
-	
-	if cycle == True:
-		print(f'Source Node :: {source_node}, Destination Node :: {destination_node}, No Shortest distance exists, cycle detected')
-	else:
-		print(f'Source Node :: {source_node}, Destination Node :: {destination_node}, Shortest Distance :: {distance}')
-		print(f'Path :: {path}')
-  
-print('\n\n')
-graph = Graph(positive_flag=False, negative_flag=False, negative_cycle_flag=True)
-response_dict = bellman_ford(graph, 1, 8)
-distance, path, cycle = response_dict.values()
-if cycle == True:
-		print(f'Source Node :: {source_node}, Destination Node :: {destination_node}, No Shortest distance exists, cycle detected')
+run_algos = RunAlgos()
+run_algos.run_program(bellman_ford)
