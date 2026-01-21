@@ -1,14 +1,31 @@
 class Graph:
-  def __init__(self, positive_flag=True, negative_flag=False, negative_cycle_flag=False):
+  def __init__(self, positive_flag=True, negative_flag=False, negative_cycle_flag=False, undirected_flag = False, undirected_cycle_flag = False):
     self.vertices = [1, 2, 3, 4, 5, 6, 7, 8]
     self.positive_flag = positive_flag
     self.negative_flag = negative_flag
     self.negative_cycle_flag = negative_cycle_flag
+    self.undirected_flag = undirected_flag
+    self.undirected_cycle_flag = undirected_cycle_flag
     self.prepare_adj_list()
+    self.edges = self.prepare_edges()
     self.print_graph()
-
+  
+  def prepare_edges(self):
+    edges = []
+    for node, edge_list in self.adj_list.items():
+      for neighbor, weight in edge_list:
+        edges.append((node, neighbor))
     
+    return edges
+
   def prepare_adj_list(self):
+    if self.undirected_flag:
+      if self.undirected_cycle_flag:
+        self.prepare_undirected_cycle()
+      else:
+        self.prepare_undirected_non_cycle()
+      return
+
     if self.positive_flag:
       self.prepare_positive_adj_list()
       return
@@ -20,6 +37,55 @@ class Graph:
     if self.negative_cycle_flag:
       self.prepare_negative_cycle_adj_list()
       return
+        
+  def prepare_undirected_cycle(self):
+    self.vertices = [1, 2, 3, 4, 5, 6, 7]
+    self.adj_list = {
+			1: [
+				[2, 1], [3, 5]
+			],
+			2: [
+				[4, 3]
+			],
+			3: [
+				[5, 8]
+			],
+			4: [
+				[6, 9]
+			],
+			5: [
+				[7, 7]
+			],
+			6: [
+				[7, 8]
+			],
+			7: [
+				[5, 7]
+			]
+		}
+    
+  def prepare_undirected_non_cycle(self):
+    self.vertices = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]
+    self.adj_list = {
+			1: [
+				[2, 5], [3, 4]
+			],
+			2: [
+				[4, 2], [8, 9]
+			],
+			3: [
+				[5, 8], [12, 4]
+			],
+			4: [
+				[9, 13]
+			],
+			5: [
+				[11, 16], [6, 7]
+			],
+			6: [
+				[10, 13]
+			]
+		}
 
   def prepare_positive_adj_list(self):
     self.adj_list = {
@@ -106,7 +172,12 @@ class Graph:
       msg = '---------------Graph with +ve Weights - Undirected ------------------------------'
     elif self.negative_flag:    
       msg = '---------------Graph with -ve Weights - Directed ------------------------------'
-    else:
+    elif self.negative_cycle_flag:
       msg = '---------------Graph with -ve Weights + Cycle - Directed ------------------------------'
+    elif self.undirected_flag:
+      if self.undirected_cycle_flag:
+        msg = '---------------Graph with +ve Weights - Undirected + Non Cycle --------------------------------'
+      else:
+        msg = '---------------Graph with +ve Weights - Undirected + Cycle --------------------------------'
     
     self.process_adj_list(msg)
