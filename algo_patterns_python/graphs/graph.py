@@ -1,5 +1,18 @@
 class Graph:
-  def __init__(self, positive_flag=True, negative_flag=False, negative_cycle_flag=False, undirected_flag = False, undirected_cycle_flag = False):
+  def __init__(self, positive_flag=True, negative_flag=False, negative_cycle_flag=False, undirected_flag = False, undirected_cycle_flag = False, new_graph=False):
+    if not new_graph:
+      self.prep_graph_with_edges(positive_flag, negative_flag, negative_cycle_flag, undirected_flag, undirected_cycle_flag, new_graph=False)
+    else:
+      self.vertices = []
+      self.edges = []
+      self.adj_list = {}
+      self.positive_flag = False
+      self.negative_flag = False
+      self.negative_cycle_flag = False
+      self.undirected_flag = False
+      self.undirected_cycle_flag = False
+    
+  def prep_graph_with_edges(self, positive_flag, negative_flag, negative_cycle_flag, undirected_flag, undirected_cycle_flag, new_graph):
     self.vertices = [1, 2, 3, 4, 5, 6, 7, 8]
     self.positive_flag = positive_flag
     self.negative_flag = negative_flag

@@ -31,7 +31,8 @@ def djikstras_algo(graph: Graph, source_node: int, destination_node: int):
     node = heappop(min_heap)
     
     if node == destination_node:
-      return [node, distance[node], find_path(predecessor, source_node, destination_node)]
+      path = find_path(predecessor, source_node, destination_node)
+      return { 'distance_destination': distance[node], 'distance': distance, 'path': path, 'cycle': False }
     
     if node in visited:
       continue
@@ -48,10 +49,11 @@ def djikstras_algo(graph: Graph, source_node: int, destination_node: int):
       heappush(min_heap, neighbor)
     
     
-  return [None, None, None]
+  return  { 'distance_destination': None, 'distance': None, 'path': [], 'cycle': False }
 
 graph = Graph()
 
 for source_node, destination_node in [[1, 4], [2, 8], [3, 7], [1, 5], [1, 8]]:
-	node, distance, path = djikstras_algo(graph, source_node, destination_node)
-	print(f'Source Node :: {source_node}, Destination Node :: {destination_node}, Shortest Distance :: {distance}, Path :: {path}')
+  response_dict = djikstras_algo(graph, source_node, destination_node)
+  _distance_destination, distance, path, cycle = response_dict.values()
+  print(f'Source Node :: {source_node}, Destination Node :: {destination_node}, Shortest Distance :: {distance}, Path :: {path}')

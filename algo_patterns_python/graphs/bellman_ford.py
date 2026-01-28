@@ -49,13 +49,13 @@ def bellman_ford(graph: Graph, source_node: int, destination_node: int):
   
 
 	if detect_negative_cycle(graph, distance, inf):
-		return { 'distance': None, 'path': None, 'cycle': True }
+		return { 'distance_destination': None, 'distance': None, 'path': None, 'cycle': True }
   
 	if distance[destination_node] == inf:
-		return { 'distance': inf, 'path': [], 'cycle': False }
+		return { 'distance_destination': inf, 'distance': None, 'path': [], 'cycle': False }
   
 	path = find_path(predecessor, source_node, destination_node)
-	return { 'distance': distance[destination_node], 'path': path, 'cycle': False }
+	return { 'distance_destination': distance[destination_node], 'distance': distance, 'path': path, 'cycle': False }
 
 
 run_algos = RunAlgos()

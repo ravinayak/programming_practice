@@ -75,10 +75,10 @@ def floyd_warshall(graph: Graph, source_node: int, destination_node: int):
           predecessor[i][j] = predecessor[k][j] if predecessor[k][j] is not None else k
           
   if detect_negative_cycle(distance, graph):
-    return { 'distance': None, 'path': [], 'cycle': True }
+    return { 'distance_destination': None, 'distance': None, 'path': [], 'cycle': True }
   else:
     path = find_path(graph, source_node, destination_node, predecessor, distance)
-    return { 'distance': distance[source_node][destination_node], 'path': path, 'cycle': False }
+    return { 'distance_destination': distance[source_node][destination_node], 'distance': distance, 'path': path, 'cycle': False }
   
 run_algos = RunAlgos()
 run_algos.run_program(floyd_warshall)
