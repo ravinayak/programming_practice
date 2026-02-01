@@ -70,6 +70,7 @@ class JohnsonsAlgo:
 		# nodes, this would give us a distance dictionary
 		h, cycle = self.run_bellman_ford()
 		if cycle == True:
+			print('Cycle detected in graph')
 			return { 'distance_destination': None, 'distance': None, 'path': [], 'cycle': True}
 
 		# Step 3: Re-weight the graph edge weights. Distance dictionary obtained from above step will be

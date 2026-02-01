@@ -31,7 +31,7 @@ class UnionFind:
       # Don't increment rank when attaching smaller tree to larger
       
   def detect_cycle(self):
-    for u, v in self.graph.edges:
+    for u, v, _wt in self.graph.edges:
       if self.find(u) == self.find(v):
         return True
       else:

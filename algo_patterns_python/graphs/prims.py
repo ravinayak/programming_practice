@@ -1,5 +1,6 @@
 from heapq import heappush, heappop
 from graph import Graph
+from run_algos import RunAlgos
 
 # Prims algorithm requires that the undirected graph has representations for edges
 # in the adjacency list of both vertices, for ex: A - B
@@ -48,14 +49,7 @@ def prims(graph: Graph):
             heappush(min_heap, key_vertex_edge_tuple)
                 
     return { 'mst_edges': mst_edges, 'min_cost': min_cost }
-        
-def run_program():
-	graph3 = Graph(positive_flag = True)
-	prims_dict = prims(graph3)
-	mst_edges, min_cost = prims_dict['mst_edges'], prims_dict['min_cost']
-	print('**************************************************')
-	print(f' MST -> Edges :: {mst_edges}, Min Cost :: {min_cost}')
-	print('**************************************************\n')
   
-run_program()
+run_algos = RunAlgos()
+run_algos.run_mst_algos(prims)
                                                                                                           

@@ -1,7 +1,7 @@
 class Graph:
-  def __init__(self, positive_flag=True, negative_flag=False, negative_cycle_flag=False, undirected_flag = False, undirected_cycle_flag = False, new_graph=False):
+  def __init__(self, positive_flag=True, negative_flag=False, negative_cycle_flag=False, undirected_flag = False, undirected_cycle_flag = False, undirected_algo_flag = False, undirected_algo_cycle_flag = False, new_graph=False):
     if not new_graph:
-      self.prep_graph_with_edges(positive_flag, negative_flag, negative_cycle_flag, undirected_flag, undirected_cycle_flag, new_graph=False)
+      self.prep_graph_with_edges(positive_flag, negative_flag, negative_cycle_flag, undirected_flag, undirected_cycle_flag, undirected_algo_flag, undirected_algo_cycle_flag)
     else:
       self.vertices = []
       self.edges = []
@@ -12,22 +12,28 @@ class Graph:
       self.undirected_flag = False
       self.undirected_cycle_flag = False
     
-  def prep_graph_with_edges(self, positive_flag, negative_flag, negative_cycle_flag, undirected_flag, undirected_cycle_flag, new_graph):
+  def prep_graph_with_edges(self, positive_flag, negative_flag, negative_cycle_flag, undirected_flag, undirected_cycle_flag, undirected_algo_flag, undirected_algo_cycle_flag):
     self.vertices = [1, 2, 3, 4, 5, 6, 7, 8]
     self.positive_flag = positive_flag
     self.negative_flag = negative_flag
     self.negative_cycle_flag = negative_cycle_flag
     self.undirected_flag = undirected_flag
     self.undirected_cycle_flag = undirected_cycle_flag
+    self.undirected_algo_flag = undirected_algo_flag
+    self.undirected_algo_cycle_flag = undirected_algo_cycle_flag
     self.prepare_adj_list()
     self.edges = self.prepare_edges()
     self.print_graph()
   
   def prepare_edges(self):
     edges = []
+    edge_set = set()
     for node, edge_list in self.adj_list.items():
       for neighbor, weight in edge_list:
-        edges.append((node, neighbor))
+        if (node, neighbor) not in edge_set:
+            edge_set.add((node, neighbor))
+            edge_set.add((neighbor, node))
+            edges.append((node, neighbor, weight))
     
     return edges
 
@@ -35,6 +41,10 @@ class Graph:
     if self.undirected_flag:
       if self.undirected_cycle_flag:
         self.prepare_undirected_cycle()
+      elif self.undirected_algo_flag:
+        self.prepare_undirected_algo()
+      elif self.undirected_algo_cycle_flag:
+        self.prepare_undirected_algo_cycle()
       else:
         self.prepare_undirected_non_cycle()
       return
@@ -51,6 +61,70 @@ class Graph:
       self.prepare_negative_cycle_adj_list()
       return
         
+  def prepare_undirected_algo_cycle(self):
+    self.vertices = [1, 2, 3, 4, 5, 6, 7]
+    self.adj_list = {
+			1: [
+				[2, 1], [3, 5]
+			],
+			2: [
+				[4, 3], [1, 1]
+			],
+			3: [
+				[5, 8], [1, 5]
+			],
+			4: [
+				[6, 9], [2, 3]
+			],
+			5: [
+				[7, 7], [3, 8]
+			],
+			6: [
+				[7, 8], [4, 9]
+			],
+			7: [
+				[5, 7], [6, 8]
+			]
+		}
+    
+  def prepare_undirected_algo(self):
+    self.vertices = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12]
+    self.adj_list = {
+			1: [
+				[2, 5], [3, 4]
+			],
+			2: [
+				[4, 2], [8, 9], [1, 5]
+			],
+			3: [
+				[5, 8], [12, 4], [1, 4]
+			],
+			4: [
+				[9, 13], [2, 2]
+			],
+			5: [
+				[11, 16], [6, 7], [3, 8]
+			],
+			6: [
+				[10, 13], [5, 7]
+			],
+			8: [
+				[2, 9]
+			],
+			9: [
+				[4, 13]
+			],
+			10: [
+				[6, 13]
+			],
+			11: [
+				[5, 16]
+			],
+			12: [
+				[3, 4],
+			]
+		}
+
   def prepare_undirected_cycle(self):
     self.vertices = [1, 2, 3, 4, 5, 6, 7]
     self.adj_list = {
