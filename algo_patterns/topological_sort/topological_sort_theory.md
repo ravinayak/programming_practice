@@ -5,7 +5,7 @@ to complete tasks so we can complete a desired event (assuming event contains mu
 Topological sorting produces serveral mini topological orders within the DAG and combines them
 into one using a stack
 
-A directed edge from node A to node B represents a dependency of node A on node B. In layman terms
+A directed edge from node A to node B represents a dependency of node B on node A. In layman terms
 it means task at node A must be completed before we can complete task at node B
 
 Topology is the arrangement of nodes and their connections in a graph
